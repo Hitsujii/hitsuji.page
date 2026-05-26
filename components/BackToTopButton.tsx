@@ -1,0 +1,86 @@
+'use client'
+
+import type { CSSProperties } from 'react'
+import { useEffect, useState } from 'react'
+import { IconArrowLeft, IconArrowNarrowUp } from './icons/AstroPaperIcons'
+
+export default function BackToTopButton() {
+  const [scrollPercent, setScrollPercent] = useState(0)
+  const [visible, setVisible] = useState(false)
+
+  useEffect(() => {
+    const rootElement = document.documentElement
+
+    const handleScroll = () => {
+      const scrollTotal = rootElement.scrollHeight - rootElement.clientHeight
+      const scrollTop = rootElement.scrollTop
+      const nextPercent = scrollTotal > 0 ? Math.floor((scrollTop / scrollTotal) * 100) : 0
+
+      setScrollPercent(nextPercent)
+      setVisible(scrollTotal > 0 && scrollTop / scrollTotal > 0.3)
+    }
+
+    handleScroll()
+
+    document.addEventListener('scroll', handleScroll, { passive: true })
+    window.addEventListener('resize', handleScroll)
+
+    return () => {
+      document.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', handleScroll)
+    }
+  }, [])
+
+  const progressStyle = {
+    backgroundImage: `conic-gradient(var(--accent), var(--accent) ${scrollPercent}%, transparent ${scrollPercent}%)`,
+  } as CSSProperties
+
+  const topProgressStyle = {
+    width: `${scrollPercent}%`,
+  } as CSSProperties
+
+  return (
+    <>
+      <div className="progress-container fixed top-0 left-0 z-10 h-1 w-full bg-[var(--background)]">
+        <div id="myBar" className="progress-bar h-1 bg-[var(--accent)]" style={topProgressStyle} />
+      </div>
+
+      <div
+        id="btt-btn-container"
+        className={[
+          'inset-e-4 fixed bottom-8 z-50',
+          'md:inset-e-auto md:sticky md:float-end md:me-1',
+          'transition duration-500',
+          visible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-14 opacity-0',
+        ].join(' ')}
+      >
+        <button
+          data-button="back-to-top"
+          type="button"
+          className={[
+            'group relative bg-[var(--background)] px-2 py-1',
+            'size-14 rounded-full shadow-xl',
+            'md:h-8 md:w-fit md:rounded-md md:shadow-none md:focus-visible:rounded-none',
+            'md:bg-[color-mix(in_srgb,var(--background)_35%,transparent)] md:bg-clip-padding md:backdrop-blur-lg',
+          ].join(' ')}
+          aria-label="Back to top"
+          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        >
+          <span
+            id="progress-indicator"
+            aria-hidden="true"
+            className="absolute inset-0 -z-10 block size-14 scale-110 rounded-full bg-transparent md:hidden md:h-8 md:rounded-md"
+            style={progressStyle}
+          />
+
+          <IconArrowLeft className="inline-block rotate-90 md:hidden" />
+
+          <span className="sr-only text-sm group-hover:text-[var(--accent)] md:not-sr-only">
+            <IconArrowNarrowUp className="inline-block size-4" />
+            Back to top
+          </span>
+        </button>
+      </div>
+    </>
+  )
+}

@@ -1,0 +1,1208 @@
+@import 'tailwindcss';
+@plugin "@tailwindcss/forms";
+@plugin '@tailwindcss/typography';
+@source '../node_modules/pliny';
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+/* Core theme configuration */
+@theme {
+  /* Font families */
+  --font-sans: var(--font-google-sans-code), 'Google Sans Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+
+  /* Colors */
+  /* Copied from https://tailwindcss.com/docs/theme#default-theme-variable-reference */
+  --color-primary-50: oklch(0.971 0.014 343.198);
+  --color-primary-100: oklch(0.948 0.028 342.258);
+  --color-primary-200: oklch(0.899 0.061 343.231);
+  --color-primary-300: oklch(0.823 0.12 346.018);
+  --color-primary-400: oklch(0.718 0.202 349.761);
+  --color-primary-500: oklch(0.656 0.241 354.308);
+  --color-primary-600: oklch(0.592 0.249 0.584);
+  --color-primary-700: oklch(0.525 0.223 3.958);
+  --color-primary-800: oklch(0.459 0.187 3.815);
+  --color-primary-900: oklch(0.408 0.153 2.432);
+  --color-primary-950: oklch(0.284 0.109 3.907);
+
+  --color-gray-50: oklch(0.985 0.002 247.839);
+  --color-gray-100: oklch(0.967 0.003 264.542);
+  --color-gray-200: oklch(0.928 0.006 264.531);
+  --color-gray-300: oklch(0.872 0.01 258.338);
+  --color-gray-400: oklch(0.707 0.022 261.325);
+  --color-gray-500: oklch(0.551 0.027 264.364);
+  --color-gray-600: oklch(0.446 0.03 256.802);
+  --color-gray-700: oklch(0.373 0.034 259.733);
+  --color-gray-800: oklch(0.278 0.033 256.848);
+  --color-gray-900: oklch(0.21 0.034 264.665);
+  --color-gray-950: oklch(0.13 0.028 261.692);
+
+  /* Line heights */
+  --line-height-11: 2.75rem;
+  --line-height-12: 3rem;
+  --line-height-13: 3.25rem;
+  --line-height-14: 3.5rem;
+
+  /* Z-index values */
+  --z-60: 60;
+  --z-70: 70;
+  --z-80: 80;
+}
+
+/*
+  The default border color has changed to `currentColor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentColor);
+  }
+
+  a,
+  button {
+    outline-color: var(--color-primary-500);
+  }
+
+  a:focus-visible,
+  button:focus-visible {
+    outline: 2px solid;
+    border-radius: var(--radius-sm);
+    outline-color: var(--color-primary-500);
+  }
+}
+
+@layer utilities {
+  .prose {
+    & a {
+      color: var(--color-primary-500);
+      &:hover {
+        color: var(--color-primary-600);
+      }
+      & code {
+        color: var(--color-primary-400);
+      }
+    }
+    & :where(h1, h2) {
+      font-weight: 700;
+      letter-spacing: var(--tracking-tight);
+    }
+    & h3 {
+      font-weight: 600;
+    }
+    & :where(code):not(pre code) {
+      color: var(--color-indigo-500);
+    }
+  }
+
+  .prose-invert {
+    & a {
+      color: var(--color-primary-500);
+      &:hover {
+        color: var(--color-primary-400);
+      }
+      & code {
+        color: var(--color-primary-400);
+      }
+    }
+    & :where(h1, h2, h3, h4, h5, h6) {
+      color: var(--color-gray-100);
+    }
+  }
+}
+
+.task-list-item::before {
+  @apply hidden;
+}
+
+.task-list-item {
+  @apply list-none;
+}
+
+.footnotes {
+  @apply mt-12 border-t border-gray-200 pt-8 dark:border-gray-700;
+}
+
+.data-footnote-backref {
+  @apply no-underline;
+}
+
+.csl-entry {
+  @apply my-5;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+/* https://stackoverflow.com/questions/61083813/how-to-avoid-internal-autofill-selected-style-to-be-applied */
+input:-webkit-autofill,
+input:-webkit-autofill:focus {
+  transition:
+    background-color 600000s 0s,
+    color 600000s 0s;
+}
+
+.katex-display {
+  overflow: auto hidden;
+}
+
+.content-header-link {
+  opacity: 0;
+  margin-left: -24px;
+  padding-right: 4px;
+}
+
+.content-header:hover .content-header-link,
+.content-header-link:hover {
+  opacity: 1;
+}
+
+.linkicon {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* NextPaper View Transition lock */
+html[data-view-transition='running'] a {
+  pointer-events: none;
+}
+
+/* NextPaper AstroPaper shared element transitions */
+@supports (view-transition-name: root) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 220ms;
+    animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+/* NextPaper AstroPaper canonical CSS baseline */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --font-app: var(--font-google-sans-code);
+  --font-sans: var(--font-google-sans-code), 'Google Sans Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+}
+
+@layer base {
+  :root,
+  [data-theme='light'] {
+    --background: #fdfdfd;
+    --foreground: #282728;
+    --accent: #006cac;
+    --accent-foreground: #ffffff;
+    --muted: #e6e6e6;
+    --muted-foreground: #6b7280;
+    --border: #ece9e9;
+    color-scheme: light;
+  }
+
+  [data-theme='dark'] {
+    --background: #212737;
+    --foreground: #eaedf3;
+    --accent: #ff6b01;
+    --accent-foreground: #ffffff;
+    --muted: #343f60;
+    --muted-foreground: #afb9ca;
+    --border: #ab4b08;
+    color-scheme: dark;
+  }
+
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--border);
+    outline-color: color-mix(in srgb, var(--accent) 75%, transparent);
+    scrollbar-width: auto;
+    scrollbar-color: var(--muted) transparent;
+  }
+
+  html,
+  body {
+    min-height: 100%;
+    background: var(--background) !important;
+  }
+
+  body {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    color: var(--foreground);
+    font-family: var(--font-google-sans-code), 'Google Sans Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  main {
+    background: var(--background);
+  }
+
+  a,
+  button {
+    outline-color: var(--accent);
+    outline-offset: 1px;
+  }
+
+  a:focus-visible,
+  button:focus-visible {
+    outline: 2px dashed var(--accent);
+    text-decoration-line: none;
+  }
+
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+
+  svg {
+    flex-shrink: 0;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--accent) 75%, transparent);
+    color: var(--accent-foreground);
+  }
+
+  :target {
+    scroll-margin-block: 1rem;
+  }
+}
+
+@layer utilities {
+  .max-w-app {
+    max-width: 48rem;
+  }
+
+  .app-layout {
+    width: 100%;
+    max-width: 48rem;
+    margin-inline: auto;
+    padding-inline: 1rem;
+  }
+
+  .active-nav {
+    text-decoration-line: underline;
+    text-decoration-style: wavy;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 8px;
+  }
+
+  .focus-outline {
+    outline: 2px solid transparent;
+    outline-offset: 1px;
+  }
+
+  .focus-outline:focus-visible {
+    outline: 2px dashed var(--accent);
+  }
+
+  @media (max-width: 639px) {
+    #menu-items a,
+    #menu-items button {
+      -webkit-tap-highlight-color: transparent;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    ::before,
+    ::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* NextPaper AstroPaper canonical typography */
+.post-content,
+.app-prose {
+  color: var(--foreground);
+  line-height: 1.75;
+}
+
+.post-content :where(h1, h2, h3, h4, th),
+.app-prose :where(h1, h2, h3, h4, th) {
+  margin-bottom: 0.75rem;
+  color: var(--foreground);
+}
+
+.post-content :where(h3),
+.app-prose :where(h3) {
+  font-style: italic;
+}
+
+.post-content :where(p, strong, ol, ul, figcaption, table, code),
+.app-prose :where(p, strong, ol, ul, figcaption, table, code) {
+  color: var(--foreground);
+}
+
+.post-content :where(a),
+.app-prose :where(a) {
+  color: var(--foreground);
+  overflow-wrap: break-word;
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-underline-offset: 4px;
+}
+
+.post-content :where(a:hover),
+.app-prose :where(a:hover) {
+  color: var(--accent);
+}
+
+.post-content :where(ul),
+.app-prose :where(ul) {
+  overflow-x: clip;
+}
+
+.post-content :where(li)::marker,
+.app-prose :where(li)::marker {
+  color: var(--accent);
+}
+
+.post-content :where(hr),
+.app-prose :where(hr) {
+  border-color: var(--border);
+}
+
+.post-content :where(img),
+.app-prose :where(img) {
+  margin-inline: auto;
+  border: 1px solid var(--border);
+}
+
+.post-content :where(figcaption),
+.app-prose :where(figcaption) {
+  opacity: 0.75;
+}
+
+.post-content :where(th, td),
+.app-prose :where(th, td) {
+  border: 1px solid var(--border);
+  padding: 0.5rem;
+}
+
+.post-content :where(th),
+.app-prose :where(th) {
+  padding-block: 0.375rem;
+}
+
+.post-content :where(code):not(pre code),
+.app-prose :where(code):not(pre code) {
+  border-radius: 0.25rem;
+  background: color-mix(in srgb, var(--muted) 75%, transparent);
+  padding: 0.25rem;
+  color: var(--foreground);
+  overflow-wrap: break-word;
+}
+
+.post-content :where(code):not(pre code)::before,
+.post-content :where(code):not(pre code)::after,
+.app-prose :where(code):not(pre code)::before,
+.app-prose :where(code):not(pre code)::after {
+  content: none;
+}
+
+.post-content :where(pre),
+.app-prose :where(pre) {
+  border: 1px solid var(--border);
+}
+
+.post-content :where(pre code),
+.app-prose :where(pre code) {
+  background: transparent;
+  padding: 0;
+}
+
+/* NextPaper AstroPaper final parity overrides */
+.app-layout {
+  width: 100%;
+  max-width: 48rem;
+  margin-inline: auto;
+  padding-inline: 1rem;
+  box-sizing: border-box;
+}
+
+header a:not(.active-nav),
+footer a {
+  text-decoration-line: none;
+}
+
+footer svg {
+  opacity: 0.9;
+}
+
+#pagefind-search .pagefind-ui__form {
+  margin-top: 1.5rem;
+}
+
+#pagefind-search .pagefind-ui__search-input {
+  height: 3.125rem;
+  min-height: 3.125rem;
+  padding-block: 0;
+  border: 1px solid var(--border);
+  box-shadow: none;
+  font: inherit;
+  font-weight: 400;
+}
+
+#pagefind-search .pagefind-ui__search-input:focus,
+#pagefind-search .pagefind-ui__search-input:focus-visible {
+  border-color: var(--border);
+  outline: 1px solid var(--accent);
+  box-shadow: none;
+}
+
+#pagefind-search .pagefind-ui__drawer {
+  margin-top: 1.5rem;
+}
+
+#pagefind-search input[type='search']::-webkit-search-cancel-button {
+  appearance: none;
+}
+
+#pagefind-search mark {
+  background: yellow;
+  color: black;
+  padding-inline: 0.125rem;
+}
+
+#pagefind-search .pagefind-ui__result:last-of-type {
+  border-bottom: 0;
+}
+
+.astro-toc {
+  margin-block: 2rem;
+}
+
+.astro-toc summary {
+  cursor: pointer;
+  color: var(--foreground);
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 600;
+}
+
+.astro-toc summary:hover {
+  color: var(--accent);
+}
+
+.astro-toc nav {
+  margin-top: 1rem;
+}
+
+.astro-toc ul {
+  margin: 0;
+  padding-inline-start: 1.25rem;
+}
+
+.astro-toc li {
+  margin-block: 0.25rem;
+}
+
+.astro-toc a {
+  color: var(--foreground);
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-underline-offset: 4px;
+}
+
+.astro-toc a:hover {
+  color: var(--accent);
+}
+
+.heading-link {
+  margin-inline-start: 0.5rem;
+  color: var(--foreground) !important;
+  text-decoration-line: none !important;
+  opacity: 0.75;
+  transition:
+    opacity 150ms ease,
+    color 150ms ease;
+}
+
+@media (min-width: 768px) {
+  .heading-link {
+    opacity: 0;
+  }
+
+  .group:hover .heading-link,
+  .heading-link:focus {
+    opacity: 1;
+  }
+}
+
+.heading-link:hover {
+  color: var(--accent) !important;
+}
+
+.code-block-wrapper {
+  overflow: visible;
+  position: relative;
+  margin-block: 2rem;
+}
+
+.code-file-name {
+  position: absolute;
+  top: var(--file-name-offset, -0.75rem);
+  inset-inline-start: 0.5rem;
+  z-index: 2;
+  display: inline-flex;
+  width: auto;
+  max-width: calc(100% - 6rem);
+  align-items: center;
+  gap: 0.25rem;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  background: var(--background);
+  padding: 0.125rem 0.5rem;
+  color: var(--foreground);
+  font-size: 0.75rem;
+  font-style: normal;
+  line-height: 1rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.code-file-name::before {
+  content: "";
+  display: inline-block;
+  width: 0.35rem;
+  height: 0.35rem;
+  flex: none;
+  border-radius: 9999px;
+  background: #22c55e;
+}
+
+.code-block-wrapper pre {
+  margin-block: 0 !important;
+}
+
+.code-block-wrapper[data-file] pre {
+  border-top-left-radius: 0.375rem;
+  border-top-right-radius: 0.375rem;
+}
+
+.copy-code {
+  position: absolute;
+  top: -0.75rem;
+  inset-inline-end: 0.75rem;
+  z-index: 2;
+  border: 1px solid var(--muted);
+  border-radius: 0.25rem;
+  background: var(--muted);
+  padding: 0.25rem 0.5rem;
+  color: var(--foreground);
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500;
+  opacity: 0;
+  transition:
+    opacity 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease,
+    background-color 150ms ease;
+}
+
+
+.code-block-wrapper:hover .copy-code,
+.code-block-wrapper:focus-within .copy-code {
+  opacity: 1;
+}
+
+.copy-code:hover,
+.copy-code:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+#back-button {
+  text-decoration-line: none;
+}
+
+#article {
+  max-width: 48rem;
+}
+
+.post-content :where(pre) {
+  position: relative;
+}
+
+.post-content :where(pre code) {
+  display: block;
+}
+
+.post-content :where(img) {
+  border: 1px solid var(--border);
+}
+
+.post-content :where(hr) {
+  border-color: var(--border);
+  border-style: dashed;
+}
+
+#btt-btn-container {
+  max-width: 48rem;
+}
+
+#progress-indicator {
+  background-color: transparent;
+}
+
+[data-button='back-to-top'] {
+  color: var(--foreground);
+}
+
+[data-button='back-to-top']:hover {
+  color: var(--accent);
+}
+
+/* NextPaper AstroPaper collapsible TOC */
+.astro-toc-collapse {
+  margin-top: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.astro-toc-collapse summary {
+  width: fit-content;
+  cursor: pointer;
+  color: var(--foreground);
+  font: inherit;
+  line-height: inherit;
+}
+
+.astro-toc-collapse summary:hover {
+  color: var(--accent);
+}
+
+.astro-toc-collapse nav {
+  margin-top: 0.75rem;
+}
+
+.astro-toc-collapse ul,
+.astro-toc-collapse ol {
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+  padding-inline-start: 1.5rem;
+}
+
+.astro-toc-collapse li {
+  margin-block: 0.5rem;
+}
+
+.astro-toc-collapse li::marker {
+  color: var(--accent);
+}
+
+.astro-toc-collapse a {
+  color: var(--foreground);
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-underline-offset: 4px;
+}
+
+.astro-toc-collapse a:hover {
+  color: var(--accent);
+}
+
+.heading-link {
+  margin-inline-start: 0.5rem;
+  color: var(--foreground) !important;
+  text-decoration-line: none !important;
+  opacity: 0.75;
+  transition:
+    opacity 150ms ease,
+    color 150ms ease;
+}
+
+@media (min-width: 768px) {
+  .heading-link {
+    opacity: 0;
+  }
+
+  .group:hover .heading-link,
+  .heading-link:focus {
+    opacity: 1;
+  }
+}
+
+.heading-link:hover {
+  color: var(--accent) !important;
+}
+
+/* NextPaper AstroPaper forced collapsible TOC */
+.astro-toc-collapse {
+  margin-top: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.astro-toc-collapse:not([open]) nav {
+  display: none;
+}
+
+.astro-toc-collapse summary {
+  width: fit-content;
+  cursor: pointer;
+  color: var(--foreground);
+  font: inherit;
+  line-height: inherit;
+}
+
+.astro-toc-collapse summary:hover {
+  color: var(--accent);
+}
+
+.astro-toc-collapse nav {
+  margin-top: 0.75rem;
+}
+
+.astro-toc-collapse ul,
+.astro-toc-collapse ol {
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+  padding-inline-start: 1.5rem;
+}
+
+.astro-toc-collapse li {
+  margin-block: 0.5rem;
+}
+
+.astro-toc-collapse li::marker {
+  color: var(--accent);
+}
+
+.astro-toc-collapse a {
+  color: var(--foreground);
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-underline-offset: 4px;
+}
+
+.astro-toc-collapse a:hover {
+  color: var(--accent);
+}
+
+/* NextPaper AstroPaper fallback collapsible TOC */
+.astro-toc-collapse {
+  margin-top: 0.5rem;
+  margin-bottom: 2rem;
+}
+
+.astro-toc-collapse:not([open]) nav {
+  display: none;
+}
+
+.astro-toc-collapse summary {
+  width: fit-content;
+  cursor: pointer;
+  color: var(--foreground);
+  font: inherit;
+  line-height: inherit;
+}
+
+.astro-toc-collapse summary:hover {
+  color: var(--accent);
+}
+
+.astro-toc-collapse nav {
+  margin-top: 0.75rem;
+}
+
+.astro-toc-collapse ul,
+.astro-toc-collapse ol {
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+  padding-inline-start: 1.5rem;
+}
+
+.astro-toc-collapse li {
+  margin-block: 0.5rem;
+}
+
+.astro-toc-collapse li::marker {
+  color: var(--accent);
+}
+
+.astro-toc-collapse a {
+  color: var(--foreground);
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
+  text-underline-offset: 4px;
+}
+
+.astro-toc-collapse a:hover {
+  color: var(--accent);
+}
+
+/* NextPaper AstroPaper heading anchors right-only */
+.post-content :where(h2, h3, h4, h5, h6) > a.anchor,
+.post-content :where(h2, h3, h4, h5, h6) > a.icon-link,
+.post-content :where(h2, h3, h4, h5, h6) > a[aria-hidden='true'] {
+  display: none !important;
+}
+
+.heading-link {
+  display: inline-block;
+  margin-inline-start: 0.5rem;
+  color: var(--foreground) !important;
+  text-decoration-line: none !important;
+  opacity: 0;
+  transition:
+    opacity 150ms ease,
+    color 150ms ease;
+}
+
+.group:hover .heading-link,
+.heading-link:focus,
+.heading-link:focus-visible {
+  opacity: 1;
+}
+
+.heading-link:hover,
+.heading-link:focus,
+.heading-link:focus-visible {
+  color: var(--accent) !important;
+}
+
+.heading-link span {
+  color: currentColor;
+}
+
+/* NextPaper AstroPaper code block exact parity */
+.code-block-wrapper {
+  position: relative;
+  margin: 2rem 0;
+  padding-top: 0;
+}
+
+.post-content :where(pre.astro-code),
+.app-prose :where(pre.astro-code) {
+  position: relative;
+  margin-top: 0;
+  margin-bottom: 0;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  background: var(--shiki-light-bg, #ffffff);
+  color: var(--shiki-light, #24292eff);
+  padding: 1rem;
+  outline-color: var(--border);
+}
+
+[data-theme='dark'] .post-content :where(pre.astro-code),
+[data-theme='dark'] .app-prose :where(pre.astro-code) {
+  background: var(--shiki-dark-bg, #011627);
+  color: var(--shiki-dark, #d6deeb);
+}
+
+.post-content :where(pre.astro-code code),
+.app-prose :where(pre.astro-code code) {
+  display: block;
+  min-width: max-content;
+  background: inherit;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  white-space: pre;
+}
+
+.post-content :where(pre.astro-code .code-line),
+.app-prose :where(pre.astro-code .code-line) {
+  display: block;
+  min-height: 1.5rem;
+}
+
+.code-file-name {
+  position: absolute;
+  top: var(--file-name-offset, -0.75rem);
+  inset-inline-start: 0.5rem;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  width: auto;
+  max-width: calc(100% - 6rem);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  background: var(--background);
+  padding: 0.25rem 0.5rem 0.25rem 1rem;
+  color: var(--foreground);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.code-file-name::before {
+  content: "";
+  position: absolute;
+  top: 45%;
+  inset-inline-start: 0.5rem;
+  display: inline-block;
+  width: 0.25rem;
+  height: 0.25rem;
+  border-radius: 9999px;
+  background: #22c55e;
+}
+
+.copy-code {
+  position: absolute;
+  top: var(--file-name-offset, -0.75rem);
+  inset-inline-end: 0.75rem;
+  z-index: 2;
+  opacity: 1;
+  border: 1px solid var(--muted);
+  border-radius: 0.25rem;
+  background: var(--muted);
+  padding: 0.25rem 0.5rem;
+  color: var(--foreground);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1rem;
+  transition:
+    color 150ms ease,
+    border-color 150ms ease,
+    background-color 150ms ease;
+}
+
+.copy-code:hover,
+.copy-code:focus-visible {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Prism tokens mapped closer to AstroPaper's Night Owl Shiki output. */
+[data-theme='dark'] .post-content :where(pre.astro-code .token.keyword),
+[data-theme='dark'] .app-prose :where(pre.astro-code .token.keyword) {
+  color: #c792ea;
+  font-style: italic;
+}
+
+[data-theme='dark'] .post-content :where(pre.astro-code .token.function),
+[data-theme='dark'] .app-prose :where(pre.astro-code .token.function) {
+  color: #82aaff;
+  font-style: italic;
+}
+
+[data-theme='dark'] .post-content :where(pre.astro-code .token.string),
+[data-theme='dark'] .app-prose :where(pre.astro-code .token.string) {
+  color: #ecc48d;
+}
+
+[data-theme='dark'] .post-content :where(pre.astro-code .token.number),
+[data-theme='dark'] .post-content :where(pre.astro-code .token.boolean),
+[data-theme='dark'] .app-prose :where(pre.astro-code .token.number),
+[data-theme='dark'] .app-prose :where(pre.astro-code .token.boolean) {
+  color: #f78c6c;
+}
+
+[data-theme='dark'] .post-content :where(pre.astro-code .token.operator),
+[data-theme='dark'] .post-content :where(pre.astro-code .token.punctuation),
+[data-theme='dark'] .app-prose :where(pre.astro-code .token.operator),
+[data-theme='dark'] .app-prose :where(pre.astro-code .token.punctuation) {
+  color: #d6deeb;
+}
+
+[data-theme='dark'] .post-content :where(pre.astro-code .token.comment),
+[data-theme='dark'] .app-prose :where(pre.astro-code .token.comment) {
+  color: #637777;
+  font-style: italic;
+}
+
+/* NextPaper AstroPaper color token sync */
+:root,
+[data-theme='light'],
+html[data-theme='light'] {
+  --border: #ece9e9;
+}
+
+[data-theme='dark'],
+html[data-theme='dark'] {
+  --border: #ab4b08;
+}
+
+/* NextPaper AstroPaper newsletter parity */
+.newsletter-section {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  color: var(--foreground);
+}
+
+.newsletter-section > div,
+.newsletter-section form {
+  width: 100%;
+  max-width: 28rem;
+}
+
+.newsletter-section h2,
+.newsletter-section h3,
+.newsletter-section legend {
+  margin-bottom: 0.75rem;
+  color: var(--foreground);
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 700;
+  letter-spacing: 0.025em;
+  text-align: center;
+}
+
+.newsletter-section p {
+  color: var(--muted-foreground);
+  text-align: center;
+}
+
+.newsletter-section form {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.newsletter-section input[type='email'],
+.newsletter-section input[type='text'] {
+  min-height: 2.75rem;
+  flex: 1 1 auto;
+  border: 1px solid var(--border) !important;
+  border-radius: 0.375rem !important;
+  background: var(--background) !important;
+  padding: 0.5rem 1rem !important;
+  color: var(--foreground) !important;
+  font: inherit !important;
+  box-shadow: none !important;
+}
+
+.newsletter-section input[type='email']::placeholder,
+.newsletter-section input[type='text']::placeholder {
+  color: var(--muted-foreground);
+}
+
+.newsletter-section input[type='email']:focus,
+.newsletter-section input[type='email']:focus-visible,
+.newsletter-section input[type='text']:focus,
+.newsletter-section input[type='text']:focus-visible {
+  border-color: var(--accent) !important;
+  outline: 2px dashed var(--accent) !important;
+  outline-offset: 3px;
+  box-shadow: none !important;
+}
+
+.newsletter-section button,
+.newsletter-section input[type='submit'] {
+  min-height: 2.75rem;
+  border: 1px solid var(--accent) !important;
+  border-radius: 0.375rem !important;
+  background: var(--accent) !important;
+  padding: 0.5rem 1rem !important;
+  color: var(--background) !important;
+  font: inherit !important;
+  font-weight: 700 !important;
+  line-height: 1.25rem;
+  box-shadow: none !important;
+  transition:
+    opacity 150ms ease,
+    color 150ms ease,
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+
+.newsletter-section button:hover,
+.newsletter-section input[type='submit']:hover {
+  opacity: 0.85;
+}
+
+.newsletter-section button:focus-visible,
+.newsletter-section input[type='submit']:focus-visible {
+  outline: 2px dashed var(--accent) !important;
+  outline-offset: 3px;
+}
+
+.newsletter-section button:disabled,
+.newsletter-section input[type='submit']:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.newsletter-section [class*='text-red'],
+.newsletter-section [class*='text-green'] {
+  margin-top: 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .newsletter-section form {
+    flex-direction: column;
+  }
+
+  .newsletter-section button,
+  .newsletter-section input[type='submit'] {
+    width: 100%;
+  }
+}
+
+/* AstroPaper/Pagefind search final typography parity */
+#pagefind-search .pagefind-ui__search-input {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+#pagefind-search .pagefind-ui__form button {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+#pagefind-search .pagefind-ui__search-input:focus,
+#pagefind-search .pagefind-ui__search-input:focus-visible {
+  border-color: var(--accent);
+  outline: none;
+  box-shadow: none;
+}
+
+#pagefind-search .pagefind-ui__message {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+#pagefind-search .pagefind-ui__result-link,
+#pagefind-search .pagefind-ui__result-link h2 {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 700;
+}
+
+#pagefind-search .pagefind-ui__result-excerpt,
+#pagefind-search .pagefind-ui__result-nested p {
+  font-size: 0.8125rem;
+  line-height: 1.25rem;
+}
+
+#pagefind-search .pagefind-ui__result-nested a {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 700;
+}
+
