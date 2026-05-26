@@ -1,9 +1,10 @@
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
-  title: '羊 hitsuji.page',
+  title: '羊 Hitsuji',
   author: 'Hitsuji',
-  headerTitle: '羊 hitsuji.page',
-  description: 'High-cortisol C++ and other bad decisions. Learning from scratch, building this site myself, pretending I’m not learning frontend and using it as an excuse to draw more.',  
+  headerTitle: '羊 Hitsuji',
+  description:
+    'High-cortisol C++ and other bad decisions. Learning from scratch, building this site myself, pretending I’m not learning frontend and using it as an excuse to draw more.',
   language: 'en-us',
   theme: 'system', // system, dark or light
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://hitsuji.page',
