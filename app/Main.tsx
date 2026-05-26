@@ -34,7 +34,7 @@ export default function Home({ posts }) {
 
       <main id="main-content" data-layout="index" data-home-path="/" className="app-layout">
         <section id="hero" className="border-b border-[var(--border)] pt-8 pb-6">
-          <h1 className="my-4 inline-block text-4xl font-bold sm:my-8 sm:text-5xl">Mingalaba</h1>{' '}
+          <h1 className="my-4 inline-block text-4xl font-bold sm:my-8 sm:text-5xl">Hello!!</h1>{' '}
           <Link
             href="/feed.xml"
             target="_blank"
@@ -50,21 +50,25 @@ export default function Home({ posts }) {
             <span className="sr-only">RSS Feed</span>
           </Link>
           <p>
-            NextPaper is a minimal, responsive, accessible and SEO-friendly Next.js blog template.
-            This template follows AstroPaper visual patterns while keeping the Tailwind Nextjs
-            Starter Blog content pipeline.
+            I’m Hitsuji. I write about learning C++ from scratch, building this site myself and
+            accidentally picking up frontend along the way.
           </p>
           <p className="mt-2">
-            Read the blog posts or check{' '}
+            Feel free to read the{' '}
             <Link
-              href={siteMetadata.siteRepo || '/about'}
-              target={siteMetadata.siteRepo ? '_blank' : undefined}
-              rel={siteMetadata.siteRepo ? 'noopener noreferrer' : undefined}
+              href="/blog"
               className="underline decoration-dashed underline-offset-4 hover:text-[var(--accent)]"
             >
-              README
+              high-cortisol posts
             </Link>{' '}
-            for more info.
+            or check out the{' '}
+            <Link
+              href="/projects"
+              className="underline decoration-dashed underline-offset-4 hover:text-[var(--accent)]"
+            >
+              projects
+            </Link>{' '}
+            to see how all the overengineering is going.
           </p>
           {socialLinks.some(({ href }) => Boolean(href)) && (
             <div className="mt-4 flex max-sm:flex-col sm:items-center">
