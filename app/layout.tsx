@@ -39,29 +39,14 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: `${metadataBasePath}/static/favicons/favicon.svg?v=13`,
+        url: `${metadataBasePath}/static/favicons/favicon.svg?v=14`,
         type: 'image/svg+xml',
         sizes: 'any',
       },
-      {
-        url: `${metadataBasePath}/static/favicons/favicon.ico?v=13`,
-        sizes: 'any',
-      },
-      {
-        url: `${metadataBasePath}/static/favicons/favicon-32x32.png?v=13`,
-        type: 'image/png',
-        sizes: '32x32',
-      },
-      {
-        url: `${metadataBasePath}/static/favicons/favicon-16x16.png?v=13`,
-        type: 'image/png',
-        sizes: '16x16',
-      },
     ],
-    shortcut: [`${metadataBasePath}/static/favicons/favicon.ico?v=13`],
     apple: [
       {
-        url: `${metadataBasePath}/static/favicons/apple-touch-icon.png?v=13`,
+        url: `${metadataBasePath}/static/favicons/apple-touch-icon.png?v=14`,
         sizes: '180x180',
         type: 'image/png',
       },
