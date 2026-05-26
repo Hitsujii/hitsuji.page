@@ -1,6 +1,6 @@
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
-  title: '羊 Hitsuji',
+  title: 'Hitsuji',
   author: 'Hitsuji',
   headerTitle: '羊 Hitsuji',
   description:
