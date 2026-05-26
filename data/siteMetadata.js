@@ -1,13 +1,13 @@
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
-  title: 'NextPaper',
+  title: '羊 hitsuji.page',
   author: 'Hitsuji',
-  headerTitle: 'NextPaper',
-  description: 'A minimal Next.js blog starter inspired by AstroPaper and built on top of Tailwind Nextjs Starter Blog.',
+  headerTitle: '羊 hitsuji.page',
+  description: 'High-cortisol C++ and other bad decisions. Learning from scratch, building this site myself, pretending I’m not learning frontend and using it as an excuse to draw more.',  
   language: 'en-us',
   theme: 'system', // system, dark or light
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://hitsujii.github.io/next-paper',
-  siteRepo: 'https://github.com/Hitsujii/next-paper',
+  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://hitsuji.page',
+  siteRepo: 'https://github.com/Hitsujii/hitsuji.page',
   siteLogo: `${process.env.BASE_PATH || ''}/static/images/logo.png`,
   socialBanner: `${process.env.BASE_PATH || ''}/static/images/twitter-card.png`,
   mastodon: '',
@@ -17,7 +17,7 @@ const siteMetadata = {
   // twitter: 'https://twitter.com/Twitter',
   facebook: '',
   youtube: '',
-  linkedin: 'https://www.linkedin.com/in/username',
+  linkedin: '',
   threads: '',
   instagram: '',
   medium: '',
@@ -29,13 +29,13 @@ const siteMetadata = {
     // If you want to use an analytics provider you have to add it to the
     // content security policy in the `next.config.js` file.
     // supports Plausible, Simple Analytics, Umami, Posthog or Google Analytics.
-    umamiAnalytics: {
-      // We use an env variable for this site to avoid other users cloning our analytics ID
-      umamiWebsiteId: process.env.NEXT_UMAMI_ID, // e.g. 123e4567-e89b-12d3-a456-426614174000
-      // You may also need to overwrite the script if you're storing data in the US - ex:
-      // src: 'https://us.umami.is/script.js'
-      // Remember to add 'us.umami.is' in `next.config.js` as a permitted domain for the CSP
-    },
+    // umamiAnalytics: {
+    //   // We use an env variable for this site to avoid other users cloning our analytics ID
+    //   umamiWebsiteId: process.env.NEXT_UMAMI_ID, // e.g. 123e4567-e89b-12d3-a456-426614174000
+    //   // You may also need to overwrite the script if you're storing data in the US - ex:
+    //   // src: 'https://us.umami.is/script.js'
+    //   // Remember to add 'us.umami.is' in `next.config.js` as a permitted domain for the CSP
+    // },
     // plausibleAnalytics: {
     //   plausibleDataDomain: '', // e.g. tailwind-nextjs-starter-blog.vercel.app
     // If you are hosting your own Plausible.
@@ -52,7 +52,7 @@ const siteMetadata = {
   newsletter: {
     // supports mailchimp, buttondown, convertkit, klaviyo, revue, emailoctopus, beehive
     // Please add your .env file and modify it according to your selection
-    provider: 'buttondown',
+    provider: '',
   },
   comments: {
     // If you want to use an analytics provider you have to add it to the
