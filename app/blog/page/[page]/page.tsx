@@ -15,6 +15,7 @@ export const generateStaticParams = async () => {
 
 export default async function Page(props: { params: Promise<{ page: string }> }) {
   const params = await props.params
+  const publishedBlogs = allBlogs.filter((post) => !post.draft)
   const posts = allCoreContent(sortPosts(publishedBlogs))
   const pageNumber = parseInt(params.page as string)
   const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE)
