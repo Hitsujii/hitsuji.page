@@ -4,7 +4,7 @@ const siteMetadata = {
   author: 'Hitsuji',
   headerTitle: '羊 Hitsuji',
   description:
-    'Learning C++, building for the web and slowly turning high-cortisol decisions into projects.',
+    'Learning C++, building for the web, and slowly turning high-cortisol decisions into projects.',
   language: 'en-us',
   theme: 'system', // system, dark or light
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://hitsuji.page',
