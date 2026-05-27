@@ -41,7 +41,9 @@ export default async function TagPage(props: { params: Promise<{ tag: string }> 
   const tagName = tag.replaceAll('-', ' ')
   const filteredPosts = allCoreContent(
     sortPosts(
-      allBlogs.filter((post) => !post.draft && post.tags && post.tags.map((t) => slug(t)).includes(tag))
+      allBlogs.filter(
+        (post) => !post.draft && post.tags && post.tags.map((t) => slug(t)).includes(tag)
+      )
     )
   )
   const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE)
