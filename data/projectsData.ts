@@ -7,16 +7,14 @@ interface Project {
 
 const projectsData: Project[] = [
   {
-    title: 'Documentation Site',
-    description: `A small documentation-style project entry. Replace this with your own project,
-    product or case study when you customize the template.`,
-    href: '/blog/introducing-tailwind-nextjs-starter-blog',
+    title: 'NextPaper',
+    description: `A minimal Next.js blog starter inspired by AstroPaper and built on top of Tailwind Nextjs Starter Blog.`,
+    href: 'https://github.com/Hitsujii/next-paper',
   },
   {
-    title: 'Content-Driven Blog',
-    description: `An example project showing how NextPaper can be used for MDX articles, tags,
-    RSS, sitemap and SEO-friendly static publishing.`,
-    href: '/blog/github-markdown-guide',
+    title: 'hitsuji.page',
+    description: `My personal site for learning C++, writing high-cortisol posts and overengineering small things along the way.`,
+    href: 'https://github.com/Hitsujii/hitsuji.page',
   },
 ]
 
