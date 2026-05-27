@@ -50,8 +50,8 @@ export default function Home({ posts }) {
             <span className="sr-only">RSS Feed</span>
           </Link>
           <p>
-            I’m Hitsuji. I write about learning C++ from scratch, building this site myself and
-            accidentally picking up frontend along the way.
+            I’m Hitsuji. I’m learning C++ from scratch, building this site myself, and accidentally
+            picking up frontend along the way.
           </p>
           <p className="mt-2">
             Feel free to read the{' '}
@@ -68,7 +68,7 @@ export default function Home({ posts }) {
             >
               projects
             </Link>{' '}
-            to see how all the overengineering is going.
+            to see how the overengineering is going.
           </p>
           {socialLinks.some(({ href }) => Boolean(href)) && (
             <div className="mt-4 flex max-sm:flex-col sm:items-center">

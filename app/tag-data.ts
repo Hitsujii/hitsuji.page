@@ -5,6 +5,7 @@ export function getTagCounts(): Record<string, number> {
   const tagCount: Record<string, number> = {}
 
   allBlogs.forEach((post) => {
+    if (post.draft) return
     if (!post.tags || post.draft === true) return
 
     post.tags.forEach((tag) => {
