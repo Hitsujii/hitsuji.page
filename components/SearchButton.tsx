@@ -1,5 +1,6 @@
 import Link from './Link'
-import { IconSearch, IconUnderline } from './icons/AstroPaperIcons'
+import { IconUnderline } from './icons/AstroPaperIcons'
+import { IconSearch } from './icons/Icons'
 
 type SearchButtonProps = {
   active?: boolean

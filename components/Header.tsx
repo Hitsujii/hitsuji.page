@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import siteMetadata from '@/data/siteMetadata'
 import headerNavLinks from '@/data/headerNavLinks'
@@ -11,8 +11,16 @@ import { IconArchive, IconMenuDeep, IconUnderline, IconX } from './icons/AstroPa
 
 const normalizePath = (path: string) => path.replace(/\/$/, '') || '/'
 
+type SheepState = 'idle' | 'eat' | 'turn' | 'run'
+
 export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [sheepState, setSheepState] = useState<SheepState>('idle')
+
+  const sheepActionTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const sheepIdleTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const sheepHoveringRef = useRef(false)
+
   const pathname = normalizePath(usePathname() || '/')
   const title =
     typeof siteMetadata.headerTitle === 'string' ? siteMetadata.headerTitle : siteMetadata.title
@@ -28,6 +36,69 @@ export default function Header() {
   const archivesActive = isActive('/archives')
   const searchActive = isActive('/search')
 
+  const clearSheepActionTimer = () => {
+    if (sheepActionTimerRef.current) {
+      clearTimeout(sheepActionTimerRef.current)
+      sheepActionTimerRef.current = null
+    }
+  }
+
+  const clearSheepIdleTimer = () => {
+    if (sheepIdleTimerRef.current) {
+      clearTimeout(sheepIdleTimerRef.current)
+      sheepIdleTimerRef.current = null
+    }
+  }
+
+  const scheduleRandomEating = () => {
+    clearSheepIdleTimer()
+
+    const delay = 4000 + Math.random() * 7000
+
+    sheepIdleTimerRef.current = setTimeout(() => {
+      if (sheepHoveringRef.current) return
+
+      setSheepState('eat')
+
+      sheepActionTimerRef.current = setTimeout(() => {
+        setSheepState('idle')
+        scheduleRandomEating()
+      }, 1900)
+    }, delay)
+  }
+
+  const startSheepRun = () => {
+    sheepHoveringRef.current = true
+
+    clearSheepIdleTimer()
+    clearSheepActionTimer()
+
+    setSheepState('turn')
+
+    sheepActionTimerRef.current = setTimeout(() => {
+      setSheepState('run')
+    }, 220)
+  }
+
+  const stopSheepRun = () => {
+    sheepHoveringRef.current = false
+
+    clearSheepIdleTimer()
+    clearSheepActionTimer()
+
+    setSheepState('idle')
+    scheduleRandomEating()
+  }
+
+  useEffect(() => {
+    scheduleRandomEating()
+
+    return () => {
+      clearSheepIdleTimer()
+      clearSheepActionTimer()
+    }
+  }, [])
+
   return (
     <>
       <a
@@ -39,14 +110,27 @@ export default function Header() {
       </a>
 
       <header className="app-layout flex flex-col items-center justify-between sm:flex-row">
-        <div className="relative flex w-full items-baseline justify-between border-b border-[var(--border)] bg-[var(--background)] py-4 sm:items-center sm:py-6">
-          <Link
+        <div className="relative flex w-full items-baseline justify-between border-b border-[var(--border)] bg-[var(--background)] pt-4 sm:items-center sm:pt-6">
+          {/* <Link
             href="/"
             aria-label={title}
             className="absolute py-1 text-xl leading-8 font-semibold whitespace-nowrap text-[var(--foreground)] hover:text-[var(--accent)] sm:static sm:my-auto sm:text-2xl sm:leading-none"
             onClick={() => setMenuOpen(false)}
           >
             {title}
+          </Link> */}
+
+          <Link
+            href="/"
+            aria-label={title}
+            className="focus-outline absolute top-4 left-0 z-10 flex h-[54px] w-[75px] shrink-0 items-center sm:static sm:my-auto"
+            onMouseEnter={startSheepRun}
+            onMouseLeave={stopSheepRun}
+            onFocus={startSheepRun}
+            onBlur={stopSheepRun}
+            onClick={() => setMenuOpen(false)}
+          >
+            <span className={`sheep-logo sheep-logo--${sheepState}`} aria-hidden="true" />
           </Link>
 
           <nav

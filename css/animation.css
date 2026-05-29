@@ -1,0 +1,97 @@
+.sheep-logo {
+  display: block;
+  width: 75px;
+  height: 54px;
+
+  background-repeat: no-repeat;
+  background-position: 0 0;
+
+  image-rendering: pixelated;
+}
+
+/* 25x18, 1 klatka, skala x3 */
+.sheep-logo--idle {
+  background-image: url('/static/sprites/sheep-idle.png');
+  background-size: 75px 54px;
+
+  animation: none;
+}
+
+/* 475x18, 19 klatek, skala x3 */
+.sheep-logo--eat {
+  background-image: url('/static/sprites/sheep-eating.png');
+  background-size: 1425px 54px;
+
+  animation: sheep-eat 1900ms steps(19) 1;
+}
+
+/* 50x18, 2 klatki, skala x3 */
+.sheep-logo--turn {
+  background-image: url('/static/sprites/sheep-turn.png');
+  background-size: 150px 54px;
+
+  animation: sheep-turn 220ms steps(2) 1;
+}
+
+/* 150x18, 6 klatek, skala x3 */
+.sheep-logo--run {
+  background-image: url('/static/sprites/sheep-running-v2.png');
+  background-size: 450px 54px;
+
+  animation: sheep-run 600ms steps(6) infinite;
+}
+
+[data-theme='dark'] .sheep-logo--idle {
+  background-image: url('/static/sprites/sheep-idle-dark.png');
+}
+
+[data-theme='dark'] .sheep-logo--eat {
+  background-image: url('/static/sprites/sheep-eating-dark.png');
+}
+
+[data-theme='dark'] .sheep-logo--turn {
+  background-image: url('/static/sprites/sheep-turn-dark.png');
+}
+
+[data-theme='dark'] .sheep-logo--run {
+  background-image: url('/static/sprites/sheep-running-dark.png');
+}
+
+@keyframes sheep-eat {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: -1425px 0;
+  }
+}
+
+@keyframes sheep-turn {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: -150px 0;
+  }
+}
+
+@keyframes sheep-run {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: -450px 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sheep-logo,
+  .sheep-logo--eat,
+  .sheep-logo--turn,
+  .sheep-logo--run {
+    animation: none;
+  }
+}

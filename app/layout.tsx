@@ -1,4 +1,5 @@
 import 'css/tailwind.css'
+import 'css/animation.css'
 import 'pliny/search/algolia.css'
 import 'remark-github-blockquote-alert/alert.css'
 
@@ -10,10 +11,10 @@ import Footer from '@/components/Footer'
 import siteMetadata from '@/data/siteMetadata'
 import { ThemeProviders } from './theme-providers'
 import { Metadata } from 'next'
-import { Google_Sans_Code } from 'next/font/google'
+import { Source_Code_Pro } from 'next/font/google'
 import { ViewTransitions } from 'next-view-transitions'
 
-const googleSansCode = Google_Sans_Code({
+const googleSansCode = Source_Code_Pro({
   subsets: ['latin'],
   weight: ['300', '400', '500', '600', '700'],
   style: ['normal', 'italic'],

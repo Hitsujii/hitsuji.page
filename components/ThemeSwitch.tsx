@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { useTheme } from 'next-themes'
-import { IconMoon, IconSunHigh } from './icons/AstroPaperIcons'
-
+import { IconSunHigh } from './icons/AstroPaperIcons'
+import { IconMoon, IconSun } from './icons/Icons'
 export default function ThemeSwitch() {
   const [mounted, setMounted] = useState(false)
   const { resolvedTheme, setTheme } = useTheme()
@@ -32,13 +32,13 @@ export default function ThemeSwitch() {
     <button
       id="theme-btn"
       type="button"
-      className="focus-outline relative size-12 p-4 sm:size-8 hover:[&>svg]:stroke-[var(--accent)]"
+      className="focus-outline relative size-12 p-4 sm:size-8 hover:[&>svg]:fill-[var(--accent)]"
       aria-label={mounted ? resolvedTheme || 'system' : 'theme'}
       aria-live="polite"
       onClick={toggleTheme}
     >
       <IconMoon className="absolute top-[50%] left-[50%] translate-[-50%] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-      <IconSunHigh className="absolute top-[50%] left-[50%] translate-[-50%] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+      <IconSun className="absolute top-[50%] left-[50%] translate-[-50%] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
     </button>
   )
 }
