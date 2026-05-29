@@ -10,7 +10,7 @@ const siteMetadata = {
   siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://hitsuji.page',
   siteRepo: 'https://github.com/Hitsujii/hitsuji.page',
   siteLogo: `${process.env.BASE_PATH || ''}/static/images/logo.png`,
-  socialBanner: `${process.env.BASE_PATH || ''}/static/images/twitter-card.png`,
+  socialBanner: `${process.env.BASE_PATH || ''}/static/images/og-card.png`,
   mastodon: '',
   email: 'hi@hitsuji.page',
   github: 'https://github.com/Hitsujii',
