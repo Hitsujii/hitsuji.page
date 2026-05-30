@@ -1,57 +1,41 @@
 import { spawn } from 'node:child_process'
 import fs from 'node:fs/promises'
-import { existsSync } from 'node:fs'
-import { execFileSync } from 'node:child_process'
+import { createServer } from 'node:net'
 
-const findChromePath = () => {
-  if (process.env.CHROME_PATH) return process.env.CHROME_PATH
+const mode = process.argv[2] ?? 'desktop'
 
-  const candidates = [
-    'google-chrome-stable',
-    'google-chrome',
-    'chromium-browser',
-    'chromium',
-    'brave-browser',
-  ]
+const getFreePort = () => {
+  return new Promise((resolve, reject) => {
+    const server = createServer()
 
-  for (const candidate of candidates) {
-    try {
-      const resolved = execFileSync('command', ['-v', candidate], {
-        encoding: 'utf8',
-        shell: true,
-      }).trim()
+    server.listen(0, () => {
+      const address = server.address()
 
-      if (resolved && existsSync(resolved)) return resolved
-    } catch {
-      // Try the next candidate.
-    }
-  }
+      if (!address || typeof address === 'string') {
+        server.close()
+        reject(new Error('Could not determine free port'))
+        return
+      }
 
-  return null
-}
+      const { port } = address
 
-const chromePath = findChromePath()
+      server.close(() => {
+        resolve(port)
+      })
+    })
 
-if (chromePath) {
-  process.env.CHROME_PATH = chromePath
-}
-
-const targetUrl = process.argv[2] ?? 'http://localhost:3000'
-const mode = process.argv[3] ?? 'desktop'
-const outputPath =
-  mode === 'mobile' ? '/tmp/hitsuji-lighthouse-mobile.json' : '/tmp/hitsuji-lighthouse.json'
-
-const startServer = () => {
-  return spawn('yarn', ['next', 'start', '-p', '3000'], {
-    stdio: ['ignore', 'pipe', 'pipe'],
-    shell: false,
+    server.on('error', reject)
   })
 }
 
-const waitForServer = async (url, timeoutMs = 30_000) => {
+const waitForServer = async (url, server, timeoutMs = 30_000) => {
   const startedAt = Date.now()
 
   while (Date.now() - startedAt < timeoutMs) {
+    if (server.exitCode !== null) {
+      throw new Error(`Next server exited before becoming ready with code ${server.exitCode}`)
+    }
+
     try {
       const response = await fetch(url)
 
@@ -68,9 +52,10 @@ const waitForServer = async (url, timeoutMs = 30_000) => {
   throw new Error(`Server did not become ready at ${url}`)
 }
 
-const run = (command, args) => {
+const run = (command, args, env = process.env) => {
   return new Promise((resolve, reject) => {
     const child = spawn(command, args, {
+      env,
       stdio: 'inherit',
       shell: false,
     })
@@ -102,6 +87,24 @@ const printReport = async (path) => {
   })
 }
 
+const port = await getFreePort()
+const targetUrl = `http://localhost:${port}`
+const outputPath =
+  mode === 'mobile' ? '/tmp/hitsuji-lighthouse-mobile.json' : '/tmp/hitsuji-lighthouse.json'
+
+const server = spawn('yarn', ['next', 'start', '-p', String(port)], {
+  stdio: ['ignore', 'pipe', 'pipe'],
+  shell: false,
+})
+
+server.stdout.on('data', (chunk) => {
+  process.stdout.write(chunk)
+})
+
+server.stderr.on('data', (chunk) => {
+  process.stderr.write(chunk)
+})
+
 const lighthouseArgs =
   mode === 'mobile'
     ? [
@@ -130,18 +133,8 @@ const lighthouseArgs =
         `--output-path=${outputPath}`,
       ]
 
-const server = startServer()
-
-server.stdout.on('data', (chunk) => {
-  process.stdout.write(chunk)
-})
-
-server.stderr.on('data', (chunk) => {
-  process.stderr.write(chunk)
-})
-
 try {
-  await waitForServer(targetUrl)
+  await waitForServer(targetUrl, server)
   await run('yarn', lighthouseArgs)
   await printReport(outputPath)
 } finally {

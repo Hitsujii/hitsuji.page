@@ -10,9 +10,9 @@
     "analyze": "cross-env ANALYZE=true next build",
     "lint": "next lint --fix --dir pages --dir app --dir components --dir lib --dir layouts --dir scripts",
     "prepare": "husky",
-    "lh:desktop": "yarn build && node scripts/lighthouse.mjs http://localhost:3000 desktop",
+    "lh:desktop": "yarn build && node scripts/lighthouse.mjs desktop",
     "lh:report": "(yarn start > /tmp/hitsuji-next.log 2>&1 & echo $! > /tmp/hitsuji-next.pid) && sleep 5 && npx lighthouse http://localhost:3000 --only-categories=performance --preset=desktop --chrome-flags=\"--headless\" --output=html --output-path=./lighthouse-report.html && kill \"$(cat /tmp/hitsuji-next.pid)\"",
-    "lh:mobile": "yarn build && node scripts/lighthouse.mjs http://localhost:3000 mobile"
+    "lh:mobile": "yarn build && node scripts/lighthouse.mjs mobile"
   },
   "dependencies": {
     "@headlessui/react": "2.2.9",
