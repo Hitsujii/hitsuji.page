@@ -208,7 +208,7 @@ html[data-view-transition='running'] a {
 @layer base {
   :root,
   [data-theme='light'] {
-    --background: #fdfdfd;
+    --background: #faf9f4;
     --foreground: #282728;
     --accent: #da4d28;
     --accent-foreground: #ffffff;
