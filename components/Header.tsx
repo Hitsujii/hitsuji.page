@@ -56,7 +56,7 @@ export default function Header() {
             onClick={() => setMenuOpen(false)}
           >
             <Logo
-              className="block h-9 w-auto transition duration-200 group-hover:brightness-80 sm:h-11"
+              className="block h-9 w-auto transition duration-200 group-hover:opacity-80 sm:h-11"
               aria-hidden="true"
             />
           </Link>

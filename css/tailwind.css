@@ -208,27 +208,32 @@ html[data-view-transition='running'] a {
 @layer base {
   :root,
   [data-theme='light'] {
-    --background: #faf9f4;
+    --background: #fefae0;
     --foreground: #282728;
-    --accent: #da4d28;
-    --accent-foreground: #ffffff;
-    --muted: #e6e6e6;
-    --muted-foreground: #6b7280;
-    --border: #ece9e9;
-    color-scheme: light;
-    --logo-secondary: #da4d28;
+    --foreground-strong: #15130e;
+    --accent: #d7591b;
+    --accent-foreground: #fefae0;
+    --muted: #eeeae1;
+    --muted-foreground: #71695d;
+    --border: #e4ded2;
+    --border-strong: #8f806a;
+    --ring: #d7591b;
+    --logo-primary: #f0641e;
+    --logo-secondary: #fefae0;
   }
-
   [data-theme='dark'] {
-    --background: #212737;
-    --foreground: #eaedf3;
+    --background: #15130e;
+    --foreground: #f4efe5;
+    --foreground-strong: #fefae0;
     --accent: #ff6b01;
-    --accent-foreground: #ffffff;
-    --muted: #343f60;
-    --muted-foreground: #afb9ca;
-    --border: #ab4b08;
-    color-scheme: dark;
-    --logo-secondary: #da4d28;
+    --accent-foreground: #15130e;
+    --muted: #201d16;
+    --muted-foreground: #c8c0ae;
+    --border: #3b3426;
+    --border-strong: #85765d;
+    --ring: #ff6b01;
+    --logo-primary: #d7591b;
+    --logo-secondary: #f4efe5;
   }
 
   *,
@@ -1038,18 +1043,6 @@ footer svg {
 [data-theme='dark'] .app-prose :where(pre.astro-code .token.comment) {
   color: #637777;
   font-style: italic;
-}
-
-/* NextPaper AstroPaper color token sync */
-:root,
-[data-theme='light'],
-html[data-theme='light'] {
-  --border: #ece9e9;
-}
-
-[data-theme='dark'],
-html[data-theme='dark'] {
-  --border: #ab4b08;
 }
 
 /* NextPaper AstroPaper newsletter parity */
