@@ -66,7 +66,7 @@ const LoadingDots = () => {
 
           40% {
             opacity: 1;
-            transform: translateY(-0.12em);
+            transform: translateY(-0.18em);
           }
         }`}
       </style>
