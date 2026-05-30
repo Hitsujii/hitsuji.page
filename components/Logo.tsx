@@ -35,7 +35,7 @@ type LogoProps = SVGProps<SVGSVGElement> & {
 }
 
 const MOTION_QUERY = '(prefers-reduced-motion: reduce)'
-const PRESENCE_SLEEP_DELAY_MS = 250
+const PRESENCE_SLEEP_DELAY_MS = 180
 const PRESENCE_SLEEP_START_DELAY_MS = 0
 
 const INTRO_DELAY_MS = 160
@@ -43,7 +43,7 @@ const INTRO_DURATION_MS = 860
 const CLICK_DURATION_MS = 640
 
 const IDLE_SLEEP_DELAY_MS = 10_000
-const SLEEP_BREATH_DURATION_MS = 2700
+const SLEEP_BREATH_DURATION_MS = 3800
 
 const MORPH_MAX_SEGMENT_LENGTH = 4
 const MORPH_CACHE_STEPS = 180
@@ -572,6 +572,7 @@ const Logo = ({
           .logo-sleep-zzzs {
             opacity: 0;
             pointer-events: none;
+            transition: opacity 420ms ease-out;
           }
 
           .logo-sleep-zzzs text {
@@ -606,11 +607,11 @@ const Logo = ({
           }
 
           [data-logo-sleeping='true'] .logo-sleep-zzzs .sleep-z-2 {
-            animation-delay: 260ms;
+            animation-delay: 420ms;
           }
 
           [data-logo-sleeping='true'] .logo-sleep-zzzs .sleep-z-3 {
-            animation-delay: 520ms;
+            animation-delay: 840ms;
           }
 
           @keyframes logoSleepBreath {
@@ -618,72 +619,60 @@ const Logo = ({
               transform: translate3d(0, 0, 0) scale(1, 1);
             }
 
-            18% {
-              transform: translate3d(0, 5.2px, 0) scale(1.052, 0.948);
+            28% {
+              transform: translate3d(0, 3.2px, 0) scale(1.026, 0.974);
             }
 
-            31% {
-              transform: translate3d(0, 0.8px, 0) scale(1.006, 0.994);
+            50% {
+              transform: translate3d(0, 0.8px, 0) scale(1.004, 0.996);
             }
 
-            52% {
-              transform: translate3d(0, 4.8px, 0) scale(1.046, 0.954);
-            }
-
-            65% {
-              transform: translate3d(0, 0.6px, 0) scale(1.004, 0.996);
+            74% {
+              transform: translate3d(0, 2.8px, 0) scale(1.022, 0.978);
             }
           }
 
           @keyframes logoSleepFace {
             0%, 100% {
               transform: translate3d(0, 0, 0) scale(1, 1);
-              opacity: 1;
             }
 
-            18% {
-              transform: translate3d(0, 3.4px, 0) scale(1.036, 0.9);
-              opacity: 0.68;
+            28% {
+              transform: translate3d(0, 1.6px, 0) scale(1.012, 0.972);
             }
 
-            31% {
-              transform: translate3d(0, 0.6px, 0) scale(1.004, 0.988);
-              opacity: 0.94;
+            50% {
+              transform: translate3d(0, 0.4px, 0) scale(1.002, 0.996);
             }
 
-            52% {
-              transform: translate3d(0, 3px, 0) scale(1.032, 0.91);
-              opacity: 0.72;
-            }
-
-            65% {
-              transform: translate3d(0, 0.4px, 0) scale(1.004, 0.99);
-              opacity: 0.96;
+            74% {
+              transform: translate3d(0, 1.4px, 0) scale(1.01, 0.976);
             }
           }
 
           @keyframes logoSleepZFall {
             0% {
               opacity: 0;
-              transform: translate3d(-12px, -46px, 0) scale(0.78) rotate(-8deg);
+              transform: translate3d(0, 0, 0) scale(0.62) rotate(-8deg);
             }
 
-            12% {
+            16% {
               opacity: 1;
             }
 
-            42% {
+            54% {
               opacity: 1;
+              transform: translate3d(13px, -22px, 0) scale(0.92) rotate(1deg);
             }
 
-            68% {
+            82% {
               opacity: 0;
-              transform: translate3d(22px, 72px, 0) scale(1.22) rotate(9deg);
+              transform: translate3d(34px, -54px, 0) scale(1.16) rotate(9deg);
             }
 
             100% {
               opacity: 0;
-              transform: translate3d(22px, 72px, 0) scale(1.22) rotate(9deg);
+              transform: translate3d(34px, -54px, 0) scale(1.16) rotate(9deg);
             }
           }
 
@@ -724,13 +713,13 @@ const Logo = ({
           <g className="logo-sleep-zzzs" style={sleepZzzStyle} aria-hidden="true">
             <text
               className="sleep-z sleep-z-1"
-              x="204"
-              y="34"
+              x="206"
+              y="124"
               fill="var(--logo-secondary)"
               stroke="var(--logo-primary)"
-              strokeWidth="4"
+              strokeWidth="3"
               paintOrder="stroke"
-              fontSize="72"
+              fontSize="40"
               fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
               fontWeight="950"
             >
@@ -739,13 +728,13 @@ const Logo = ({
 
             <text
               className="sleep-z sleep-z-2"
-              x="262"
-              y="18"
+              x="230"
+              y="104"
               fill="var(--logo-secondary)"
               stroke="var(--logo-primary)"
-              strokeWidth="3.8"
+              strokeWidth="3"
               paintOrder="stroke"
-              fontSize="62"
+              fontSize="46"
               fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
               fontWeight="950"
             >
@@ -754,8 +743,8 @@ const Logo = ({
 
             <text
               className="sleep-z sleep-z-3"
-              x="313"
-              y="4"
+              x="257"
+              y="83"
               fill="var(--logo-secondary)"
               stroke="var(--logo-primary)"
               strokeWidth="3.5"
