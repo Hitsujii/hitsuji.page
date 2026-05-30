@@ -99,6 +99,16 @@ const siteMetadata = {
     //   indexName: 'docsearch',
     // },
   },
+  presence: {
+    discordUserId: '225253076628406274',
+  },
+
+  availability: {
+    timeZone: 'Europe/Warsaw',
+    locationLabel: 'Warsaw',
+    sleepStart: '01:00',
+    sleepEnd: '09:30',
+  },
 }
 
 module.exports = siteMetadata
