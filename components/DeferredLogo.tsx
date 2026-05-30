@@ -8,53 +8,33 @@ import type Logo from './Logo'
 type AnimatedLogoProps = React.ComponentProps<typeof Logo>
 type AnimatedLogoComponent = typeof Logo
 
-const DEFERRED_LOGO_DELAY_MS = 2_500
+const DEFERRED_LOGO_DELAY_MS = 6_000
 
 const DeferredLogo = (props: AnimatedLogoProps) => {
   const [AnimatedLogo, setAnimatedLogo] = React.useState<AnimatedLogoComponent | null>(null)
+  const hasStartedLoadingRef = React.useRef(false)
+
+  const loadAnimatedLogo = React.useCallback(() => {
+    if (hasStartedLoadingRef.current) return
+
+    hasStartedLoadingRef.current = true
+
+    void import('./Logo').then((module) => {
+      React.startTransition(() => {
+        setAnimatedLogo(() => module.default)
+      })
+    })
+  }, [])
 
   React.useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
 
-    let isCancelled = false
-    let hasStartedLoading = false
-    let timeoutId: number | null = null
-    let idleCallbackId: number | null = null
-
-    const loadAnimatedLogo = () => {
-      if (hasStartedLoading) return
-
-      hasStartedLoading = true
-
-      void import('./Logo').then((module) => {
-        if (isCancelled) return
-
-        React.startTransition(() => {
-          setAnimatedLogo(() => module.default)
-        })
-      })
-    }
-
-    timeoutId = window.setTimeout(loadAnimatedLogo, DEFERRED_LOGO_DELAY_MS)
-
-    if ('requestIdleCallback' in window) {
-      idleCallbackId = window.requestIdleCallback(loadAnimatedLogo, {
-        timeout: DEFERRED_LOGO_DELAY_MS,
-      })
-    }
+    const timeoutId = window.setTimeout(loadAnimatedLogo, DEFERRED_LOGO_DELAY_MS)
 
     return () => {
-      isCancelled = true
-
-      if (timeoutId !== null) {
-        window.clearTimeout(timeoutId)
-      }
-
-      if (idleCallbackId !== null && 'cancelIdleCallback' in window) {
-        window.cancelIdleCallback(idleCallbackId)
-      }
+      window.clearTimeout(timeoutId)
     }
-  }, [])
+  }, [loadAnimatedLogo])
 
   if (!AnimatedLogo) {
     return (
@@ -62,6 +42,9 @@ const DeferredLogo = (props: AnimatedLogoProps) => {
         className={props.className}
         decorative={props.decorative ?? props['aria-hidden'] === true}
         aria-label={props['aria-label']}
+        onPointerEnter={loadAnimatedLogo}
+        onFocus={loadAnimatedLogo}
+        onClick={loadAnimatedLogo}
       />
     )
   }

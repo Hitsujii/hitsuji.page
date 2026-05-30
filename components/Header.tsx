@@ -8,7 +8,6 @@ import Link from './Link'
 import SearchButton from './SearchButton'
 import ThemeSwitch from './ThemeSwitch'
 import { IconArchive, IconMenuDeep, IconUnderline, IconX } from './icons/AstroPaperIcons'
-import Logo from './Logo'
 import DeferredLogo from './DeferredLogo'
 
 const normalizePath = (path: string) => path.replace(/\/$/, '') || '/'
@@ -35,7 +34,7 @@ export default function Header() {
       <a
         id="skip-to-content"
         href="#main-content"
-        className="inset-s-16 absolute -top-full z-50 bg-[var(--background)] px-3 py-2 text-[var(--accent)] backdrop-blur-lg transition-all focus:top-4"
+        className="absolute inset-s-16 -top-full z-50 bg-[var(--background)] px-3 py-2 text-[var(--accent)] backdrop-blur-lg transition-all focus:top-4"
       >
         Skip to content
       </a>
