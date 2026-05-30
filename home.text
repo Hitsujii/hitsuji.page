@@ -1,0 +1,136 @@
+diff --git a/components/Header.tsx b/components/Header.tsx
+index b654623..acd6140 100644
+--- a/components/Header.tsx
++++ b/components/Header.tsx
+@@ -8,6 +8,7 @@ import Link from './Link'
+ import SearchButton from './SearchButton'
+ import ThemeSwitch from './ThemeSwitch'
+ import { IconArchive, IconMenuDeep, IconUnderline, IconX } from './icons/AstroPaperIcons'
++import Logo from './Logo'
+ 
+ const normalizePath = (path: string) => path.replace(/\/$/, '') || '/'
+ 
+@@ -40,13 +41,21 @@ export default function Header() {
+ 
+       <header className="app-layout flex flex-col items-center justify-between sm:flex-row">
+         <div className="relative flex w-full items-baseline justify-between border-b border-[var(--border)] bg-[var(--background)] py-4 sm:items-center sm:py-6">
+-          <Link
++          {/* <Link
+             href="/"
+             aria-label={title}
+             className="absolute py-1 text-xl leading-8 font-semibold whitespace-nowrap text-[var(--foreground)] hover:text-[var(--accent)] sm:static sm:my-auto sm:text-2xl sm:leading-none"
+             onClick={() => setMenuOpen(false)}
+           >
+             {title}
++          </Link> */}
++          <Link
++            href="/"
++            aria-label={title}
++            className="absolute flex items-center transition-transform duration-150 active:scale-95 sm:static sm:my-auto"
++            onClick={() => setMenuOpen(false)}
++          >
++            <Logo className="block h-9 w-auto sm:h-11" aria-hidden="true" />
+           </Link>
+ 
+           <nav
+diff --git a/css/tailwind.css b/css/tailwind.css
+index f8c3bb8..9df85b0 100644
+--- a/css/tailwind.css
++++ b/css/tailwind.css
+@@ -1,5 +1,5 @@
+ @import 'tailwindcss';
+-@plugin "@tailwindcss/forms";
++@plugin '@tailwindcss/forms';
+ @plugin '@tailwindcss/typography';
+ @source '../node_modules/pliny';
+ @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+@@ -7,7 +7,9 @@
+ /* Core theme configuration */
+ @theme {
+   /* Font families */
+-  --font-sans: var(--font-google-sans-code), 'Google Sans Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
++  --font-sans:
++    var(--font-google-sans-code), 'Google Sans Code', ui-monospace, SFMono-Regular, Menlo, Monaco,
++    Consolas, 'Liberation Mono', 'Courier New', monospace;
+ 
+   /* Colors */
+   /* Copied from https://tailwindcss.com/docs/theme#default-theme-variable-reference */
+@@ -198,7 +200,9 @@ html[data-view-transition='running'] a {
+   --color-muted-foreground: var(--muted-foreground);
+   --color-border: var(--border);
+   --font-app: var(--font-google-sans-code);
+-  --font-sans: var(--font-google-sans-code), 'Google Sans Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
++  --font-sans:
++    var(--font-google-sans-code), 'Google Sans Code', ui-monospace, SFMono-Regular, Menlo, Monaco,
++    Consolas, 'Liberation Mono', 'Courier New', monospace;
+ }
+ 
+ @layer base {
+@@ -206,12 +210,13 @@ html[data-view-transition='running'] a {
+   [data-theme='light'] {
+     --background: #fdfdfd;
+     --foreground: #282728;
+-    --accent: #006cac;
++    --accent: #da4d28;
+     --accent-foreground: #ffffff;
+     --muted: #e6e6e6;
+     --muted-foreground: #6b7280;
+     --border: #ece9e9;
+     color-scheme: light;
++    --logo-secondary: #da4d28;
+   }
+ 
+   [data-theme='dark'] {
+@@ -223,6 +228,7 @@ html[data-view-transition='running'] a {
+     --muted-foreground: #afb9ca;
+     --border: #ab4b08;
+     color-scheme: dark;
++    --logo-secondary: #da4d28;
+   }
+ 
+   *,
+@@ -248,7 +254,9 @@ html[data-view-transition='running'] a {
+     flex-direction: column;
+     overflow-x: hidden;
+     color: var(--foreground);
+-    font-family: var(--font-google-sans-code), 'Google Sans Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
++    font-family:
++      var(--font-google-sans-code), 'Google Sans Code', ui-monospace, SFMono-Regular, Menlo, Monaco,
++      Consolas, 'Liberation Mono', 'Courier New', monospace;
+     font-size: 1rem;
+     line-height: 1.5;
+   }
+@@ -588,7 +596,7 @@ footer svg {
+ }
+ 
+ .code-file-name::before {
+-  content: "";
++  content: '';
+   display: inline-block;
+   width: 0.35rem;
+   height: 0.35rem;
+@@ -627,7 +635,6 @@ footer svg {
+     background-color 150ms ease;
+ }
+ 
+-
+ .code-block-wrapper:hover .copy-code,
+ .code-block-wrapper:focus-within .copy-code {
+   opacity: 1;
+@@ -958,7 +965,7 @@ footer svg {
+ }
+ 
+ .code-file-name::before {
+-  content: "";
++  content: '';
+   position: absolute;
+   top: 45%;
+   inset-inline-start: 0.5rem;
+@@ -1205,4 +1212,3 @@ html[data-theme='dark'] {
+   line-height: 1.25rem;
+   font-weight: 700;
+ }
+-
+diff --git a/public/static/images/avatar.png b/public/static/images/avatar.png
+index 9ef1293..9263059 100644
+Binary files a/public/static/images/avatar.png and b/public/static/images/avatar.png differ

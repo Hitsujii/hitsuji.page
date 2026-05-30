@@ -1,5 +1,5 @@
 @import 'tailwindcss';
-@plugin "@tailwindcss/forms";
+@plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
 @source '../node_modules/pliny';
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
@@ -7,7 +7,9 @@
 /* Core theme configuration */
 @theme {
   /* Font families */
-  --font-sans: var(--font-google-sans-code), 'Google Sans Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  --font-sans:
+    var(--font-google-sans-code), 'Google Sans Code', ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, 'Liberation Mono', 'Courier New', monospace;
 
   /* Colors */
   /* Copied from https://tailwindcss.com/docs/theme#default-theme-variable-reference */
@@ -198,7 +200,9 @@ html[data-view-transition='running'] a {
   --color-muted-foreground: var(--muted-foreground);
   --color-border: var(--border);
   --font-app: var(--font-google-sans-code);
-  --font-sans: var(--font-google-sans-code), 'Google Sans Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  --font-sans:
+    var(--font-google-sans-code), 'Google Sans Code', ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, 'Liberation Mono', 'Courier New', monospace;
 }
 
 @layer base {
@@ -206,12 +210,13 @@ html[data-view-transition='running'] a {
   [data-theme='light'] {
     --background: #fdfdfd;
     --foreground: #282728;
-    --accent: #006cac;
+    --accent: #da4d28;
     --accent-foreground: #ffffff;
     --muted: #e6e6e6;
     --muted-foreground: #6b7280;
     --border: #ece9e9;
     color-scheme: light;
+    --logo-secondary: #da4d28;
   }
 
   [data-theme='dark'] {
@@ -223,6 +228,7 @@ html[data-view-transition='running'] a {
     --muted-foreground: #afb9ca;
     --border: #ab4b08;
     color-scheme: dark;
+    --logo-secondary: #da4d28;
   }
 
   *,
@@ -248,7 +254,9 @@ html[data-view-transition='running'] a {
     flex-direction: column;
     overflow-x: hidden;
     color: var(--foreground);
-    font-family: var(--font-google-sans-code), 'Google Sans Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+    font-family:
+      var(--font-google-sans-code), 'Google Sans Code', ui-monospace, SFMono-Regular, Menlo, Monaco,
+      Consolas, 'Liberation Mono', 'Courier New', monospace;
     font-size: 1rem;
     line-height: 1.5;
   }
@@ -588,7 +596,7 @@ footer svg {
 }
 
 .code-file-name::before {
-  content: "";
+  content: '';
   display: inline-block;
   width: 0.35rem;
   height: 0.35rem;
@@ -626,7 +634,6 @@ footer svg {
     border-color 150ms ease,
     background-color 150ms ease;
 }
-
 
 .code-block-wrapper:hover .copy-code,
 .code-block-wrapper:focus-within .copy-code {
@@ -958,7 +965,7 @@ footer svg {
 }
 
 .code-file-name::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 45%;
   inset-inline-start: 0.5rem;
@@ -1205,4 +1212,3 @@ html[data-theme='dark'] {
   line-height: 1.25rem;
   font-weight: 700;
 }
-

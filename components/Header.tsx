@@ -8,6 +8,7 @@ import Link from './Link'
 import SearchButton from './SearchButton'
 import ThemeSwitch from './ThemeSwitch'
 import { IconArchive, IconMenuDeep, IconUnderline, IconX } from './icons/AstroPaperIcons'
+import Logo from './Logo'
 
 const normalizePath = (path: string) => path.replace(/\/$/, '') || '/'
 
@@ -40,13 +41,21 @@ export default function Header() {
 
       <header className="app-layout flex flex-col items-center justify-between sm:flex-row">
         <div className="relative flex w-full items-baseline justify-between border-b border-[var(--border)] bg-[var(--background)] py-4 sm:items-center sm:py-6">
-          <Link
+          {/* <Link
             href="/"
             aria-label={title}
             className="absolute py-1 text-xl leading-8 font-semibold whitespace-nowrap text-[var(--foreground)] hover:text-[var(--accent)] sm:static sm:my-auto sm:text-2xl sm:leading-none"
             onClick={() => setMenuOpen(false)}
           >
             {title}
+          </Link> */}
+          <Link
+            href="/"
+            aria-label={title}
+            className="absolute flex items-center transition-transform duration-150 active:scale-95 sm:static sm:my-auto"
+            onClick={() => setMenuOpen(false)}
+          >
+            <Logo className="block h-9 w-auto sm:h-11" aria-hidden="true" />
           </Link>
 
           <nav
