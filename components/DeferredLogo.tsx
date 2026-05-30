@@ -8,7 +8,7 @@ import type Logo from './Logo'
 type AnimatedLogoProps = React.ComponentProps<typeof Logo>
 type AnimatedLogoComponent = typeof Logo
 
-const DEFERRED_LOGO_DELAY_MS = 6_000
+const DEFERRED_LOGO_DELAY_MS = 4_000
 
 const DeferredLogo = (props: AnimatedLogoProps) => {
   const [AnimatedLogo, setAnimatedLogo] = React.useState<AnimatedLogoComponent | null>(null)
@@ -49,7 +49,7 @@ const DeferredLogo = (props: AnimatedLogoProps) => {
     )
   }
 
-  return <AnimatedLogo key="animated-logo" {...props} playIntro={props.playIntro ?? true} />
+  return <AnimatedLogo key="animated-logo" {...props} playIntro={props.playIntro ?? false} />
 }
 
 export default DeferredLogo

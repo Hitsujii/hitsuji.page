@@ -35,8 +35,8 @@ type LogoProps = SVGProps<SVGSVGElement> & {
 }
 
 const MOTION_QUERY = '(prefers-reduced-motion: reduce)'
-const PRESENCE_SLEEP_DELAY_MS = 800
-const PRESENCE_SLEEP_START_DELAY_MS = 2_500
+const PRESENCE_SLEEP_DELAY_MS = 250
+const PRESENCE_SLEEP_START_DELAY_MS = 0
 
 const INTRO_DELAY_MS = 160
 const INTRO_DURATION_MS = 860

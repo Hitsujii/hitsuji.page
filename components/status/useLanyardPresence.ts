@@ -22,6 +22,7 @@ export type LanyardPresence = {
 export const DEFAULT_DISCORD_USER_ID: string = statusConfig.discordUserId
 
 const DEFAULT_REFRESH_INTERVAL_MS = 30_000
+const DEFAULT_START_DELAY_MS = 4_000
 const LANYARD_ENDPOINT = 'https://api.lanyard.rest/v1/users'
 
 const isDiscordPresenceStatus = (value: unknown): value is DiscordPresenceStatus => {
@@ -114,7 +115,7 @@ export const useLanyardPresence = (
   discordUserId: string = DEFAULT_DISCORD_USER_ID,
   refreshIntervalMs: number = DEFAULT_REFRESH_INTERVAL_MS,
   enabled: boolean = true,
-  startDelayMs: number = 0
+  startDelayMs: number = DEFAULT_START_DELAY_MS
 ) => {
   const [presence, setPresence] = React.useState<LanyardPresence>(() =>
     enabled
