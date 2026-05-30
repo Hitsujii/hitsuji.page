@@ -48,8 +48,8 @@ export default function BackToTopButton() {
       <div
         id="btt-btn-container"
         className={[
-          'inset-e-4 fixed bottom-8 z-50',
-          'md:inset-e-auto md:sticky md:float-end md:me-1',
+          'fixed inset-e-4 bottom-8 z-50',
+          'md:sticky md:inset-e-auto md:float-end md:me-1',
           'transition duration-500',
           visible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-14 opacity-0',
         ].join(' ')}

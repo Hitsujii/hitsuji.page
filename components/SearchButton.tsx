@@ -18,7 +18,7 @@ export default function SearchButton({ active = false }: SearchButtonProps) {
       {active && (
         <IconUnderline
           aria-hidden="true"
-          className="max-sm:inset-s-2 absolute bottom-0 w-6 scale-125"
+          className="absolute bottom-0 w-6 scale-125 max-sm:inset-s-2"
         />
       )}
     </Link>

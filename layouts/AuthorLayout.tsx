@@ -46,7 +46,9 @@ export default function AuthorLayout({ children, content }: Props) {
         </div>
       </section>
 
-      <article className="post-content app-prose prose max-w-app w-full dark:prose-invert">{children}</article>
+      <article className="post-content app-prose prose max-w-app dark:prose-invert w-full">
+        {children}
+      </article>
     </main>
   )
 }
