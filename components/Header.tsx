@@ -52,10 +52,13 @@ export default function Header() {
           <Link
             href="/"
             aria-label={title}
-            className="absolute flex items-center transition-transform duration-150 active:scale-95 sm:static sm:my-auto"
+            className="group absolute flex items-center transition-transform duration-150 active:scale-95 sm:static sm:my-auto"
             onClick={() => setMenuOpen(false)}
           >
-            <Logo className="block h-9 w-auto sm:h-11" aria-hidden="true" />
+            <Logo
+              className="block h-9 w-auto transition-opacity duration-200 group-hover:opacity-50 sm:h-11"
+              aria-hidden="true"
+            />
           </Link>
 
           <nav
