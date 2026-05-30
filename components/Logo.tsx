@@ -5,6 +5,13 @@ import type { SVGProps } from 'react'
 import { interpolate } from 'flubber'
 import svgpath from 'svgpath'
 
+import {
+  isTimeInRange,
+  parseClockTime,
+  siteAvailability,
+  useCurrentTimeZoneMinutes,
+} from '@/components/status/availability'
+import { useLanyardPresence } from '@/components/status/useLanyardPresence'
 type MotionFrame = Readonly<{
   t: number
   y: number
@@ -16,18 +23,27 @@ type MotionFrame = Readonly<{
   faceSy: number
 }>
 
+type IdleSleepMode = 'dark' | 'always' | 'off'
+
 type LogoProps = SVGProps<SVGSVGElement> & {
   title?: string
   decorative?: boolean
   playIntro?: boolean
   playOnInteraction?: boolean
+  idleSleep?: IdleSleepMode
+  idleSleepDelayMs?: number
 }
 
 const MOTION_QUERY = '(prefers-reduced-motion: reduce)'
+const DARK_MODE_QUERY = '(prefers-color-scheme: dark)'
+const PRESENCE_SLEEP_DELAY_MS = 800
 
 const INTRO_DELAY_MS = 160
 const INTRO_DURATION_MS = 860
 const CLICK_DURATION_MS = 640
+
+const IDLE_SLEEP_DELAY_MS = 10_000
+const SLEEP_BREATH_DURATION_MS = 2700
 
 const MORPH_MAX_SEGMENT_LENGTH = 4
 const MORPH_CACHE_STEPS = 180
@@ -53,6 +69,27 @@ const faceMotionStyle = {
   transformOrigin: '50% 28%',
   backfaceVisibility: 'hidden',
   willChange: 'transform',
+} as React.CSSProperties
+
+const sleepLayerStyle = {
+  transformBox: 'fill-box',
+  transformOrigin: '50% 92%',
+  backfaceVisibility: 'hidden',
+  willChange: 'transform',
+} as React.CSSProperties
+
+const sleepFaceStyle = {
+  transformBox: 'fill-box',
+  transformOrigin: '50% 28%',
+  backfaceVisibility: 'hidden',
+  willChange: 'transform',
+} as React.CSSProperties
+
+const sleepZzzStyle = {
+  transformBox: 'fill-box',
+  transformOrigin: '50% 50%',
+  pointerEvents: 'none',
+  userSelect: 'none',
 } as React.CSSProperties
 
 const getPrefersReducedMotion = () => {
@@ -89,6 +126,65 @@ const usePrefersReducedMotion = () => {
   }, [])
 
   return prefersReducedMotion
+}
+
+const getIsDarkThemeActive = () => {
+  if (typeof window === 'undefined') return false
+  if (typeof document === 'undefined') return false
+
+  const root = document.documentElement
+  const theme = root.dataset.theme?.toLowerCase()
+  const colorScheme = root.style.colorScheme?.toLowerCase()
+
+  if (root.classList.contains('light') || theme === 'light' || colorScheme === 'light') {
+    return false
+  }
+
+  if (root.classList.contains('dark') || theme === 'dark' || colorScheme === 'dark') {
+    return true
+  }
+
+  return window.matchMedia(DARK_MODE_QUERY).matches
+}
+
+const useIsDarkThemeActive = () => {
+  const [isDarkThemeActive, setIsDarkThemeActive] = React.useState(getIsDarkThemeActive)
+
+  React.useEffect(() => {
+    const root = document.documentElement
+    const mediaQuery = window.matchMedia(DARK_MODE_QUERY)
+
+    const update = () => {
+      setIsDarkThemeActive(getIsDarkThemeActive())
+    }
+
+    update()
+
+    const observer = new MutationObserver(update)
+
+    observer.observe(root, {
+      attributes: true,
+      attributeFilter: ['class', 'data-theme', 'style'],
+    })
+
+    if (mediaQuery.addEventListener) {
+      mediaQuery.addEventListener('change', update)
+
+      return () => {
+        observer.disconnect()
+        mediaQuery.removeEventListener('change', update)
+      }
+    }
+
+    mediaQuery.addListener(update)
+
+    return () => {
+      observer.disconnect()
+      mediaQuery.removeListener(update)
+    }
+  }, [])
+
+  return isDarkThemeActive
 }
 
 const FLAT_BODY_RAW =
@@ -139,18 +235,21 @@ const createMorphPathCache = () => {
   })
 }
 
+// Precomputed morph frames keep animation cheap at runtime.
+// Increase MORPH_CACHE_STEPS only if visible stepping appears at larger sizes.
 const BODY_MORPH_PATHS = createMorphPathCache()
 
 const getMorphPathSample = (progress: number) => {
   const index = Math.round(clamp01(progress) * MORPH_CACHE_STEPS)
+  const path = BODY_MORPH_PATHS[index] ?? FLAT_BODY
 
   return {
     index,
-    path: BODY_MORPH_PATHS[index],
+    path,
   }
 }
 
-const introFrames = [
+const introFrames: readonly MotionFrame[] = [
   { t: 0, y: 0, sx: 1, sy: 1, shape: 0, faceY: 0, faceSx: 1, faceSy: 1 },
   { t: 0.12, y: 6, sx: 1.13, sy: 0.82, shape: 0.06, faceY: 3, faceSx: 1.06, faceSy: 0.91 },
   { t: 0.29, y: -30, sx: 0.93, sy: 1.12, shape: 1, faceY: -6, faceSx: 0.96, faceSy: 1.09 },
@@ -159,9 +258,9 @@ const introFrames = [
   { t: 0.77, y: -8, sx: 0.98, sy: 1.06, shape: 0.05, faceY: -2, faceSx: 0.99, faceSy: 1.04 },
   { t: 0.9, y: 2, sx: 1.03, sy: 0.98, shape: 0, faceY: 1, faceSx: 1.01, faceSy: 0.99 },
   { t: 1, y: 0, sx: 1, sy: 1, shape: 0, faceY: 0, faceSx: 1, faceSy: 1 },
-] satisfies readonly MotionFrame[]
+]
 
-const clickFrames = [
+const clickFrames: readonly MotionFrame[] = [
   { t: 0, y: 0, sx: 1, sy: 1, shape: 0, faceY: 0, faceSx: 1, faceSy: 1 },
   { t: 0.1, y: 5, sx: 1.12, sy: 0.83, shape: 0.06, faceY: 3, faceSx: 1.05, faceSy: 0.91 },
   { t: 0.27, y: -28, sx: 0.94, sy: 1.1, shape: 1, faceY: -6, faceSx: 0.96, faceSy: 1.08 },
@@ -170,18 +269,26 @@ const clickFrames = [
   { t: 0.78, y: -6, sx: 0.99, sy: 1.05, shape: 0.04, faceY: -2, faceSx: 0.99, faceSy: 1.03 },
   { t: 0.9, y: 2, sx: 1.02, sy: 0.99, shape: 0, faceY: 1, faceSx: 1.01, faceSy: 0.99 },
   { t: 1, y: 0, sx: 1, sy: 1, shape: 0, faceY: 0, faceSx: 1, faceSy: 1 },
-] satisfies readonly MotionFrame[]
+]
 
 const sampleFrames = (frames: readonly MotionFrame[], progress: number): MotionFrame => {
+  const firstFrame = frames[0]
+  const lastFrame = frames[frames.length - 1]
+
+  if (!firstFrame || !lastFrame) {
+    throw new Error('Logo animation requires at least one motion frame.')
+  }
+
   const p = clamp01(progress)
 
-  if (p <= frames[0].t) return frames[0]
-  if (p >= frames[frames.length - 1].t) return frames[frames.length - 1]
+  if (p <= firstFrame.t) return firstFrame
+  if (p >= lastFrame.t) return lastFrame
 
   for (let i = 0; i < frames.length - 1; i += 1) {
     const current = frames[i]
     const next = frames[i + 1]
 
+    if (!current || !next) continue
     if (p < current.t || p > next.t) continue
 
     const span = next.t - current.t
@@ -199,12 +306,14 @@ const sampleFrames = (frames: readonly MotionFrame[], progress: number): MotionF
     }
   }
 
-  return frames[frames.length - 1]
+  return lastFrame
 }
 
 const Logo = ({
   className,
   onPointerDown,
+  onPointerEnter,
+  onFocus,
   onKeyDown,
   onClick,
   style,
@@ -212,6 +321,8 @@ const Logo = ({
   decorative = false,
   playIntro = true,
   playOnInteraction = true,
+  idleSleep = 'dark',
+  idleSleepDelayMs = IDLE_SLEEP_DELAY_MS,
   role,
   tabIndex,
   focusable,
@@ -220,6 +331,12 @@ const Logo = ({
   ...props
 }: LogoProps) => {
   const prefersReducedMotion = usePrefersReducedMotion()
+  const isDarkThemeActive = useIsDarkThemeActive()
+  const { status: discordStatus } = useLanyardPresence()
+  const currentMinutes = useCurrentTimeZoneMinutes(siteAvailability.timeZone)
+  const sleepStartMinutes = parseClockTime(siteAvailability.sleepStart)
+  const sleepEndMinutes = parseClockTime(siteAvailability.sleepEnd)
+  const [isSleeping, setIsSleeping] = React.useState(false)
   const titleId = React.useId()
 
   const bodyRef = React.useRef<SVGPathElement>(null)
@@ -229,6 +346,7 @@ const Logo = ({
 
   const rafRef = React.useRef<number | null>(null)
   const introDelayRef = React.useRef<number | null>(null)
+  const idleSleepDelayRef = React.useRef<number | null>(null)
   const lastMorphIndexRef = React.useRef<number | null>(null)
 
   const isInteractive = Boolean(
@@ -242,6 +360,26 @@ const Logo = ({
   const resolvedAriaLabel = decorative ? undefined : ariaLabel
   const resolvedAriaLabelledBy =
     decorative || ariaLabel ? ariaLabelledBy : (ariaLabelledBy ?? titleId)
+
+  const isConfiguredSleepTime = isTimeInRange(currentMinutes, sleepStartMinutes, sleepEndMinutes)
+
+  const shouldSleepFastFromPresence = discordStatus === 'idle' && isConfiguredSleepTime
+
+  const shouldBlockAutoSleepFromPresence =
+    discordStatus === 'online' ||
+    discordStatus === 'dnd' ||
+    discordStatus === 'offline' ||
+    (discordStatus === 'idle' && !isConfiguredSleepTime)
+
+  const canUseIdleSleep =
+    idleSleep === 'always' ||
+    shouldSleepFastFromPresence ||
+    (idleSleep === 'dark' &&
+      isDarkThemeActive &&
+      !discordStatus &&
+      !shouldBlockAutoSleepFromPresence)
+
+  const shouldScheduleIdleSleep = idleSleep !== 'off' && canUseIdleSleep && !prefersReducedMotion
 
   const svgStyle = React.useMemo<React.CSSProperties>(
     () => ({
@@ -259,12 +397,40 @@ const Logo = ({
     introDelayRef.current = null
   }, [])
 
+  const clearIdleSleepDelay = React.useCallback(() => {
+    if (idleSleepDelayRef.current === null) return
+
+    window.clearTimeout(idleSleepDelayRef.current)
+    idleSleepDelayRef.current = null
+  }, [])
+
   const stopAnimation = React.useCallback(() => {
     if (rafRef.current === null) return
 
     cancelAnimationFrame(rafRef.current)
     rafRef.current = null
   }, [])
+
+  const scheduleIdleSleep = React.useCallback(() => {
+    clearIdleSleepDelay()
+    setIsSleeping(false)
+
+    if (!shouldScheduleIdleSleep) return
+
+    const sleepDelayMs = shouldSleepFastFromPresence ? PRESENCE_SLEEP_DELAY_MS : idleSleepDelayMs
+
+    idleSleepDelayRef.current = window.setTimeout(
+      () => {
+        idleSleepDelayRef.current = null
+        setIsSleeping(true)
+      },
+      Math.max(0, sleepDelayMs)
+    )
+  }, [clearIdleSleepDelay, idleSleepDelayMs, shouldScheduleIdleSleep, shouldSleepFastFromPresence])
+
+  const wakeLogo = React.useCallback(() => {
+    scheduleIdleSleep()
+  }, [scheduleIdleSleep])
 
   const applyFrame = React.useCallback((frame: MotionFrame) => {
     const shapeProgress = clamp01(frame.shape)
@@ -305,6 +471,7 @@ const Logo = ({
     (frames: readonly MotionFrame[], durationMs: number) => {
       clearIntroDelay()
       stopAnimation()
+      setIsSleeping(false)
 
       if (prefersReducedMotion) {
         applyFrame(sampleFrames(frames, 1))
@@ -331,12 +498,13 @@ const Logo = ({
 
         rafRef.current = null
         applyFrame(sampleFrames(frames, 1))
+        scheduleIdleSleep()
       }
 
       applyFrame(sampleFrames(frames, 0))
       rafRef.current = requestAnimationFrame(tick)
     },
-    [applyFrame, clearIntroDelay, prefersReducedMotion, stopAnimation]
+    [applyFrame, clearIntroDelay, prefersReducedMotion, scheduleIdleSleep, stopAnimation]
   )
 
   const playInteractionAnimation = React.useCallback(() => {
@@ -353,7 +521,10 @@ const Logo = ({
     lastMorphIndexRef.current = null
     applyFrame(sampleFrames(introFrames, 0))
 
-    if (!playIntro || prefersReducedMotion) return
+    if (!playIntro || prefersReducedMotion) {
+      scheduleIdleSleep()
+      return
+    }
 
     introDelayRef.current = window.setTimeout(() => {
       introDelayRef.current = null
@@ -364,11 +535,28 @@ const Logo = ({
       clearIntroDelay()
       stopAnimation()
     }
-  }, [applyFrame, clearIntroDelay, playIntro, prefersReducedMotion, runAnimation, stopAnimation])
+  }, [
+    applyFrame,
+    clearIntroDelay,
+    playIntro,
+    prefersReducedMotion,
+    runAnimation,
+    scheduleIdleSleep,
+    stopAnimation,
+  ])
+
+  React.useEffect(() => {
+    scheduleIdleSleep()
+
+    return () => {
+      clearIdleSleepDelay()
+    }
+  }, [clearIdleSleepDelay, scheduleIdleSleep])
 
   const handlePointerDown = React.useCallback<React.PointerEventHandler<SVGSVGElement>>(
     (event) => {
       onPointerDown?.(event)
+      wakeLogo()
 
       if (event.defaultPrevented) return
       if (!event.isPrimary) return
@@ -376,12 +564,29 @@ const Logo = ({
 
       playInteractionAnimation()
     },
-    [onPointerDown, playInteractionAnimation]
+    [onPointerDown, playInteractionAnimation, wakeLogo]
+  )
+
+  const handlePointerEnter = React.useCallback<React.PointerEventHandler<SVGSVGElement>>(
+    (event) => {
+      onPointerEnter?.(event)
+      wakeLogo()
+    },
+    [onPointerEnter, wakeLogo]
+  )
+
+  const handleFocus = React.useCallback<React.FocusEventHandler<SVGSVGElement>>(
+    (event) => {
+      onFocus?.(event)
+      wakeLogo()
+    },
+    [onFocus, wakeLogo]
   )
 
   const handleKeyDown = React.useCallback<React.KeyboardEventHandler<SVGSVGElement>>(
     (event) => {
       onKeyDown?.(event)
+      wakeLogo()
 
       if (event.defaultPrevented) return
       if (!isInteractive) return
@@ -390,7 +595,7 @@ const Logo = ({
       event.preventDefault()
       playInteractionAnimation()
     },
-    [isInteractive, onKeyDown, playInteractionAnimation]
+    [isInteractive, onKeyDown, playInteractionAnimation, wakeLogo]
   )
 
   return (
@@ -405,29 +610,221 @@ const Logo = ({
       aria-hidden={decorative ? true : undefined}
       aria-label={resolvedAriaLabel}
       aria-labelledby={resolvedAriaLabelledBy}
+      data-logo-sleeping={isSleeping ? 'true' : undefined}
       onPointerDown={handlePointerDown}
+      onPointerEnter={handlePointerEnter}
+      onFocus={handleFocus}
       onKeyDown={handleKeyDown}
       onClick={onClick}
       style={svgStyle}
       {...props}
     >
+      <style>
+        {`
+          .logo-sleep-breath,
+          .logo-sleep-face-soft,
+          .logo-sleep-zzzs,
+          .logo-sleep-zzzs text {
+            animation-play-state: paused;
+          }
+
+          .logo-sleep-zzzs {
+            opacity: 0;
+            pointer-events: none;
+          }
+
+          .logo-sleep-zzzs text {
+            opacity: 0;
+            fill: var(--logo-secondary);
+            stroke: var(--logo-primary);
+            stroke-width: 4px;
+            paint-order: stroke;
+            transform-box: fill-box;
+            transform-origin: 50% 50%;
+            filter: drop-shadow(0 3px 7px rgb(0 0 0 / 0.55));
+          }
+
+          [data-logo-sleeping='true'] .logo-sleep-breath {
+            animation: logoSleepBreath ${SLEEP_BREATH_DURATION_MS}ms ease-in-out infinite;
+          }
+
+          [data-logo-sleeping='true'] .logo-sleep-face-soft {
+            animation: logoSleepFace ${SLEEP_BREATH_DURATION_MS}ms ease-in-out infinite;
+          }
+
+          [data-logo-sleeping='true'] .logo-sleep-zzzs {
+            opacity: 1;
+          }
+
+          [data-logo-sleeping='true'] .logo-sleep-zzzs .sleep-z {
+            animation: logoSleepZFall ${SLEEP_BREATH_DURATION_MS}ms ease-in-out infinite;
+          }
+
+          [data-logo-sleeping='true'] .logo-sleep-zzzs .sleep-z-1 {
+            animation-delay: 0ms;
+          }
+
+          [data-logo-sleeping='true'] .logo-sleep-zzzs .sleep-z-2 {
+            animation-delay: 260ms;
+          }
+
+          [data-logo-sleeping='true'] .logo-sleep-zzzs .sleep-z-3 {
+            animation-delay: 520ms;
+          }
+
+          @keyframes logoSleepBreath {
+            0%, 100% {
+              transform: translate3d(0, 0, 0) scale(1, 1);
+            }
+
+            18% {
+              transform: translate3d(0, 5.2px, 0) scale(1.052, 0.948);
+            }
+
+            31% {
+              transform: translate3d(0, 0.8px, 0) scale(1.006, 0.994);
+            }
+
+            52% {
+              transform: translate3d(0, 4.8px, 0) scale(1.046, 0.954);
+            }
+
+            65% {
+              transform: translate3d(0, 0.6px, 0) scale(1.004, 0.996);
+            }
+          }
+
+          @keyframes logoSleepFace {
+            0%, 100% {
+              transform: translate3d(0, 0, 0) scale(1, 1);
+              opacity: 1;
+            }
+
+            18% {
+              transform: translate3d(0, 3.4px, 0) scale(1.036, 0.9);
+              opacity: 0.68;
+            }
+
+            31% {
+              transform: translate3d(0, 0.6px, 0) scale(1.004, 0.988);
+              opacity: 0.94;
+            }
+
+            52% {
+              transform: translate3d(0, 3px, 0) scale(1.032, 0.91);
+              opacity: 0.72;
+            }
+
+            65% {
+              transform: translate3d(0, 0.4px, 0) scale(1.004, 0.99);
+              opacity: 0.96;
+            }
+          }
+
+          @keyframes logoSleepZFall {
+            0% {
+              opacity: 0;
+              transform: translate3d(-12px, -46px, 0) scale(0.78) rotate(-8deg);
+            }
+
+            12% {
+              opacity: 1;
+            }
+
+            42% {
+              opacity: 1;
+            }
+
+            68% {
+              opacity: 0;
+              transform: translate3d(22px, 72px, 0) scale(1.22) rotate(9deg);
+            }
+
+            100% {
+              opacity: 0;
+              transform: translate3d(22px, 72px, 0) scale(1.22) rotate(9deg);
+            }
+          }
+
+          @media (prefers-reduced-motion: reduce) {
+            .logo-sleep-breath,
+            .logo-sleep-face-soft,
+            .logo-sleep-zzzs,
+            .logo-sleep-zzzs text {
+              animation: none !important;
+            }
+          }
+        `}
+      </style>
+
       {!decorative && !ariaLabel && title ? <title id={titleId}>{title}</title> : null}
 
-      <g ref={stageRef} style={stageMotionStyle}>
-        <path
-          ref={bodyRef}
-          d={FLAT_BODY}
-          fill="var(--logo-primary)"
-          fillOpacity={1}
-          stroke="none"
-          strokeLinecap="round"
-        />
+      <g className="logo-sleep-breath" style={sleepLayerStyle}>
+        <g ref={stageRef} style={stageMotionStyle}>
+          <path
+            ref={bodyRef}
+            d={FLAT_BODY}
+            fill="var(--logo-primary)"
+            fillOpacity={1}
+            stroke="none"
+            strokeLinecap="round"
+          />
 
-        <g ref={facePositionRef}>
-          <g ref={faceJellyRef} style={faceMotionStyle}>
-            <path fill="var(--logo-secondary)" d={FACE_PATH} transform={FACE_BASE_TRANSFORM} />
+          <g ref={facePositionRef}>
+            <g className="logo-sleep-face-soft" style={sleepFaceStyle}>
+              <g ref={faceJellyRef} style={faceMotionStyle}>
+                <path fill="var(--logo-secondary)" d={FACE_PATH} transform={FACE_BASE_TRANSFORM} />
 
-            <path fill="var(--logo-primary)" d={CHECK_PATH} transform={FACE_BASE_TRANSFORM} />
+                <path fill="var(--logo-primary)" d={CHECK_PATH} transform={FACE_BASE_TRANSFORM} />
+              </g>
+            </g>
+          </g>
+
+          <g className="logo-sleep-zzzs" style={sleepZzzStyle} aria-hidden="true">
+            <text
+              className="sleep-z sleep-z-1"
+              x="204"
+              y="34"
+              fill="var(--logo-secondary)"
+              stroke="var(--logo-primary)"
+              strokeWidth="4"
+              paintOrder="stroke"
+              fontSize="72"
+              fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+              fontWeight="950"
+            >
+              Z
+            </text>
+
+            <text
+              className="sleep-z sleep-z-2"
+              x="262"
+              y="18"
+              fill="var(--logo-secondary)"
+              stroke="var(--logo-primary)"
+              strokeWidth="3.8"
+              paintOrder="stroke"
+              fontSize="62"
+              fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+              fontWeight="950"
+            >
+              Z
+            </text>
+
+            <text
+              className="sleep-z sleep-z-3"
+              x="313"
+              y="4"
+              fill="var(--logo-secondary)"
+              stroke="var(--logo-primary)"
+              strokeWidth="3.5"
+              paintOrder="stroke"
+              fontSize="52"
+              fontFamily="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+              fontWeight="950"
+            >
+              Z
+            </text>
           </g>
         </g>
       </g>
