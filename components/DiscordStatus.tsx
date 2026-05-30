@@ -45,13 +45,37 @@ const SLEEPING_META = {
 }
 
 const LOADING_META = {
-  label: 'Checking status...',
+  label: 'Checking status',
   color: '#80848e',
 }
 
 const ERROR_META = {
   label: 'Status unavailable',
   color: '#80848e',
+}
+
+const LoadingDots = () => {
+  return (
+    <span className="inline-flex w-5 items-end" aria-hidden="true">
+      <style>
+        {`@keyframes presence-loading-dot {
+          0%, 80%, 100% {
+            opacity: 0.25;
+            transform: translateY(0);
+          }
+
+          40% {
+            opacity: 1;
+            transform: translateY(-0.12em);
+          }
+        }`}
+      </style>
+
+      <span style={{ animation: 'presence-loading-dot 1.2s infinite ease-in-out' }}>.</span>
+      <span style={{ animation: 'presence-loading-dot 1.2s infinite ease-in-out 150ms' }}>.</span>
+      <span style={{ animation: 'presence-loading-dot 1.2s infinite ease-in-out 300ms' }}>.</span>
+    </span>
+  )
 }
 
 const DiscordStatus = ({
@@ -97,7 +121,10 @@ const DiscordStatus = ({
         aria-hidden="true"
       />
 
-      <span>{meta.label}</span>
+      <span>
+        {meta.label}
+        {isLoading && <LoadingDots />}
+      </span>
     </span>
   )
 }
