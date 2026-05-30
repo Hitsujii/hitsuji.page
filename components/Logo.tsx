@@ -35,7 +35,6 @@ type LogoProps = SVGProps<SVGSVGElement> & {
 }
 
 const MOTION_QUERY = '(prefers-reduced-motion: reduce)'
-const PRESENCE_SLEEP_DELAY_MS = 180
 const PRESENCE_SLEEP_START_DELAY_MS = 0
 
 const INTRO_DELAY_MS = 160
@@ -354,24 +353,33 @@ const Logo = ({
 
   const scheduleIdleSleep = React.useCallback(() => {
     clearIdleSleepDelay()
+
+    if (!shouldScheduleIdleSleep) {
+      setIsSleeping(false)
+      return
+    }
+
+    if (shouldSleepFastFromPresence) {
+      setIsSleeping(true)
+      return
+    }
+
     setIsSleeping(false)
-
-    if (!shouldScheduleIdleSleep) return
-
-    const sleepDelayMs = shouldSleepFastFromPresence ? PRESENCE_SLEEP_DELAY_MS : idleSleepDelayMs
 
     idleSleepDelayRef.current = window.setTimeout(
       () => {
         idleSleepDelayRef.current = null
         setIsSleeping(true)
       },
-      Math.max(0, sleepDelayMs)
+      Math.max(0, idleSleepDelayMs)
     )
   }, [clearIdleSleepDelay, idleSleepDelayMs, shouldScheduleIdleSleep, shouldSleepFastFromPresence])
 
   const wakeLogo = React.useCallback(() => {
+    if (isSleeping || shouldSleepFastFromPresence) return
+
     scheduleIdleSleep()
-  }, [scheduleIdleSleep])
+  }, [isSleeping, scheduleIdleSleep, shouldSleepFastFromPresence])
 
   const applyFrame = React.useCallback((frame: MotionFrame) => {
     const shapeProgress = clamp01(frame.shape)
