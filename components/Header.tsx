@@ -9,6 +9,7 @@ import SearchButton from './SearchButton'
 import ThemeSwitch from './ThemeSwitch'
 import { IconArchive, IconMenuDeep, IconUnderline, IconX } from './icons/AstroPaperIcons'
 import Logo from './Logo'
+import DeferredLogo from './DeferredLogo'
 
 const normalizePath = (path: string) => path.replace(/\/$/, '') || '/'
 
@@ -34,7 +35,7 @@ export default function Header() {
       <a
         id="skip-to-content"
         href="#main-content"
-        className="absolute inset-s-16 -top-full z-50 bg-[var(--background)] px-3 py-2 text-[var(--accent)] backdrop-blur-lg transition-all focus:top-4"
+        className="inset-s-16 absolute -top-full z-50 bg-[var(--background)] px-3 py-2 text-[var(--accent)] backdrop-blur-lg transition-all focus:top-4"
       >
         Skip to content
       </a>
@@ -55,9 +56,10 @@ export default function Header() {
             className="group absolute -bottom-px -left-[5px] flex items-center transition-transform duration-150 active:scale-95 sm:my-auto"
             onClick={() => setMenuOpen(false)}
           >
-            <Logo
-              className="block h-9 w-auto transition duration-200 group-hover:opacity-80 sm:h-11"
+            <DeferredLogo
+              className="block h-9 w-auto sm:h-11"
               aria-hidden="true"
+              playIntro={true}
             />
           </Link>
 
