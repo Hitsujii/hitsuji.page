@@ -2,7 +2,7 @@
 
 import * as React from 'react'
 
-import siteMetadata from '@/data/siteMetadata'
+import { statusConfig } from '@/components/status/config'
 
 export type DiscordPresenceStatus = 'online' | 'idle' | 'dnd' | 'offline'
 
@@ -13,23 +13,13 @@ type LanyardResponse = {
   }
 }
 
-type PresenceConfig = {
-  discordUserId?: string
-}
-
-type SiteMetadataWithPresence = {
-  presence?: PresenceConfig
-}
-
 export type LanyardPresence = {
   status: DiscordPresenceStatus | null
   isLoading: boolean
   hasError: boolean
 }
 
-const metadata = siteMetadata as SiteMetadataWithPresence
-
-export const DEFAULT_DISCORD_USER_ID = metadata.presence?.discordUserId ?? '225253076628406274'
+export const DEFAULT_DISCORD_USER_ID: string = statusConfig.discordUserId
 
 const DEFAULT_REFRESH_INTERVAL_MS = 30_000
 const LANYARD_ENDPOINT = 'https://api.lanyard.rest/v1/users'
@@ -45,7 +35,7 @@ let snapshot: LanyardPresence = {
 }
 
 let intervalId: number | null = null
-let activeDiscordUserId = DEFAULT_DISCORD_USER_ID
+let activeDiscordUserId: string | null = null
 
 const listeners = new Set<(presence: LanyardPresence) => void>()
 
@@ -116,28 +106,74 @@ const startPolling = (discordUserId: string, refreshIntervalMs: number) => {
   )
 }
 
+const shouldStartPolling = (discordUserId: string) => {
+  return intervalId === null || activeDiscordUserId !== discordUserId
+}
+
 export const useLanyardPresence = (
-  discordUserId = DEFAULT_DISCORD_USER_ID,
-  refreshIntervalMs = DEFAULT_REFRESH_INTERVAL_MS
+  discordUserId: string = DEFAULT_DISCORD_USER_ID,
+  refreshIntervalMs: number = DEFAULT_REFRESH_INTERVAL_MS,
+  enabled: boolean = true,
+  startDelayMs: number = 0
 ) => {
-  const [presence, setPresence] = React.useState(snapshot)
+  const [presence, setPresence] = React.useState<LanyardPresence>(() =>
+    enabled
+      ? snapshot
+      : {
+          status: null,
+          isLoading: false,
+          hasError: false,
+        }
+  )
 
   React.useEffect(() => {
+    if (!enabled) {
+      setPresence({
+        status: null,
+        isLoading: false,
+        hasError: false,
+      })
+
+      return undefined
+    }
+
     if (!discordUserId) {
       setPresence({
         status: null,
         isLoading: false,
         hasError: true,
       })
+
       return undefined
     }
 
     listeners.add(setPresence)
     setPresence(snapshot)
 
-    if (listeners.size === 1 || activeDiscordUserId !== discordUserId) {
-      startPolling(discordUserId, refreshIntervalMs)
+    const start = () => {
+      if (!listeners.has(setPresence)) return
+
+      if (shouldStartPolling(discordUserId)) {
+        startPolling(discordUserId, refreshIntervalMs)
+      }
     }
+
+    const delay = Math.max(0, startDelayMs)
+
+    if (delay > 0) {
+      const timeoutId = window.setTimeout(start, delay)
+
+      return () => {
+        window.clearTimeout(timeoutId)
+        listeners.delete(setPresence)
+
+        if (listeners.size === 0) {
+          stopPolling()
+        }
+      }
+    }
+
+    start()
 
     return () => {
       listeners.delete(setPresence)
@@ -146,7 +182,7 @@ export const useLanyardPresence = (
         stopPolling()
       }
     }
-  }, [discordUserId, refreshIntervalMs])
+  }, [discordUserId, refreshIntervalMs, enabled, startDelayMs])
 
   return presence
 }

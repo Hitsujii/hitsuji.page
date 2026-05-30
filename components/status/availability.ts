@@ -2,26 +2,13 @@
 
 import * as React from 'react'
 
-import siteMetadata from '@/data/siteMetadata'
-
-export type AvailabilityConfig = {
-  timeZone?: string
-  locationLabel?: string
-  sleepStart?: string
-  sleepEnd?: string
-}
-
-type SiteMetadataWithAvailability = {
-  availability?: AvailabilityConfig
-}
-
-const metadata = siteMetadata as SiteMetadataWithAvailability
+import { statusConfig } from '@/components/status/config'
 
 export const siteAvailability = {
-  timeZone: metadata.availability?.timeZone ?? 'Europe/Warsaw',
-  locationLabel: metadata.availability?.locationLabel ?? 'Warsaw',
-  sleepStart: metadata.availability?.sleepStart ?? '01:00',
-  sleepEnd: metadata.availability?.sleepEnd ?? '09:30',
+  timeZone: statusConfig.timeZone,
+  locationLabel: statusConfig.locationLabel,
+  sleepStart: statusConfig.sleepStart,
+  sleepEnd: statusConfig.sleepEnd,
 } as const
 
 const CLOCK_TIME_PATTERN = /^([01]\d|2[0-3]):([0-5]\d)$/
@@ -82,22 +69,52 @@ export const isTimeInRange = (current: number, start: number, end: number) => {
   return current >= start || current < end
 }
 
-export const useCurrentTimeZoneMinutes = (timeZone = siteAvailability.timeZone) => {
-  const [minutes, setMinutes] = React.useState(() => getTimeZoneMinutes(timeZone))
+export const useCurrentTimeZoneMinutes = (
+  timeZone = siteAvailability.timeZone,
+  enabled = true,
+  startDelayMs = 0
+) => {
+  const [minutes, setMinutes] = React.useState(() =>
+    enabled && startDelayMs === 0 ? getTimeZoneMinutes(timeZone) : 0
+  )
 
   React.useEffect(() => {
+    if (!enabled) {
+      setMinutes(0)
+      return undefined
+    }
+
     const update = () => {
       setMinutes(getTimeZoneMinutes(timeZone))
     }
 
-    update()
+    const delay = Math.max(0, startDelayMs)
+    let intervalId: number | null = null
 
-    const intervalId = window.setInterval(update, 30_000)
+    if (delay > 0) {
+      const timeoutId = window.setTimeout(() => {
+        update()
+        intervalId = window.setInterval(update, 30_000)
+      }, delay)
+
+      return () => {
+        window.clearTimeout(timeoutId)
+
+        if (intervalId !== null) {
+          window.clearInterval(intervalId)
+        }
+      }
+    }
+
+    update()
+    intervalId = window.setInterval(update, 30_000)
 
     return () => {
-      window.clearInterval(intervalId)
+      if (intervalId !== null) {
+        window.clearInterval(intervalId)
+      }
     }
-  }, [timeZone])
+  }, [timeZone, enabled, startDelayMs])
 
   return minutes
 }
