@@ -23,7 +23,7 @@ type MotionFrame = Readonly<{
   faceSy: number
 }>
 
-type IdleSleepMode = 'dark' | 'always' | 'off'
+type IdleSleepMode = 'presence' | 'dark' | 'always' | 'off'
 
 type LogoProps = SVGProps<SVGSVGElement> & {
   title?: string
@@ -35,8 +35,8 @@ type LogoProps = SVGProps<SVGSVGElement> & {
 }
 
 const MOTION_QUERY = '(prefers-reduced-motion: reduce)'
-const DARK_MODE_QUERY = '(prefers-color-scheme: dark)'
 const PRESENCE_SLEEP_DELAY_MS = 800
+const PRESENCE_SLEEP_START_DELAY_MS = 2_500
 
 const INTRO_DELAY_MS = 160
 const INTRO_DURATION_MS = 860
@@ -126,65 +126,6 @@ const usePrefersReducedMotion = () => {
   }, [])
 
   return prefersReducedMotion
-}
-
-const getIsDarkThemeActive = () => {
-  if (typeof window === 'undefined') return false
-  if (typeof document === 'undefined') return false
-
-  const root = document.documentElement
-  const theme = root.dataset.theme?.toLowerCase()
-  const colorScheme = root.style.colorScheme?.toLowerCase()
-
-  if (root.classList.contains('light') || theme === 'light' || colorScheme === 'light') {
-    return false
-  }
-
-  if (root.classList.contains('dark') || theme === 'dark' || colorScheme === 'dark') {
-    return true
-  }
-
-  return window.matchMedia(DARK_MODE_QUERY).matches
-}
-
-const useIsDarkThemeActive = () => {
-  const [isDarkThemeActive, setIsDarkThemeActive] = React.useState(getIsDarkThemeActive)
-
-  React.useEffect(() => {
-    const root = document.documentElement
-    const mediaQuery = window.matchMedia(DARK_MODE_QUERY)
-
-    const update = () => {
-      setIsDarkThemeActive(getIsDarkThemeActive())
-    }
-
-    update()
-
-    const observer = new MutationObserver(update)
-
-    observer.observe(root, {
-      attributes: true,
-      attributeFilter: ['class', 'data-theme', 'style'],
-    })
-
-    if (mediaQuery.addEventListener) {
-      mediaQuery.addEventListener('change', update)
-
-      return () => {
-        observer.disconnect()
-        mediaQuery.removeEventListener('change', update)
-      }
-    }
-
-    mediaQuery.addListener(update)
-
-    return () => {
-      observer.disconnect()
-      mediaQuery.removeListener(update)
-    }
-  }, [])
-
-  return isDarkThemeActive
 }
 
 const FLAT_BODY_RAW =
@@ -321,7 +262,7 @@ const Logo = ({
   decorative = false,
   playIntro = true,
   playOnInteraction = true,
-  idleSleep = 'dark',
+  idleSleep = 'presence',
   idleSleepDelayMs = IDLE_SLEEP_DELAY_MS,
   role,
   tabIndex,
@@ -331,9 +272,18 @@ const Logo = ({
   ...props
 }: LogoProps) => {
   const prefersReducedMotion = usePrefersReducedMotion()
-  const isDarkThemeActive = useIsDarkThemeActive()
-  const { status: discordStatus } = useLanyardPresence()
-  const currentMinutes = useCurrentTimeZoneMinutes(siteAvailability.timeZone)
+  const shouldUsePresenceSleep = idleSleep !== 'off' && idleSleep !== 'always'
+  const { status: discordStatus } = useLanyardPresence(
+    undefined,
+    undefined,
+    shouldUsePresenceSleep,
+    PRESENCE_SLEEP_START_DELAY_MS
+  )
+  const currentMinutes = useCurrentTimeZoneMinutes(
+    siteAvailability.timeZone,
+    shouldUsePresenceSleep,
+    PRESENCE_SLEEP_START_DELAY_MS
+  )
   const sleepStartMinutes = parseClockTime(siteAvailability.sleepStart)
   const sleepEndMinutes = parseClockTime(siteAvailability.sleepEnd)
   const [isSleeping, setIsSleeping] = React.useState(false)
@@ -362,22 +312,13 @@ const Logo = ({
     decorative || ariaLabel ? ariaLabelledBy : (ariaLabelledBy ?? titleId)
 
   const isConfiguredSleepTime = isTimeInRange(currentMinutes, sleepStartMinutes, sleepEndMinutes)
+  const isSleepPresenceStatus = discordStatus === 'idle' || discordStatus === 'offline'
 
-  const shouldSleepFastFromPresence = discordStatus === 'idle' && isConfiguredSleepTime
-
-  const shouldBlockAutoSleepFromPresence =
-    discordStatus === 'online' ||
-    discordStatus === 'dnd' ||
-    discordStatus === 'offline' ||
-    (discordStatus === 'idle' && !isConfiguredSleepTime)
+  const shouldSleepFastFromPresence = isSleepPresenceStatus && isConfiguredSleepTime
 
   const canUseIdleSleep =
     idleSleep === 'always' ||
-    shouldSleepFastFromPresence ||
-    (idleSleep === 'dark' &&
-      isDarkThemeActive &&
-      !discordStatus &&
-      !shouldBlockAutoSleepFromPresence)
+    ((idleSleep === 'presence' || idleSleep === 'dark') && shouldSleepFastFromPresence)
 
   const shouldScheduleIdleSleep = idleSleep !== 'off' && canUseIdleSleep && !prefersReducedMotion
 

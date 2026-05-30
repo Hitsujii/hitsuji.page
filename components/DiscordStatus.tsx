@@ -63,7 +63,7 @@ const DiscordStatus = ({
   const { status, isLoading, hasError } = useLanyardPresence(discordUserId, refreshIntervalMs)
   const isConfiguredSleepTime = useIsConfiguredSleepTime()
 
-  const shouldShowSleeping = status === 'idle' && isConfiguredSleepTime
+  const shouldShowSleeping = (status === 'idle' || status === 'offline') && isConfiguredSleepTime
 
   const meta = isLoading
     ? LOADING_META
