@@ -23,7 +23,7 @@ type MotionFrame = Readonly<{
   faceSy: number
 }>
 
-type IdleSleepMode = 'presence' | 'dark' | 'always' | 'off'
+type IdleSleepMode = 'presence' | 'always' | 'off'
 
 type LogoProps = SVGProps<SVGSVGElement> & {
   title?: string
@@ -303,6 +303,7 @@ const Logo = ({
   const lastMorphIndexRef = React.useRef<number | null>(null)
   const hasIntroSettledRef = React.useRef(false)
   const isSleepingRef = React.useRef(false)
+  const scheduleIdleSleepRef = React.useRef<(() => void) | null>(null)
 
   const isInteractive = Boolean(
     playOnInteraction && (onPointerDown || onClick || role === 'button')
@@ -322,8 +323,7 @@ const Logo = ({
   const shouldSleepFastFromPresence = forceSleep || (isSleepPresenceStatus && isConfiguredSleepTime)
 
   const canUseIdleSleep =
-    idleSleep === 'always' ||
-    ((idleSleep === 'presence' || idleSleep === 'dark') && shouldSleepFastFromPresence)
+    idleSleep === 'always' || (idleSleep === 'presence' && shouldSleepFastFromPresence)
 
   const shouldScheduleIdleSleep = idleSleep !== 'off' && canUseIdleSleep
 
@@ -409,6 +409,8 @@ const Logo = ({
     shouldSleepFastFromPresence,
   ])
 
+  scheduleIdleSleepRef.current = scheduleIdleSleep
+
   const wakeLogo = React.useCallback(() => {
     if (shouldSleepFastFromPresence) return
 
@@ -463,14 +465,14 @@ const Logo = ({
       if (prefersReducedMotion) {
         applyFrame(sampleFrames(frames, 1))
         hasIntroSettledRef.current = true
-        scheduleIdleSleep()
+        scheduleIdleSleepRef.current?.()
         return
       }
 
       if (typeof document !== 'undefined' && document.hidden) {
         applyFrame(sampleFrames(frames, 1))
         hasIntroSettledRef.current = true
-        scheduleIdleSleep()
+        scheduleIdleSleepRef.current?.()
         return
       }
 
@@ -490,13 +492,13 @@ const Logo = ({
         rafRef.current = null
         applyFrame(sampleFrames(frames, 1))
         hasIntroSettledRef.current = true
-        scheduleIdleSleep()
+        scheduleIdleSleepRef.current?.()
       }
 
       applyFrame(sampleFrames(frames, 0))
       rafRef.current = requestAnimationFrame(tick)
     },
-    [applyFrame, clearIntroDelay, exitSleep, prefersReducedMotion, scheduleIdleSleep, stopAnimation]
+    [applyFrame, clearIntroDelay, exitSleep, prefersReducedMotion, stopAnimation]
   )
 
   const playInteractionAnimation = React.useCallback(() => {
@@ -517,7 +519,7 @@ const Logo = ({
 
     if (!playIntro || prefersReducedMotion) {
       hasIntroSettledRef.current = true
-      scheduleIdleSleep()
+      scheduleIdleSleepRef.current?.()
       return
     }
 
@@ -530,15 +532,7 @@ const Logo = ({
       clearIntroDelay()
       stopAnimation()
     }
-  }, [
-    applyFrame,
-    clearIntroDelay,
-    playIntro,
-    prefersReducedMotion,
-    runAnimation,
-    scheduleIdleSleep,
-    stopAnimation,
-  ])
+  }, [applyFrame, clearIntroDelay, playIntro, prefersReducedMotion, runAnimation, stopAnimation])
 
   React.useEffect(() => {
     scheduleIdleSleep()

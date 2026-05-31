@@ -59,8 +59,6 @@ const DeferredLogo = (props: AnimatedLogoProps) => {
   }, [loadAnimatedLogo])
 
   React.useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
-
     const timeoutId = window.setTimeout(loadAnimatedLogo, DEFERRED_LOGO_DELAY_MS)
 
     return () => {
