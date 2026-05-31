@@ -14,7 +14,7 @@ const siteMetadata = {
   mastodon: '',
   email: 'hi@hitsuji.page',
   github: 'https://github.com/Hitsujii',
-  x: 'https://x.com/HiHitsuji',
+  x: 'https://x.com/HiHitsujii',
   // twitter: 'https://twitter.com/Twitter',
   facebook: '',
   youtube: '',
