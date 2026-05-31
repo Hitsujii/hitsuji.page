@@ -8,11 +8,31 @@ import type Logo from './Logo'
 type AnimatedLogoProps = React.ComponentProps<typeof Logo>
 type AnimatedLogoComponent = typeof Logo
 
-const DEFERRED_LOGO_DELAY_MS = 4_000
+type IdleDeadlineLike = {
+  didTimeout: boolean
+  timeRemaining: () => number
+}
+
+type WindowWithIdleCallback = Window & {
+  requestIdleCallback?: (
+    callback: (deadline: IdleDeadlineLike) => void,
+    options?: { timeout?: number }
+  ) => number
+  cancelIdleCallback?: (handle: number) => void
+}
+
+const MIN_DEFERRED_LOGO_DELAY_MS = 2_000
+const MAX_DEFERRED_LOGO_DELAY_MS = 9_000
+const IDLE_RETRY_DELAY_MS = 450
+const MIN_IDLE_BUDGET_MS = 14
 
 const DeferredLogo = (props: AnimatedLogoProps) => {
   const [AnimatedLogo, setAnimatedLogo] = React.useState<AnimatedLogoComponent | null>(null)
+  const [isStaticPressing, setIsStaticPressing] = React.useState(false)
+
   const hasStartedLoadingRef = React.useRef(false)
+  const hasScheduledInteractionLoadRef = React.useRef(false)
+  const staticPressTimeoutRef = React.useRef<number | null>(null)
 
   const loadAnimatedLogo = React.useCallback(() => {
     if (hasStartedLoadingRef.current) return
@@ -26,26 +46,178 @@ const DeferredLogo = (props: AnimatedLogoProps) => {
     })
   }, [])
 
+  const playStaticTap = React.useCallback(() => {
+    setIsStaticPressing(false)
+
+    window.requestAnimationFrame(() => {
+      setIsStaticPressing(true)
+    })
+
+    if (staticPressTimeoutRef.current !== null) {
+      window.clearTimeout(staticPressTimeoutRef.current)
+    }
+
+    staticPressTimeoutRef.current = window.setTimeout(() => {
+      staticPressTimeoutRef.current = null
+      setIsStaticPressing(false)
+    }, 320)
+  }, [])
+
+  const loadAnimatedLogoAfterVisualFeedback = React.useCallback(() => {
+    if (hasStartedLoadingRef.current || hasScheduledInteractionLoadRef.current) return
+
+    hasScheduledInteractionLoadRef.current = true
+
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        hasScheduledInteractionLoadRef.current = false
+        loadAnimatedLogo()
+      })
+    })
+  }, [loadAnimatedLogo])
+
   React.useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
 
-    const timeoutId = window.setTimeout(loadAnimatedLogo, DEFERRED_LOGO_DELAY_MS)
+    const idleWindow = window as WindowWithIdleCallback
+    const startedAt = performance.now()
+
+    let isCancelled = false
+    let minDelayTimeoutId: number | null = null
+    let fallbackTimeoutId: number | null = null
+    let retryTimeoutId: number | null = null
+    let idleCallbackId: number | null = null
+
+    const clearScheduledIdleCallback = () => {
+      if (idleCallbackId === null) return
+
+      idleWindow.cancelIdleCallback?.(idleCallbackId)
+      idleCallbackId = null
+    }
+
+    const clearRetryTimeout = () => {
+      if (retryTimeoutId === null) return
+
+      window.clearTimeout(retryTimeoutId)
+      retryTimeoutId = null
+    }
+
+    const scheduleRetry = (callback: () => void) => {
+      clearRetryTimeout()
+
+      retryTimeoutId = window.setTimeout(callback, IDLE_RETRY_DELAY_MS)
+    }
+
+    const shouldForceLoad = () => {
+      return performance.now() - startedAt >= MAX_DEFERRED_LOGO_DELAY_MS
+    }
+
+    const tryLoadAnimatedLogo = () => {
+      if (isCancelled || hasStartedLoadingRef.current) return
+
+      if (!idleWindow.requestIdleCallback) {
+        if (shouldForceLoad()) {
+          loadAnimatedLogo()
+          return
+        }
+
+        scheduleRetry(tryLoadAnimatedLogo)
+        return
+      }
+
+      clearScheduledIdleCallback()
+
+      idleCallbackId = idleWindow.requestIdleCallback((deadline) => {
+        idleCallbackId = null
+
+        if (isCancelled || hasStartedLoadingRef.current) return
+
+        const hasEnoughIdleBudget = deadline.timeRemaining() >= MIN_IDLE_BUDGET_MS
+
+        if (hasEnoughIdleBudget || shouldForceLoad()) {
+          loadAnimatedLogo()
+          return
+        }
+
+        scheduleRetry(tryLoadAnimatedLogo)
+      })
+    }
+
+    minDelayTimeoutId = window.setTimeout(tryLoadAnimatedLogo, MIN_DEFERRED_LOGO_DELAY_MS)
+    fallbackTimeoutId = window.setTimeout(loadAnimatedLogo, MAX_DEFERRED_LOGO_DELAY_MS)
 
     return () => {
-      window.clearTimeout(timeoutId)
+      isCancelled = true
+
+      if (minDelayTimeoutId !== null) {
+        window.clearTimeout(minDelayTimeoutId)
+      }
+
+      if (fallbackTimeoutId !== null) {
+        window.clearTimeout(fallbackTimeoutId)
+      }
+
+      clearRetryTimeout()
+      clearScheduledIdleCallback()
+
+      if (staticPressTimeoutRef.current !== null) {
+        window.clearTimeout(staticPressTimeoutRef.current)
+      }
     }
   }, [loadAnimatedLogo])
 
   if (!AnimatedLogo) {
     return (
-      <LogoStatic
-        className={props.className}
-        decorative={props.decorative ?? props['aria-hidden'] === true}
-        aria-label={props['aria-label']}
-        onPointerEnter={loadAnimatedLogo}
-        onFocus={loadAnimatedLogo}
-        onClick={loadAnimatedLogo}
-      />
+      <>
+        <style>
+          {`@keyframes deferredLogoTap {
+            0%, 100% {
+              transform: translate3d(0, 0, 0) scale(1, 1);
+            }
+
+            34% {
+              transform: translate3d(0, 2px, 0) scale(1.055, 0.94);
+            }
+
+            62% {
+              transform: translate3d(0, -5px, 0) scale(0.985, 1.045);
+            }
+          }`}
+        </style>
+
+        <LogoStatic
+          className={props.className}
+          decorative={props.decorative ?? props['aria-hidden'] === true}
+          aria-label={props['aria-label']}
+          onPointerDown={(event) => {
+            props.onPointerDown?.(event)
+            if (event.defaultPrevented) return
+
+            playStaticTap()
+            loadAnimatedLogoAfterVisualFeedback()
+          }}
+          onPointerEnter={(event) => {
+            props.onPointerEnter?.(event)
+            loadAnimatedLogo()
+          }}
+          onFocus={(event) => {
+            props.onFocus?.(event)
+            loadAnimatedLogo()
+          }}
+          onClick={(event) => {
+            props.onClick?.(event)
+            loadAnimatedLogoAfterVisualFeedback()
+          }}
+          style={{
+            ...props.style,
+            animation: isStaticPressing
+              ? 'deferredLogoTap 320ms cubic-bezier(0.34, 1.56, 0.64, 1)'
+              : undefined,
+            transformBox: 'fill-box',
+            transformOrigin: '50% 92%',
+          }}
+        />
+      </>
     )
   }
 
