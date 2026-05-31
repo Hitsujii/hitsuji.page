@@ -28,10 +28,10 @@ type WindowWithIdleCallback = Window & {
   cancelIdleCallback?: (handle: number) => void
 }
 
-const MIN_DEFERRED_LOGO_DELAY_MS = 2_000
-const MAX_DEFERRED_LOGO_DELAY_MS = 9_000
+const MIN_DEFERRED_LOGO_DELAY_MS = 3_500
+const MAX_DEFERRED_LOGO_DELAY_MS = 12_000
 const IDLE_RETRY_DELAY_MS = 450
-const MIN_IDLE_BUDGET_MS = 14
+const MIN_IDLE_BUDGET_MS = 20
 
 const sleepStartMinutes = parseClockTime(siteAvailability.sleepStart)
 const sleepEndMinutes = parseClockTime(siteAvailability.sleepEnd)
