@@ -34,7 +34,7 @@ export default function Header() {
       <a
         id="skip-to-content"
         href="#main-content"
-        className="absolute inset-s-16 -top-full z-50 bg-[var(--background)] px-3 py-2 text-[var(--accent)] backdrop-blur-lg transition-all focus:top-4"
+        className="inset-s-16 absolute -top-full z-50 bg-[var(--background)] px-3 py-2 text-[var(--accent)] backdrop-blur-lg transition-all focus:top-4"
       >
         Skip to content
       </a>
@@ -56,7 +56,7 @@ export default function Header() {
             onClick={() => setMenuOpen(false)}
           >
             <DeferredLogo
-              className="block h-9 w-auto sm:h-11"
+              className="block h-9 w-auto transition-opacity hover:opacity-80 sm:h-11"
               aria-hidden="true"
               playIntro={true}
             />
