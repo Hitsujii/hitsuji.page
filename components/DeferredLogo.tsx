@@ -2,6 +2,13 @@
 
 import * as React from 'react'
 
+import {
+  isTimeInRange,
+  parseClockTime,
+  siteAvailability,
+  useCurrentTimeZoneMinutes,
+} from './status/availability'
+import { useLanyardPresence } from './status/useLanyardPresence'
 import LogoStatic from './LogoStatic'
 import type Logo from './Logo'
 
@@ -26,13 +33,28 @@ const MAX_DEFERRED_LOGO_DELAY_MS = 9_000
 const IDLE_RETRY_DELAY_MS = 450
 const MIN_IDLE_BUDGET_MS = 14
 
+const sleepStartMinutes = parseClockTime(siteAvailability.sleepStart)
+const sleepEndMinutes = parseClockTime(siteAvailability.sleepEnd)
+
 const DeferredLogo = (props: AnimatedLogoProps) => {
   const [AnimatedLogo, setAnimatedLogo] = React.useState<AnimatedLogoComponent | null>(null)
-  const [isStaticPressing, setIsStaticPressing] = React.useState(false)
-
+  const [shouldResolvePresenceImmediately, setShouldResolvePresenceImmediately] =
+    React.useState(false)
   const hasStartedLoadingRef = React.useRef(false)
-  const hasScheduledInteractionLoadRef = React.useRef(false)
-  const staticPressTimeoutRef = React.useRef<number | null>(null)
+
+  const presenceStartDelayMs = shouldResolvePresenceImmediately ? 0 : undefined
+  const { status, isLoading, hasError } = useLanyardPresence(
+    undefined,
+    undefined,
+    true,
+    presenceStartDelayMs
+  )
+  const currentMinutes = useCurrentTimeZoneMinutes(siteAvailability.timeZone)
+
+  const isConfiguredSleepTime = isTimeInRange(currentMinutes, sleepStartMinutes, sleepEndMinutes)
+  const isSleepPresenceStatus = status === 'idle' || status === 'offline'
+  const shouldSleepAfterIntro = isSleepPresenceStatus && isConfiguredSleepTime
+  const hasResolvedPresence = !isLoading || hasError || status !== null
 
   const loadAnimatedLogo = React.useCallback(() => {
     if (hasStartedLoadingRef.current) return
@@ -46,34 +68,9 @@ const DeferredLogo = (props: AnimatedLogoProps) => {
     })
   }, [])
 
-  const playStaticTap = React.useCallback(() => {
-    setIsStaticPressing(false)
-
-    window.requestAnimationFrame(() => {
-      setIsStaticPressing(true)
-    })
-
-    if (staticPressTimeoutRef.current !== null) {
-      window.clearTimeout(staticPressTimeoutRef.current)
-    }
-
-    staticPressTimeoutRef.current = window.setTimeout(() => {
-      staticPressTimeoutRef.current = null
-      setIsStaticPressing(false)
-    }, 320)
-  }, [])
-
-  const loadAnimatedLogoAfterVisualFeedback = React.useCallback(() => {
-    if (hasStartedLoadingRef.current || hasScheduledInteractionLoadRef.current) return
-
-    hasScheduledInteractionLoadRef.current = true
-
-    window.requestAnimationFrame(() => {
-      window.requestAnimationFrame(() => {
-        hasScheduledInteractionLoadRef.current = false
-        loadAnimatedLogo()
-      })
-    })
+  const loadInteractiveLogoImmediately = React.useCallback(() => {
+    setShouldResolvePresenceImmediately(true)
+    loadAnimatedLogo()
   }, [loadAnimatedLogo])
 
   React.useEffect(() => {
@@ -104,7 +101,6 @@ const DeferredLogo = (props: AnimatedLogoProps) => {
 
     const scheduleRetry = (callback: () => void) => {
       clearRetryTimeout()
-
       retryTimeoutId = window.setTimeout(callback, IDLE_RETRY_DELAY_MS)
     }
 
@@ -159,69 +155,48 @@ const DeferredLogo = (props: AnimatedLogoProps) => {
 
       clearRetryTimeout()
       clearScheduledIdleCallback()
-
-      if (staticPressTimeoutRef.current !== null) {
-        window.clearTimeout(staticPressTimeoutRef.current)
-      }
     }
   }, [loadAnimatedLogo])
 
-  if (!AnimatedLogo) {
+  if (!AnimatedLogo || !hasResolvedPresence) {
     return (
-      <>
-        <style>
-          {`@keyframes deferredLogoTap {
-            0%, 100% {
-              transform: translate3d(0, 0, 0) scale(1, 1);
-            }
+      <LogoStatic
+        className={props.className}
+        decorative={props.decorative ?? props['aria-hidden'] === true}
+        aria-label={props['aria-label']}
+        onPointerDown={(event) => {
+          props.onPointerDown?.(event)
 
-            34% {
-              transform: translate3d(0, 2px, 0) scale(1.055, 0.94);
-            }
+          if (event.defaultPrevented) return
+          if (!event.isPrimary) return
+          if (event.button !== 0) return
 
-            62% {
-              transform: translate3d(0, -5px, 0) scale(0.985, 1.045);
-            }
-          }`}
-        </style>
-
-        <LogoStatic
-          className={props.className}
-          decorative={props.decorative ?? props['aria-hidden'] === true}
-          aria-label={props['aria-label']}
-          onPointerDown={(event) => {
-            props.onPointerDown?.(event)
-            if (event.defaultPrevented) return
-
-            playStaticTap()
-            loadAnimatedLogoAfterVisualFeedback()
-          }}
-          onPointerEnter={(event) => {
-            props.onPointerEnter?.(event)
-            loadAnimatedLogo()
-          }}
-          onFocus={(event) => {
-            props.onFocus?.(event)
-            loadAnimatedLogo()
-          }}
-          onClick={(event) => {
-            props.onClick?.(event)
-            loadAnimatedLogoAfterVisualFeedback()
-          }}
-          style={{
-            ...props.style,
-            animation: isStaticPressing
-              ? 'deferredLogoTap 320ms cubic-bezier(0.34, 1.56, 0.64, 1)'
-              : undefined,
-            transformBox: 'fill-box',
-            transformOrigin: '50% 92%',
-          }}
-        />
-      </>
+          loadInteractiveLogoImmediately()
+        }}
+        onPointerEnter={(event) => {
+          props.onPointerEnter?.(event)
+          loadAnimatedLogo()
+        }}
+        onFocus={(event) => {
+          props.onFocus?.(event)
+          loadInteractiveLogoImmediately()
+        }}
+        onClick={props.onClick}
+        style={props.style}
+      />
     )
   }
 
-  return <AnimatedLogo key="animated-logo" {...props} playIntro={props.playIntro ?? false} />
+  return (
+    <AnimatedLogo
+      key={shouldSleepAfterIntro ? 'animated-logo-sleep-after-intro' : 'animated-logo-awake'}
+      {...props}
+      forceSleep={shouldSleepAfterIntro}
+      idleSleep={shouldSleepAfterIntro ? 'always' : props.idleSleep}
+      idleSleepDelayMs={shouldSleepAfterIntro ? 0 : props.idleSleepDelayMs}
+      playIntro={props.playIntro ?? true}
+    />
+  )
 }
 
 export default DeferredLogo
