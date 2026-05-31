@@ -15,23 +15,7 @@ import type Logo from './Logo'
 type AnimatedLogoProps = React.ComponentProps<typeof Logo>
 type AnimatedLogoComponent = typeof Logo
 
-type IdleDeadlineLike = {
-  didTimeout: boolean
-  timeRemaining: () => number
-}
-
-type WindowWithIdleCallback = Window & {
-  requestIdleCallback?: (
-    callback: (deadline: IdleDeadlineLike) => void,
-    options?: { timeout?: number }
-  ) => number
-  cancelIdleCallback?: (handle: number) => void
-}
-
-const MIN_DEFERRED_LOGO_DELAY_MS = 3_500
-const MAX_DEFERRED_LOGO_DELAY_MS = 12_000
-const IDLE_RETRY_DELAY_MS = 450
-const MIN_IDLE_BUDGET_MS = 20
+const DEFERRED_LOGO_DELAY_MS = 4_000
 
 const sleepStartMinutes = parseClockTime(siteAvailability.sleepStart)
 const sleepEndMinutes = parseClockTime(siteAvailability.sleepEnd)
@@ -40,6 +24,7 @@ const DeferredLogo = (props: AnimatedLogoProps) => {
   const [AnimatedLogo, setAnimatedLogo] = React.useState<AnimatedLogoComponent | null>(null)
   const [shouldResolvePresenceImmediately, setShouldResolvePresenceImmediately] =
     React.useState(false)
+
   const hasStartedLoadingRef = React.useRef(false)
 
   const presenceStartDelayMs = shouldResolvePresenceImmediately ? 0 : undefined
@@ -76,85 +61,10 @@ const DeferredLogo = (props: AnimatedLogoProps) => {
   React.useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined
 
-    const idleWindow = window as WindowWithIdleCallback
-    const startedAt = performance.now()
-
-    let isCancelled = false
-    let minDelayTimeoutId: number | null = null
-    let fallbackTimeoutId: number | null = null
-    let retryTimeoutId: number | null = null
-    let idleCallbackId: number | null = null
-
-    const clearScheduledIdleCallback = () => {
-      if (idleCallbackId === null) return
-
-      idleWindow.cancelIdleCallback?.(idleCallbackId)
-      idleCallbackId = null
-    }
-
-    const clearRetryTimeout = () => {
-      if (retryTimeoutId === null) return
-
-      window.clearTimeout(retryTimeoutId)
-      retryTimeoutId = null
-    }
-
-    const scheduleRetry = (callback: () => void) => {
-      clearRetryTimeout()
-      retryTimeoutId = window.setTimeout(callback, IDLE_RETRY_DELAY_MS)
-    }
-
-    const shouldForceLoad = () => {
-      return performance.now() - startedAt >= MAX_DEFERRED_LOGO_DELAY_MS
-    }
-
-    const tryLoadAnimatedLogo = () => {
-      if (isCancelled || hasStartedLoadingRef.current) return
-
-      if (!idleWindow.requestIdleCallback) {
-        if (shouldForceLoad()) {
-          loadAnimatedLogo()
-          return
-        }
-
-        scheduleRetry(tryLoadAnimatedLogo)
-        return
-      }
-
-      clearScheduledIdleCallback()
-
-      idleCallbackId = idleWindow.requestIdleCallback((deadline) => {
-        idleCallbackId = null
-
-        if (isCancelled || hasStartedLoadingRef.current) return
-
-        const hasEnoughIdleBudget = deadline.timeRemaining() >= MIN_IDLE_BUDGET_MS
-
-        if (hasEnoughIdleBudget || shouldForceLoad()) {
-          loadAnimatedLogo()
-          return
-        }
-
-        scheduleRetry(tryLoadAnimatedLogo)
-      })
-    }
-
-    minDelayTimeoutId = window.setTimeout(tryLoadAnimatedLogo, MIN_DEFERRED_LOGO_DELAY_MS)
-    fallbackTimeoutId = window.setTimeout(loadAnimatedLogo, MAX_DEFERRED_LOGO_DELAY_MS)
+    const timeoutId = window.setTimeout(loadAnimatedLogo, DEFERRED_LOGO_DELAY_MS)
 
     return () => {
-      isCancelled = true
-
-      if (minDelayTimeoutId !== null) {
-        window.clearTimeout(minDelayTimeoutId)
-      }
-
-      if (fallbackTimeoutId !== null) {
-        window.clearTimeout(fallbackTimeoutId)
-      }
-
-      clearRetryTimeout()
-      clearScheduledIdleCallback()
+      window.clearTimeout(timeoutId)
     }
   }, [loadAnimatedLogo])
 
