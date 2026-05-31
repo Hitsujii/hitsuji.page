@@ -32,6 +32,7 @@ type LogoProps = SVGProps<SVGSVGElement> & {
   playOnInteraction?: boolean
   idleSleep?: IdleSleepMode
   idleSleepDelayMs?: number
+  forceSleep?: boolean
 }
 
 const MOTION_QUERY = '(prefers-reduced-motion: reduce)'
@@ -43,6 +44,7 @@ const CLICK_DURATION_MS = 640
 
 const IDLE_SLEEP_DELAY_MS = 10_000
 const SLEEP_BREATH_DURATION_MS = 3800
+const SLEEP_ENTER_DURATION_MS = 720
 
 const MORPH_MAX_SEGMENT_LENGTH = 4
 const MORPH_CACHE_STEPS = 180
@@ -263,6 +265,7 @@ const Logo = ({
   playOnInteraction = true,
   idleSleep = 'presence',
   idleSleepDelayMs = IDLE_SLEEP_DELAY_MS,
+  forceSleep = false,
   role,
   tabIndex,
   focusable,
@@ -286,6 +289,7 @@ const Logo = ({
   const sleepStartMinutes = parseClockTime(siteAvailability.sleepStart)
   const sleepEndMinutes = parseClockTime(siteAvailability.sleepEnd)
   const [isSleeping, setIsSleeping] = React.useState(false)
+  const [isSleepEntering, setIsSleepEntering] = React.useState(false)
   const titleId = React.useId()
 
   const bodyRef = React.useRef<SVGPathElement>(null)
@@ -313,7 +317,7 @@ const Logo = ({
   const isConfiguredSleepTime = isTimeInRange(currentMinutes, sleepStartMinutes, sleepEndMinutes)
   const isSleepPresenceStatus = discordStatus === 'idle' || discordStatus === 'offline'
 
-  const shouldSleepFastFromPresence = isSleepPresenceStatus && isConfiguredSleepTime
+  const shouldSleepFastFromPresence = forceSleep || (isSleepPresenceStatus && isConfiguredSleepTime)
 
   const canUseIdleSleep =
     idleSleep === 'always' ||
@@ -502,6 +506,18 @@ const Logo = ({
     }
   }, [clearIdleSleepDelay, scheduleIdleSleep])
 
+  React.useEffect(() => {
+    if (!isSleepEntering) return undefined
+
+    const timeoutId = window.setTimeout(() => {
+      setIsSleepEntering(false)
+    }, SLEEP_ENTER_DURATION_MS)
+
+    return () => {
+      window.clearTimeout(timeoutId)
+    }
+  }, [isSleepEntering])
+
   const handlePointerDown = React.useCallback<React.PointerEventHandler<SVGSVGElement>>(
     (event) => {
       onPointerDown?.(event)
@@ -560,6 +576,7 @@ const Logo = ({
       aria-label={resolvedAriaLabel}
       aria-labelledby={resolvedAriaLabelledBy}
       data-logo-sleeping={isSleeping ? 'true' : undefined}
+      data-logo-sleep-entering={isSleepEntering ? 'true' : undefined}
       onPointerDown={handlePointerDown}
       onPointerEnter={handlePointerEnter}
       onFocus={handleFocus}
@@ -584,6 +601,9 @@ const Logo = ({
           }
 
           .logo-sleep-zzzs text {
+            --sleep-z-offset-x: 0px;
+            --sleep-z-offset-y: 0px;
+
             opacity: 0;
             fill: var(--logo-secondary);
             stroke: var(--logo-primary);
@@ -594,12 +614,41 @@ const Logo = ({
             filter: drop-shadow(0 3px 7px rgb(0 0 0 / 0.55));
           }
 
+          @media (max-width: 640px) {
+            .logo-sleep-zzzs .sleep-z-1 {
+              --sleep-z-offset-x: -16px;
+              --sleep-z-offset-y: 12px;
+            }
+
+            .logo-sleep-zzzs .sleep-z-2 {
+              --sleep-z-offset-x: -21px;
+              --sleep-z-offset-y: 15px;
+            }
+
+            .logo-sleep-zzzs .sleep-z-3 {
+              --sleep-z-offset-x: -25px;
+              --sleep-z-offset-y: 18px;
+            }
+          }
+
           [data-logo-sleeping='true'] .logo-sleep-breath {
             animation: logoSleepBreath ${SLEEP_BREATH_DURATION_MS}ms ease-in-out infinite;
           }
 
           [data-logo-sleeping='true'] .logo-sleep-face-soft {
             animation: logoSleepFace ${SLEEP_BREATH_DURATION_MS}ms ease-in-out infinite;
+          }
+
+          [data-logo-sleep-entering='true'] .logo-sleep-breath {
+            animation: logoSleepEnter ${SLEEP_ENTER_DURATION_MS}ms cubic-bezier(0.22, 1, 0.36, 1) both;
+          }
+
+          [data-logo-sleep-entering='true'] .logo-sleep-face-soft {
+            animation: logoSleepFaceEnter ${SLEEP_ENTER_DURATION_MS}ms cubic-bezier(0.22, 1, 0.36, 1) both;
+          }
+
+          [data-logo-sleep-entering='true'] .logo-sleep-zzzs {
+            opacity: 0;
           }
 
           [data-logo-sleeping='true'] .logo-sleep-zzzs {
@@ -620,6 +669,42 @@ const Logo = ({
 
           [data-logo-sleeping='true'] .logo-sleep-zzzs .sleep-z-3 {
             animation-delay: 840ms;
+          }
+
+          @keyframes logoSleepEnter {
+            0% {
+              transform: translate3d(0, 0, 0) scale(1, 1);
+            }
+
+            42% {
+              transform: translate3d(0, 3px, 0) scale(1.024, 0.976);
+            }
+
+            72% {
+              transform: translate3d(0, 0.8px, 0) scale(1.006, 0.994);
+            }
+
+            100% {
+              transform: translate3d(0, 0, 0) scale(1, 1);
+            }
+          }
+
+          @keyframes logoSleepFaceEnter {
+            0% {
+              transform: translate3d(0, 0, 0) scale(1, 1);
+            }
+
+            42% {
+              transform: translate3d(0, 1.5px, 0) scale(1.01, 0.976);
+            }
+
+            72% {
+              transform: translate3d(0, 0.4px, 0) scale(1.002, 0.996);
+            }
+
+            100% {
+              transform: translate3d(0, 0, 0) scale(1, 1);
+            }
           }
 
           @keyframes logoSleepBreath {
@@ -661,7 +746,7 @@ const Logo = ({
           @keyframes logoSleepZFall {
             0% {
               opacity: 0;
-              transform: translate3d(0, 0, 0) scale(0.62) rotate(-8deg);
+              transform: translate3d(var(--sleep-z-offset-x), var(--sleep-z-offset-y), 0) scale(0.62) rotate(-8deg);
             }
 
             16% {
@@ -670,17 +755,17 @@ const Logo = ({
 
             54% {
               opacity: 1;
-              transform: translate3d(13px, -22px, 0) scale(0.92) rotate(1deg);
+              transform: translate3d(calc(var(--sleep-z-offset-x) + 13px), calc(var(--sleep-z-offset-y) - 22px), 0) scale(0.92) rotate(1deg);
             }
 
             82% {
               opacity: 0;
-              transform: translate3d(34px, -54px, 0) scale(1.16) rotate(9deg);
+              transform: translate3d(calc(var(--sleep-z-offset-x) + 34px), calc(var(--sleep-z-offset-y) - 54px), 0) scale(1.16) rotate(9deg);
             }
 
             100% {
               opacity: 0;
-              transform: translate3d(34px, -54px, 0) scale(1.16) rotate(9deg);
+              transform: translate3d(calc(var(--sleep-z-offset-x) + 34px), calc(var(--sleep-z-offset-y) - 54px), 0) scale(1.16) rotate(9deg);
             }
           }
 
