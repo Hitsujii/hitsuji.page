@@ -301,6 +301,8 @@ const Logo = ({
   const introDelayRef = React.useRef<number | null>(null)
   const idleSleepDelayRef = React.useRef<number | null>(null)
   const lastMorphIndexRef = React.useRef<number | null>(null)
+  const hasIntroSettledRef = React.useRef(false)
+  const isSleepingRef = React.useRef(false)
 
   const isInteractive = Boolean(
     playOnInteraction && (onPointerDown || onClick || role === 'button')
@@ -323,7 +325,7 @@ const Logo = ({
     idleSleep === 'always' ||
     ((idleSleep === 'presence' || idleSleep === 'dark') && shouldSleepFastFromPresence)
 
-  const shouldScheduleIdleSleep = idleSleep !== 'off' && canUseIdleSleep && !prefersReducedMotion
+  const shouldScheduleIdleSleep = idleSleep !== 'off' && canUseIdleSleep
 
   const svgStyle = React.useMemo<React.CSSProperties>(
     () => ({
@@ -355,35 +357,67 @@ const Logo = ({
     rafRef.current = null
   }, [])
 
+  const exitSleep = React.useCallback(() => {
+    isSleepingRef.current = false
+    setIsSleeping(false)
+    setIsSleepEntering(false)
+  }, [])
+
+  const enterSleep = React.useCallback(() => {
+    if (!isSleepingRef.current && !prefersReducedMotion) {
+      setIsSleepEntering(true)
+    }
+
+    isSleepingRef.current = true
+    setIsSleeping(true)
+  }, [prefersReducedMotion])
+
   const scheduleIdleSleep = React.useCallback(() => {
     clearIdleSleepDelay()
 
     if (!shouldScheduleIdleSleep) {
-      setIsSleeping(false)
+      exitSleep()
+      return
+    }
+
+    if (!hasIntroSettledRef.current && playIntro && !prefersReducedMotion) {
       return
     }
 
     if (shouldSleepFastFromPresence) {
-      setIsSleeping(true)
+      enterSleep()
       return
     }
 
-    setIsSleeping(false)
+    exitSleep()
 
     idleSleepDelayRef.current = window.setTimeout(
       () => {
         idleSleepDelayRef.current = null
-        setIsSleeping(true)
+        enterSleep()
       },
       Math.max(0, idleSleepDelayMs)
     )
-  }, [clearIdleSleepDelay, idleSleepDelayMs, shouldScheduleIdleSleep, shouldSleepFastFromPresence])
+  }, [
+    clearIdleSleepDelay,
+    enterSleep,
+    exitSleep,
+    idleSleepDelayMs,
+    playIntro,
+    prefersReducedMotion,
+    shouldScheduleIdleSleep,
+    shouldSleepFastFromPresence,
+  ])
 
   const wakeLogo = React.useCallback(() => {
-    if (isSleeping || shouldSleepFastFromPresence) return
+    if (shouldSleepFastFromPresence) return
+
+    if (isSleeping) {
+      exitSleep()
+    }
 
     scheduleIdleSleep()
-  }, [isSleeping, scheduleIdleSleep, shouldSleepFastFromPresence])
+  }, [exitSleep, isSleeping, scheduleIdleSleep, shouldSleepFastFromPresence])
 
   const applyFrame = React.useCallback((frame: MotionFrame) => {
     const shapeProgress = clamp01(frame.shape)
@@ -424,15 +458,19 @@ const Logo = ({
     (frames: readonly MotionFrame[], durationMs: number) => {
       clearIntroDelay()
       stopAnimation()
-      setIsSleeping(false)
+      exitSleep()
 
       if (prefersReducedMotion) {
         applyFrame(sampleFrames(frames, 1))
+        hasIntroSettledRef.current = true
+        scheduleIdleSleep()
         return
       }
 
       if (typeof document !== 'undefined' && document.hidden) {
         applyFrame(sampleFrames(frames, 1))
+        hasIntroSettledRef.current = true
+        scheduleIdleSleep()
         return
       }
 
@@ -451,30 +489,34 @@ const Logo = ({
 
         rafRef.current = null
         applyFrame(sampleFrames(frames, 1))
+        hasIntroSettledRef.current = true
         scheduleIdleSleep()
       }
 
       applyFrame(sampleFrames(frames, 0))
       rafRef.current = requestAnimationFrame(tick)
     },
-    [applyFrame, clearIntroDelay, prefersReducedMotion, scheduleIdleSleep, stopAnimation]
+    [applyFrame, clearIntroDelay, exitSleep, prefersReducedMotion, scheduleIdleSleep, stopAnimation]
   )
 
   const playInteractionAnimation = React.useCallback(() => {
     if (!playOnInteraction) return
     if (prefersReducedMotion) return
+    if (shouldSleepFastFromPresence) return
 
     runAnimation(clickFrames, CLICK_DURATION_MS)
-  }, [playOnInteraction, prefersReducedMotion, runAnimation])
+  }, [playOnInteraction, prefersReducedMotion, runAnimation, shouldSleepFastFromPresence])
 
   useIsomorphicLayoutEffect(() => {
     clearIntroDelay()
     stopAnimation()
 
+    hasIntroSettledRef.current = false
     lastMorphIndexRef.current = null
     applyFrame(sampleFrames(introFrames, 0))
 
     if (!playIntro || prefersReducedMotion) {
+      hasIntroSettledRef.current = true
       scheduleIdleSleep()
       return
     }
@@ -647,12 +689,12 @@ const Logo = ({
             animation: logoSleepFaceEnter ${SLEEP_ENTER_DURATION_MS}ms cubic-bezier(0.22, 1, 0.36, 1) both;
           }
 
-          [data-logo-sleep-entering='true'] .logo-sleep-zzzs {
-            opacity: 0;
-          }
-
           [data-logo-sleeping='true'] .logo-sleep-zzzs {
             opacity: 1;
+          }
+
+          [data-logo-sleeping='true'][data-logo-sleep-entering='true'] .logo-sleep-zzzs {
+            opacity: 0;
           }
 
           [data-logo-sleeping='true'] .logo-sleep-zzzs .sleep-z {
@@ -775,6 +817,10 @@ const Logo = ({
             .logo-sleep-zzzs,
             .logo-sleep-zzzs text {
               animation: none !important;
+            }
+
+            [data-logo-sleeping='true'] .logo-sleep-zzzs text {
+              opacity: 1;
             }
           }
         `}
