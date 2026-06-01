@@ -1204,4 +1204,271 @@ footer svg {
   font-size: 0.875rem;
   line-height: 1.25rem;
   font-weight: 700;
+}\n\n\n\n\n\n\n\n\n\n/* Notes vault layout */
+.notes-vault-layout {
+  max-width: 48rem;
+}
+
+.notes-vault-shell {
+  display: grid;
+  grid-template-columns: 12rem minmax(0, 1fr);
+  column-gap: 1.5rem;
+  align-items: start;
+  min-width: 0;
+  padding-top: 1.25rem;
+}
+
+.notes-vault-sidebar {
+  position: sticky;
+  top: 1.5rem;
+  min-width: 0;
+  max-height: calc(100svh - 3rem);
+  overflow-y: auto;
+  border-right: 1px solid var(--border);
+  padding-right: 1rem;
+}
+
+.notes-vault-title {
+  margin-bottom: 1rem;
+}
+
+.notes-vault-title h1 {
+  margin: 0;
+  color: var(--foreground);
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+}
+
+.notes-vault-title p {
+  margin-top: 0.25rem;
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.notes-vault-content {
+  min-width: 0;
+  max-width: none;
+  padding-top: 0;
+}
+
+.notes-vault-content > :first-child {
+  margin-top: 0;
+}
+
+@media (max-width: 639px) {
+  .notes-vault-shell {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: 2rem;
+  }
+
+  .notes-vault-sidebar {
+    position: static;
+    max-height: none;
+    overflow: visible;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+    padding-right: 0;
+    padding-bottom: 1rem;
+  }
+}
+
+/* Hitsuji palette code blocks */
+:root,
+[data-theme='light'] {
+  --code-bg: color-mix(in srgb, var(--background) 62%, var(--muted));
+  --code-fg: var(--foreground);
+  --code-muted: var(--muted-foreground);
+  --code-border: var(--border);
+  --code-selection: color-mix(in srgb, var(--accent) 30%, transparent);
+
+  --code-keyword: color-mix(in srgb, var(--accent) 92%, var(--foreground));
+  --code-function: color-mix(in srgb, var(--foreground-strong) 58%, var(--accent));
+  --code-string: color-mix(in srgb, var(--accent) 72%, var(--foreground));
+  --code-number: color-mix(in srgb, var(--accent) 86%, var(--foreground));
+  --code-type: color-mix(in srgb, var(--foreground) 56%, var(--accent));
+  --code-operator: color-mix(in srgb, var(--foreground) 68%, var(--accent));
+  --code-punctuation: color-mix(in srgb, var(--foreground) 92%, var(--muted-foreground));
+  --code-comment: color-mix(in srgb, var(--muted-foreground) 92%, var(--foreground));
+  --code-line-highlight: color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+[data-theme='dark'] {
+  --code-bg: color-mix(in srgb, var(--background) 52%, var(--muted));
+  --code-fg: var(--foreground);
+  --code-muted: var(--muted-foreground);
+  --code-border: var(--border);
+  --code-selection: color-mix(in srgb, var(--accent) 34%, transparent);
+
+  --code-keyword: color-mix(in srgb, var(--accent) 92%, var(--foreground));
+  --code-function: color-mix(in srgb, var(--foreground) 58%, var(--accent));
+  --code-string: color-mix(in srgb, var(--accent) 72%, var(--foreground));
+  --code-number: color-mix(in srgb, var(--accent) 86%, var(--foreground));
+  --code-type: color-mix(in srgb, var(--foreground) 52%, var(--accent));
+  --code-operator: color-mix(in srgb, var(--foreground) 68%, var(--accent));
+  --code-punctuation: color-mix(in srgb, var(--foreground) 90%, var(--muted-foreground));
+  --code-comment: color-mix(in srgb, var(--muted-foreground) 88%, var(--foreground));
+  --code-line-highlight: color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+.post-content :where(pre.astro-code),
+.app-prose :where(pre.astro-code) {
+  --shiki-light-bg: var(--code-bg);
+  --shiki-light: var(--code-fg);
+  --shiki-dark-bg: var(--code-bg);
+  --shiki-dark: var(--code-fg);
+
+  border-color: color-mix(in srgb, var(--code-border) 72%, var(--accent));
+  background: var(--code-bg) !important;
+  color: var(--code-fg) !important;
+}
+
+.post-content :where(pre.astro-code code),
+.app-prose :where(pre.astro-code code) {
+  background: transparent !important;
+  color: inherit !important;
+}
+
+.post-content :where(pre.astro-code span),
+.app-prose :where(pre.astro-code span) {
+  color: inherit;
+}
+
+.post-content :where(pre.astro-code .highlighted),
+.app-prose :where(pre.astro-code .highlighted),
+.post-content :where(pre.astro-code .line-highlight),
+.app-prose :where(pre.astro-code .line-highlight) {
+  background: var(--code-line-highlight);
+}
+
+.post-content :where(pre.astro-code .token.comment),
+.post-content :where(pre.astro-code .token.prolog),
+.post-content :where(pre.astro-code .token.doctype),
+.post-content :where(pre.astro-code .token.cdata),
+.app-prose :where(pre.astro-code .token.comment),
+.app-prose :where(pre.astro-code .token.prolog),
+.app-prose :where(pre.astro-code .token.doctype),
+.app-prose :where(pre.astro-code .token.cdata) {
+  color: var(--code-comment) !important;
+  font-style: italic;
+}
+
+.post-content :where(pre.astro-code .token.keyword),
+.post-content :where(pre.astro-code .token.atrule),
+.post-content :where(pre.astro-code .token.selector),
+.app-prose :where(pre.astro-code .token.keyword),
+.app-prose :where(pre.astro-code .token.atrule),
+.app-prose :where(pre.astro-code .token.selector) {
+  color: var(--code-keyword) !important;
+  font-style: italic;
+}
+
+.post-content :where(pre.astro-code .token.function),
+.post-content :where(pre.astro-code .token.method),
+.app-prose :where(pre.astro-code .token.function),
+.app-prose :where(pre.astro-code .token.method) {
+  color: var(--code-function) !important;
+  font-style: normal;
+}
+
+.post-content :where(pre.astro-code .token.string),
+.post-content :where(pre.astro-code .token.char),
+.post-content :where(pre.astro-code .token.attr-value),
+.app-prose :where(pre.astro-code .token.string),
+.app-prose :where(pre.astro-code .token.char),
+.app-prose :where(pre.astro-code .token.attr-value) {
+  color: var(--code-string) !important;
+}
+
+.post-content :where(pre.astro-code .token.number),
+.post-content :where(pre.astro-code .token.boolean),
+.post-content :where(pre.astro-code .token.constant),
+.app-prose :where(pre.astro-code .token.number),
+.app-prose :where(pre.astro-code .token.boolean),
+.app-prose :where(pre.astro-code .token.constant) {
+  color: var(--code-number) !important;
+}
+
+.post-content :where(pre.astro-code .token.class-name),
+.post-content :where(pre.astro-code .token.builtin),
+.post-content :where(pre.astro-code .token.tag),
+.app-prose :where(pre.astro-code .token.class-name),
+.app-prose :where(pre.astro-code .token.builtin),
+.app-prose :where(pre.astro-code .token.tag) {
+  color: var(--code-type) !important;
+}
+
+.post-content :where(pre.astro-code .token.operator),
+.post-content :where(pre.astro-code .token.entity),
+.post-content :where(pre.astro-code .token.url),
+.app-prose :where(pre.astro-code .token.operator),
+.app-prose :where(pre.astro-code .token.entity),
+.app-prose :where(pre.astro-code .token.url) {
+  color: var(--code-operator) !important;
+}
+
+.post-content :where(pre.astro-code .token.punctuation),
+.app-prose :where(pre.astro-code .token.punctuation) {
+  color: var(--code-punctuation) !important;
+}
+
+.post-content :where(pre.astro-code .token.property),
+.post-content :where(pre.astro-code .token.variable),
+.post-content :where(pre.astro-code .token.parameter),
+.app-prose :where(pre.astro-code .token.property),
+.app-prose :where(pre.astro-code .token.variable),
+.app-prose :where(pre.astro-code .token.parameter) {
+  color: var(--code-fg) !important;
+}
+
+.post-content :where(pre.astro-code .token.deleted),
+.app-prose :where(pre.astro-code .token.deleted) {
+  color: color-mix(in srgb, red 58%, var(--foreground)) !important;
+}
+
+.post-content :where(pre.astro-code .token.inserted),
+.app-prose :where(pre.astro-code .token.inserted) {
+  color: color-mix(in srgb, green 50%, var(--foreground)) !important;
+}
+
+.post-content :where(pre.astro-code ::selection),
+.app-prose :where(pre.astro-code ::selection) {
+  background: var(--code-selection);
+}
+
+.code-file-name,
+.copy-code {
+  border-color: color-mix(in srgb, var(--code-border) 72%, var(--accent));
+  background: var(--code-bg);
+  color: var(--code-fg);
+}
+
+.copy-code:hover,
+.copy-code:focus-visible {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--code-bg) 82%, var(--accent));
+  color: var(--accent);
+}\n\n\n\n
+
+/* Notes tree readable labels */
+.notes-tree-file,
+.notes-tree-file * {
+  white-space: nowrap !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+}
+
+.notes-tree-file {
+  display: block !important;
+  overflow: hidden !important;
+}
+
+.notes-tree-file-icon {
+  display: inline-block !important;
+  color: var(--accent);
+}
+
+.notes-tree-file-label {
+  display: inline !important;
 }

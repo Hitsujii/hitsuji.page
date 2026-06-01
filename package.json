@@ -12,7 +12,8 @@
     "prepare": "husky",
     "lh:desktop": "yarn build && node scripts/lighthouse.mjs desktop",
     "lh:report": "(yarn start > /tmp/hitsuji-next.log 2>&1 & echo $! > /tmp/hitsuji-next.pid) && sleep 5 && npx lighthouse http://localhost:3000 --only-categories=performance --preset=desktop --chrome-flags=\"--headless\" --output=html --output-path=./lighthouse-report.html && kill \"$(cat /tmp/hitsuji-next.pid)\"",
-    "lh:mobile": "yarn build && node scripts/lighthouse.mjs mobile"
+    "lh:mobile": "yarn build && node scripts/lighthouse.mjs mobile",
+    "notes:sync": "mkdir -p data/notes public/static/notes && rsync -a --delete --delete-excluded --exclude='.*/' --exclude='.obsidian/' --exclude='.trash/' --include='*/' --include='*.md' --exclude='*' /home/hitsuji/Learning/programming/cpp/ data/notes/ && rsync -a --delete --delete-excluded --exclude='.*/' --exclude='.obsidian/' --exclude='.trash/' --exclude='*.md' /home/hitsuji/Learning/programming/cpp/ public/static/notes/"
   },
   "dependencies": {
     "@headlessui/react": "2.2.9",

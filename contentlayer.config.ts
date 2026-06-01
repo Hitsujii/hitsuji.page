@@ -1,5 +1,5 @@
 import { defineDocumentType, ComputedFields, makeSource } from 'contentlayer2/source-files'
-import { writeFileSync } from 'fs'
+import { writeFileSync, existsSync, readdirSync } from 'fs'
 import readingTime from 'reading-time'
 import path from 'path'
 import { fromHtmlIsomorphic } from 'hast-util-from-html-isomorphic'
@@ -68,6 +68,323 @@ function remarkAstroPaperCodeMeta() {
   }
 }
 
+function slugifyHeading(value: string) {
+  return value
+    .toLowerCase()
+    .trim()
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
+const noteMarkdownRoot = path.join(root, 'data', 'notes', 'notes')
+let cachedNoteSlugs: Set<string> | undefined
+
+function normalizeSlashes(value: string) {
+  return value.replace(/\\/g, '/')
+}
+
+function safeDecode(value: string) {
+  try {
+    return decodeURIComponent(value)
+  } catch {
+    return value
+  }
+}
+
+function normalizeNoteDocPath(value: string) {
+  return normalizeSlashes(value)
+    .replace(/\.mdx?$/i, '')
+    .replace(/^data\//i, '')
+    .replace(/^notes\/notes\/?/i, '')
+    .replace(/^notes\/?/i, '')
+    .replace(/\/index$/i, '')
+    .replace(/^\/+/, '')
+    .replace(/\/$/, '')
+}
+
+function readNoteSlugs(dir: string, baseDir: string): string[] {
+  if (!existsSync(dir)) return []
+
+  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    if (entry.name.startsWith('.') || entry.name === '.obsidian' || entry.name === '.trash') {
+      return []
+    }
+
+    const fullPath = path.join(dir, entry.name)
+
+    if (entry.isDirectory()) {
+      return readNoteSlugs(fullPath, baseDir)
+    }
+
+    if (!entry.name.endsWith('.md')) {
+      return []
+    }
+
+    return normalizeNoteDocPath(path.relative(baseDir, fullPath))
+  })
+}
+
+function getNoteSlugs() {
+  if (!cachedNoteSlugs) {
+    cachedNoteSlugs = new Set(readNoteSlugs(noteMarkdownRoot, noteMarkdownRoot))
+  }
+
+  return cachedNoteSlugs
+}
+
+function getCurrentNotePath(file: any) {
+  const candidates = [
+    file?.path,
+    file?.history?.[0],
+    file?.data?.rawDocumentData?._raw?.sourceFilePath,
+  ].filter(Boolean)
+
+  for (const candidate of candidates) {
+    const value = normalizeSlashes(String(candidate))
+    const marker = '/data/notes/notes/'
+
+    if (value.includes(marker)) {
+      return normalizeNoteDocPath(value.slice(value.indexOf(marker) + marker.length))
+    }
+
+    if (value.startsWith('data/notes/notes/')) {
+      return normalizeNoteDocPath(value.slice('data/notes/notes/'.length))
+    }
+
+    if (value.startsWith('notes/notes/')) {
+      return normalizeNoteDocPath(value)
+    }
+  }
+
+  return ''
+}
+
+function getCurrentNoteDir(file: any) {
+  const currentPath = getCurrentNotePath(file)
+  const dirname = path.posix.dirname(currentPath)
+
+  return dirname === '.' ? '' : dirname
+}
+
+function encodeUrlPath(value: string) {
+  return value
+    .split('/')
+    .filter(Boolean)
+    .map((part) => encodeURIComponent(part))
+    .join('/')
+}
+
+function splitHash(value: string) {
+  const hashIndex = value.indexOf('#')
+
+  if (hashIndex === -1) {
+    return { rawPath: value, rawHeading: '' }
+  }
+
+  return {
+    rawPath: value.slice(0, hashIndex),
+    rawHeading: value.slice(hashIndex + 1),
+  }
+}
+
+function getWikiLinkLabel(target: string, alias?: string) {
+  if (alias?.trim()) return alias.trim()
+
+  return target.split('#')[0]?.split('/').pop()?.replace(/\.md$/i, '').trim() || target
+}
+
+function resolveNoteSlug(rawTarget: string, file: any) {
+  const noteSlugs = getNoteSlugs()
+  const currentDir = getCurrentNoteDir(file)
+  const decodedTarget = safeDecode(rawTarget.trim())
+  const target = normalizeSlashes(decodedTarget)
+    .replace(/\.md$/i, '')
+    .replace(/^\/+/, '')
+    .replace(/^\.\//, '')
+
+  const candidates: string[] = []
+
+  if (target.startsWith('../')) {
+    candidates.push(path.posix.normalize(`${currentDir}/${target}`))
+  } else if (target.includes('/')) {
+    candidates.push(target)
+  } else {
+    if (currentDir) {
+      candidates.push(`${currentDir}/${target}`)
+    }
+
+    candidates.push(target)
+  }
+
+  for (const candidate of candidates) {
+    const normalized = normalizeNoteDocPath(candidate)
+
+    if (noteSlugs.has(normalized)) {
+      return normalized
+    }
+  }
+
+  const basenameMatches = [...noteSlugs].filter((slug) => slug.split('/').at(-1) === target)
+
+  if (basenameMatches.length === 1) {
+    return basenameMatches[0]
+  }
+
+  return normalizeNoteDocPath(candidates[0] || target)
+}
+
+function noteTargetToHref(target: string, file: any) {
+  const { rawPath, rawHeading } = splitHash(target)
+  const slug = resolveNoteSlug(rawPath, file)
+  const hash = rawHeading ? `#${slugifyHeading(rawHeading)}` : ''
+
+  return slug ? `/notes/${encodeUrlPath(slug)}${hash}` : `/notes${hash}`
+}
+
+function isExternalUrl(value: string) {
+  return /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(value)
+}
+
+function isStaticFileTarget(value: string) {
+  return /\.(?:pdf|zip|html?|png|jpe?g|gif|webp|svg|cpp|c|h|hpp|txt)$/i.test(value)
+}
+
+function staticTargetToHref(rawTarget: string, file: any) {
+  const decodedTarget = safeDecode(rawTarget.trim())
+  const target = normalizeSlashes(decodedTarget).replace(/^\/+/, '')
+  const currentDir = getCurrentNoteDir(file)
+  const currentStaticDir = currentDir ? `notes/${currentDir}` : 'notes'
+
+  const resolved = target.startsWith('../') || target.startsWith('./')
+    ? path.posix.normalize(`${currentStaticDir}/${target}`)
+    : target
+
+  const cleanPath = normalizeSlashes(resolved)
+    .replace(/^public\/static\/notes\//i, '')
+    .replace(/^\/+/, '')
+
+  return `/static/notes/${encodeUrlPath(cleanPath)}`
+}
+
+function normalizeMarkdownLink(url: string, file: any) {
+  if (!url || isExternalUrl(url) || url.startsWith('#')) {
+    return url
+  }
+
+  if (url.startsWith('/notes/notes/')) {
+    return url.replace(/^\/notes\/notes\//, '/notes/')
+  }
+
+  const { rawPath, rawHeading } = splitHash(url)
+  const decodedPath = safeDecode(rawPath)
+
+  if (!decodedPath) {
+    return rawHeading ? `#${slugifyHeading(rawHeading)}` : url
+  }
+
+  if (isStaticFileTarget(decodedPath)) {
+    const hash = rawHeading ? `#${slugifyHeading(rawHeading)}` : ''
+    return `${staticTargetToHref(decodedPath, file)}${hash}`
+  }
+
+  if (decodedPath.endsWith('.md') || !path.posix.extname(decodedPath)) {
+    return noteTargetToHref(rawHeading ? `${decodedPath}#${rawHeading}` : decodedPath, file)
+  }
+
+  return url
+}
+
+function convertWikiText(value: string, file: any) {
+  const regex = /\[\[([^\]\|]+)(?:\|([^\]]+))?\]\]/g
+  const children: any[] = []
+  let lastIndex = 0
+  let match: RegExpExecArray | null
+
+  while ((match = regex.exec(value))) {
+    if (match.index > 0 && value[match.index - 1] === '!') {
+      continue
+    }
+
+    if (match.index > lastIndex) {
+      children.push({ type: 'text', value: value.slice(lastIndex, match.index) })
+    }
+
+    const target = match[1].trim()
+    const alias = match[2]?.trim()
+
+    children.push({
+      type: 'link',
+      url: noteTargetToHref(target, file),
+      children: [{ type: 'text', value: getWikiLinkLabel(target, alias) }],
+    })
+
+    lastIndex = regex.lastIndex
+  }
+
+  if (children.length === 0) {
+    return [{ type: 'text', value }]
+  }
+
+  if (lastIndex < value.length) {
+    children.push({ type: 'text', value: value.slice(lastIndex) })
+  }
+
+  return children
+}
+
+function transformNoteLinks(node: any, file: any) {
+  if (!node) return
+
+  if (node.type === 'link' && typeof node.url === 'string') {
+    node.url = normalizeMarkdownLink(node.url, file)
+  }
+
+  if (!Array.isArray(node.children)) return
+
+  node.children = node.children.flatMap((child: any) => {
+    if (child?.type === 'text') {
+      return convertWikiText(child.value, file)
+    }
+
+    transformNoteLinks(child, file)
+    return child
+  })
+}
+
+function remarkWikiLinks() {
+  return (tree: any, file: any) => {
+    transformNoteLinks(tree, file)
+  }
+}
+
+const noteComputedFields: ComputedFields = {
+  readingTime: { type: 'json', resolve: (doc) => readingTime(doc.body.raw) },
+  slug: {
+    type: 'string',
+    resolve: (doc) => normalizeNoteDocPath(doc._raw.flattenedPath),
+  },
+  path: {
+    type: 'string',
+    resolve: (doc) => {
+      const slug = normalizeNoteDocPath(doc._raw.flattenedPath)
+      return slug ? `notes/${slug}` : 'notes'
+    },
+  },
+  filePath: {
+    type: 'string',
+    resolve: (doc) => doc._raw.sourceFilePath,
+  },
+  toc: { type: 'json', resolve: (doc) => extractTocHeadings(doc.body.raw) },
+  hasToc: {
+    type: 'boolean',
+    resolve: (doc) => /^##\s+Table of contents\s*$/im.test(doc.body.raw),
+  },
+}
+
 // heroicon mini link
 const icon = fromHtmlIsomorphic(
   `
@@ -101,6 +418,7 @@ const computedFields: ComputedFields = {
     resolve: (doc) => /^##\s+Table of contents\s*$/im.test(doc.body.raw),
   },
 }
+
 
 function createSearchIndex(allBlogs) {
   if (
@@ -150,6 +468,20 @@ export const Blog = defineDocumentType(() => ({
   },
 }))
 
+export const Note = defineDocumentType(() => ({
+  name: 'Note',
+  filePathPattern: 'notes/notes/**/*.md',
+  contentType: 'mdx',
+  fields: {
+    title: { type: 'string' },
+    summary: { type: 'string' },
+    tags: { type: 'list', of: { type: 'string' }, default: [] },
+    draft: { type: 'boolean' },
+    lastmod: { type: 'date' },
+  },
+  computedFields: noteComputedFields,
+}))
+
 export const Authors = defineDocumentType(() => ({
   name: 'Authors',
   filePathPattern: 'authors/**/*.mdx',
@@ -171,12 +503,13 @@ export const Authors = defineDocumentType(() => ({
 
 export default makeSource({
   contentDirPath: 'data',
-  documentTypes: [Blog, Authors],
+  documentTypes: [Blog, Authors, Note],
   mdx: {
     cwd: process.cwd(),
     remarkPlugins: [
       remarkExtractFrontmatter,
       remarkGfm,
+      remarkWikiLinks,
       remarkCodeTitles,
       remarkAstroPaperCodeMeta,
       remarkMath,
@@ -203,7 +536,12 @@ export default makeSource({
     ],
   },
   onSuccess: async (importData) => {
-    const { allBlogs } = await importData()
-    createSearchIndex(allBlogs)
+    const { allBlogs, allNotes } = await importData()
+
+    const publicNotes = allNotes
+      .filter((note) => !note.draft)
+      .sort((a, b) => (a.title || a.slug).localeCompare(b.title || b.slug))
+
+    createSearchIndex([...sortPosts(allBlogs), ...publicNotes])
   },
 })
