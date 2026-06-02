@@ -150,3 +150,25 @@ export function findTreeNodeByPath(
 
   return null
 }
+
+export function getNotesBreadcrumbLabels(tree = getNotesTree()) {
+  const labels: Record<string, string> = {
+    '/notes': 'Notes',
+  }
+
+  function walk(nodes: NotesTreeNode[]) {
+    for (const node of nodes) {
+      if (node.path) {
+        labels[`/notes/${node.path}`] = node.name
+      }
+
+      if (node.type === 'folder') {
+        walk(node.children)
+      }
+    }
+  }
+
+  walk(tree)
+
+  return labels
+}

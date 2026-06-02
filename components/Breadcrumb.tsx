@@ -22,16 +22,28 @@ function safeDecode(value: string) {
   }
 }
 
-function formatSegment(segment: string, index: number) {
+function formatSegment(segment: string, index: number, label?: string) {
+  if (label) return label
+
   const decoded = safeDecode(segment)
 
   if (labels[decoded]) return labels[decoded]
 
-  const text = decoded.replaceAll('-', ' ')
+  const text = decoded
+    .replace(/(\d+)-(\d+|x)/gi, (_, left: string, right: string) => {
+      const section = right.toLowerCase()
+      return `${Number(left)}.${section === 'x' ? 'x' : Number(section)}`
+    })
+    .replaceAll('-', ' ')
+
   return index > 0 ? text.toLowerCase() : text.replace(/\b\w/g, (char) => char.toUpperCase())
 }
 
-export default function Breadcrumb() {
+type BreadcrumbProps = {
+  labelsByHref?: Record<string, string>
+}
+
+export default function Breadcrumb({ labelsByHref = {} }: BreadcrumbProps) {
   const pathname = usePathname()
   const segments = pathname.split('/').filter(Boolean)
 
@@ -67,16 +79,18 @@ export default function Breadcrumb() {
                 ? '/tags'
                 : `/${segments.slice(0, index + 1).join('/')}`
 
+          const label = labelsByHref[href]
+
           return (
             <li key={`${segment}-${index}`}>
               {isLast ? (
                 <span className="opacity-75" aria-current="page">
-                  {formatSegment(segment, index)}
+                  {formatSegment(segment, index, label)}
                 </span>
               ) : (
                 <>
-                  <Link href={href} className="capitalize opacity-70 hover:opacity-100">
-                    {formatSegment(segment, index)}
+                  <Link href={href} className="opacity-70 hover:opacity-100">
+                    {formatSegment(segment, index, label)}
                   </Link>{' '}
                   <span aria-hidden="true" className="opacity-70">
                     &raquo;

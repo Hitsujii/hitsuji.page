@@ -10,7 +10,7 @@ import Link from '@/components/Link'
 import { genPageMetadata } from 'app/seo'
 import NotesShell from '@/components/notes/NotesShell'
 import PostEnhancements from '@/components/PostEnhancements'
-import { findTreeNodeByPath, getNotesTree } from '../_lib/notes-tree'
+import { findTreeNodeByPath, getNotesBreadcrumbLabels, getNotesTree } from '../_lib/notes-tree'
 
 function getNoteTitle(note: Pick<Note, 'title' | 'slug'>) {
   return note.title || note.slug.split('/').pop()?.replace(/-/g, ' ') || 'Note'

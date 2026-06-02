@@ -187,7 +187,7 @@ export default function NotesVaultClient({ tree, activePath, children }: NotesVa
       >
         <div className="notes-vault-title">
           <div>
-            <h1>Notes</h1>
+            <div className="notes-vault-heading">Notes</div>
             <p>C++ vault</p>
           </div>
 

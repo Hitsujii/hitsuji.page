@@ -1206,7 +1206,6 @@ footer svg {
   font-weight: 700;
 }
 
-
 /* Notes vault layout */
 .notes-vault-layout {
   max-width: 48rem;
@@ -1254,7 +1253,7 @@ footer svg {
   margin-bottom: 1rem;
 }
 
-.notes-vault-title h1 {
+.notes-vault-heading {
   margin: 0;
   color: var(--foreground);
   font-size: 1rem;
@@ -1631,7 +1630,6 @@ footer svg {
   background: color-mix(in srgb, var(--code-bg) 82%, var(--accent));
   color: var(--accent);
 }
-
 
 /* Notes explorer final polish */
 .notes-vault-toolbar {

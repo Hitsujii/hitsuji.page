@@ -9,7 +9,7 @@ import Link from '@/components/Link'
 import { genPageMetadata } from 'app/seo'
 import NotesShell from '@/components/notes/NotesShell'
 import PostEnhancements from '@/components/PostEnhancements'
-import { getNotesTree, type NotesTreeNode } from './_lib/notes-tree'
+import { getNotesBreadcrumbLabels, getNotesTree, type NotesTreeNode } from './_lib/notes-tree'
 
 export function generateMetadata(): Metadata {
   const note = getRootNote()
@@ -100,7 +100,7 @@ export default function NotesIndexPage() {
 
   if (!note) {
     return (
-      <NotesShell tree={tree}>
+      <NotesShell tree={tree} breadcrumbLabels={getNotesBreadcrumbLabels(tree)}>
         <NotesFallbackList tree={tree} />
       </NotesShell>
     )
@@ -109,7 +109,7 @@ export default function NotesIndexPage() {
   const startsWithH1 = note.body.raw.trimStart().startsWith('# ')
 
   return (
-    <NotesShell tree={tree}>
+    <NotesShell tree={tree} breadcrumbLabels={getNotesBreadcrumbLabels(tree)}>
       {!startsWithH1 && (
         <h1 className="mb-6 text-3xl font-bold text-[var(--accent)]">{getNoteTitle(note)}</h1>
       )}
