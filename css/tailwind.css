@@ -1210,6 +1210,7 @@ footer svg {
 /* Notes vault layout */
 .notes-vault-layout {
   max-width: 48rem;
+  padding-bottom: 64px;
 }
 
 .notes-vault-shell {

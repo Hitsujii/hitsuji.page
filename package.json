@@ -13,7 +13,7 @@
     "lh:desktop": "yarn build && node scripts/lighthouse.mjs desktop",
     "lh:report": "(yarn start > /tmp/hitsuji-next.log 2>&1 & echo $! > /tmp/hitsuji-next.pid) && sleep 5 && npx lighthouse http://localhost:3000 --only-categories=performance --preset=desktop --chrome-flags=\"--headless\" --output=html --output-path=./lighthouse-report.html && kill \"$(cat /tmp/hitsuji-next.pid)\"",
     "lh:mobile": "yarn build && node scripts/lighthouse.mjs mobile",
-    "notes:sync": "bash -lc 'set -euo pipefail; NOTES=\"${CPP_NOTES:-/home/hitsuji/Learning/programming/cpp/notes}\"; test -d \"$NOTES\"; rm -rf data/notes; mkdir -p data/notes/notes; rsync -a --delete --delete-excluded --exclude=\".*/\" --exclude=\".*\" --exclude=\".obsidian/\" --exclude=\".trash/\" --include=\"*/\" --include=\"*.md\" --exclude=\"*\" \"$NOTES/\" data/notes/notes/; echo \"Synced markdown notes from $NOTES\"'",
+    "notes:sync": "bash -lc 'set -euo pipefail; NOTES=\"${CPP_NOTES:-/home/hitsuji/Learning/programming/cpp/notes}\"; test -d \"$NOTES\"; SRC=\"$NOTES\"; if [ -d \"$NOTES/notes\" ] && [ -z \"$(find \"$NOTES\" -maxdepth 1 -type f -name \"*.md\" -print -quit)\" ]; then SRC=\"$NOTES/notes\"; fi; rm -rf data/notes; mkdir -p data/notes/notes; rsync -a --delete --delete-excluded --exclude=\".*/\" --exclude=\".*\" --exclude=\".obsidian/\" --exclude=\".trash/\" --include=\"*/\" --include=\"*.md\" --exclude=\"*\" \"$SRC/\" data/notes/notes/; echo \"Synced markdown notes from $SRC\"'",
     "notes:resync": "bash -lc 'set -euo pipefail; rm -rf data/notes .contentlayer .next public/search.json; yarn notes:sync'"
   },
   "dependencies": {

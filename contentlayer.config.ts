@@ -600,7 +600,9 @@ export default makeSource({
     ],
   },
   onSuccess: async (importData) => {
-    const { allBlogs, allNotes } = await importData()
+    const generatedData = await importData()
+    const allBlogs = Array.isArray(generatedData.allBlogs) ? generatedData.allBlogs : []
+    const allNotes = Array.isArray(generatedData.allNotes) ? generatedData.allNotes : []
 
     const publicNotes = allNotes
       .filter((note) => !note.draft)
