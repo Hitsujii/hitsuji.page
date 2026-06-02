@@ -95,15 +95,32 @@ function safeDecode(value: string) {
   }
 }
 
+function normalizeNoteAliases(value: string) {
+  const parts = normalizeSlashes(safeDecode(value)).replace(/\+/g, ' ').split('/').filter(Boolean)
+  const first = parts[0]?.toLowerCase()
+
+  if (first === 'knowledge' || first === 'c++ fundamentals' || first === 'cpp fundamentals') {
+    parts[0] = 'cpp-fundamentals'
+  }
+
+  if (first === 'learncpp' || first === 'learncpp course') {
+    parts[0] = 'learncpp-course'
+  }
+
+  return parts.join('/')
+}
+
 function normalizeNoteDocPath(value: string) {
-  return normalizeSlashes(value)
-    .replace(/\.mdx?$/i, '')
-    .replace(/^data\//i, '')
-    .replace(/^notes\/notes\/?/i, '')
-    .replace(/^notes\/?/i, '')
-    .replace(/\/index$/i, '')
-    .replace(/^\/+/, '')
-    .replace(/\/$/, '')
+  return normalizeNoteAliases(
+    normalizeSlashes(value)
+      .replace(/\.mdx?$/i, '')
+      .replace(/^data\//i, '')
+      .replace(/^notes\/notes\/?/i, '')
+      .replace(/^notes\/?/i, '')
+      .replace(/\/index$/i, '')
+      .replace(/^\/+/, '')
+      .replace(/\/$/, '')
+  )
 }
 
 function readNoteSlugs(dir: string, baseDir: string): string[] {
@@ -136,38 +153,86 @@ function getNoteSlugs() {
   return cachedNoteSlugs
 }
 
+function normalizeNoteSourcePath(value: string) {
+  let normalized = normalizeSlashes(safeDecode(value)).replace(/\\/g, '/')
+
+  const dataNotesNotesMarker = '/data/notes/notes/'
+  const dataNotesMarker = '/data/notes/'
+
+  if (normalized.includes(dataNotesNotesMarker)) {
+    normalized = normalized.slice(
+      normalized.indexOf(dataNotesNotesMarker) + dataNotesNotesMarker.length
+    )
+  } else if (normalized.includes(dataNotesMarker)) {
+    normalized = normalized.slice(normalized.indexOf(dataNotesMarker) + dataNotesMarker.length)
+  }
+
+  normalized = normalized
+    .replace(/^notes\/notes\//, '')
+    .replace(/^notes\//, '')
+    .replace(/^\.\//, '')
+    .replace(/\.md$/i, '')
+
+  if (normalized.endsWith('/index')) {
+    normalized = normalized.replace(/\/index$/, '')
+  }
+
+  return normalized
+}
+
+function collectFilePathCandidates(file: any) {
+  const candidates: string[] = []
+
+  const push = (value: unknown) => {
+    if (typeof value === 'string' && value.trim()) {
+      candidates.push(value)
+    }
+  }
+
+  push(file?.data?.rawDocumentData?._raw?.sourceFilePath)
+  push(file?.data?.rawDocumentData?.sourceFilePath)
+  push(file?.data?.rawDocumentData?._raw?.flattenedPath)
+  push(file?.data?.rawDocumentData?.flattenedPath)
+  push(file?.data?.sourceFilePath)
+
+  if (Array.isArray(file?.history)) {
+    file.history.forEach(push)
+  }
+
+  push(file?.path)
+  push(file?.dirname)
+  push(file?.basename)
+  push(file?.stem)
+
+  return candidates
+}
+
 function getCurrentNotePath(file: any) {
-  const candidates = [
-    file?.path,
-    file?.history?.[0],
-    file?.data?.rawDocumentData?._raw?.sourceFilePath,
-  ].filter(Boolean)
+  const candidates = collectFilePathCandidates(file)
 
   for (const candidate of candidates) {
-    const value = normalizeSlashes(String(candidate))
-    const marker = '/data/notes/notes/'
+    const normalized = normalizeNoteSourcePath(candidate)
 
-    if (value.includes(marker)) {
-      return normalizeNoteDocPath(value.slice(value.indexOf(marker) + marker.length))
-    }
+    if (!normalized) continue
+    if (normalized === '.' || normalized === '/') continue
+    if (normalized.includes('node_modules')) continue
+    if (normalized.includes('hitsuji.page')) continue
+    if (normalized.startsWith('home/')) continue
 
-    if (value.startsWith('data/notes/notes/')) {
-      return normalizeNoteDocPath(value.slice('data/notes/notes/'.length))
-    }
-
-    if (value.startsWith('notes/notes/')) {
-      return normalizeNoteDocPath(value)
-    }
+    return normalized
   }
 
   return ''
 }
 
 function getCurrentNoteDir(file: any) {
-  const currentPath = getCurrentNotePath(file)
-  const dirname = path.posix.dirname(currentPath)
+  const currentNotePath = getCurrentNotePath(file)
 
-  return dirname === '.' ? '' : dirname
+  if (!currentNotePath) return ''
+
+  const dir = path.posix.dirname(currentNotePath)
+
+  return dir === '.' ? '' : dir
 }
 
 function encodeUrlPath(value: string) {
@@ -249,25 +314,11 @@ function isExternalUrl(value: string) {
   return /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i.test(value)
 }
 
-function isStaticFileTarget(value: string) {
-  return /\.(?:pdf|zip|html?|png|jpe?g|gif|webp|svg|cpp|c|h|hpp|txt)$/i.test(value)
-}
+function hasNonMarkdownExtension(value: string) {
+  const cleanPath = value.split('#')[0] || ''
+  const ext = path.posix.extname(cleanPath).toLowerCase()
 
-function staticTargetToHref(rawTarget: string, file: any) {
-  const decodedTarget = safeDecode(rawTarget.trim())
-  const target = normalizeSlashes(decodedTarget).replace(/^\/+/, '')
-  const currentDir = getCurrentNoteDir(file)
-  const currentStaticDir = currentDir ? `notes/${currentDir}` : 'notes'
-
-  const resolved = target.startsWith('../') || target.startsWith('./')
-    ? path.posix.normalize(`${currentStaticDir}/${target}`)
-    : target
-
-  const cleanPath = normalizeSlashes(resolved)
-    .replace(/^public\/static\/notes\//i, '')
-    .replace(/^\/+/, '')
-
-  return `/static/notes/${encodeUrlPath(cleanPath)}`
+  return Boolean(ext && ext !== '.md' && ext !== '.mdx')
 }
 
 function normalizeMarkdownLink(url: string, file: any) {
@@ -275,20 +326,24 @@ function normalizeMarkdownLink(url: string, file: any) {
     return url
   }
 
+  const { rawPath, rawHeading } = splitHash(url)
+  const decodedPath = safeDecode(rawPath)
+  const hash = rawHeading ? `#${slugifyHeading(rawHeading)}` : ''
+
+  if (!decodedPath) {
+    return rawHeading ? hash : url
+  }
+
   if (url.startsWith('/notes/notes/')) {
     return url.replace(/^\/notes\/notes\//, '/notes/')
   }
 
-  const { rawPath, rawHeading } = splitHash(url)
-  const decodedPath = safeDecode(rawPath)
-
-  if (!decodedPath) {
-    return rawHeading ? `#${slugifyHeading(rawHeading)}` : url
+  if (url.startsWith('/notes/')) {
+    return url
   }
 
-  if (isStaticFileTarget(decodedPath)) {
-    const hash = rawHeading ? `#${slugifyHeading(rawHeading)}` : ''
-    return `${staticTargetToHref(decodedPath, file)}${hash}`
+  if (hasNonMarkdownExtension(decodedPath)) {
+    return url
   }
 
   if (decodedPath.endsWith('.md') || !path.posix.extname(decodedPath)) {
@@ -296,6 +351,21 @@ function normalizeMarkdownLink(url: string, file: any) {
   }
 
   return url
+}
+
+function linkNode(url: string, label: string, file: any) {
+  if (hasNonMarkdownExtension(url)) {
+    return {
+      type: 'text',
+      value: label,
+    }
+  }
+
+  return {
+    type: 'link',
+    url: normalizeMarkdownLink(url, file),
+    children: [{ type: 'text', value: label }],
+  }
 }
 
 function convertWikiText(value: string, file: any) {
@@ -315,12 +385,7 @@ function convertWikiText(value: string, file: any) {
 
     const target = match[1].trim()
     const alias = match[2]?.trim()
-
-    children.push({
-      type: 'link',
-      url: noteTargetToHref(target, file),
-      children: [{ type: 'text', value: getWikiLinkLabel(target, alias) }],
-    })
+    children.push(linkNode(target, getWikiLinkLabel(target, alias), file))
 
     lastIndex = regex.lastIndex
   }
@@ -418,7 +483,6 @@ const computedFields: ComputedFields = {
     resolve: (doc) => /^##\s+Table of contents\s*$/im.test(doc.body.raw),
   },
 }
-
 
 function createSearchIndex(allBlogs) {
   if (
