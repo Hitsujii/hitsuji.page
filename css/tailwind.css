@@ -1809,15 +1809,47 @@ footer svg {
 }
 
 .learning-log-stream {
+  position: relative;
   display: grid;
-  gap: 2.75rem;
-  padding-left: 0;
+  gap: 2rem;
+  padding-left: 1.35rem;
   list-style: none;
 }
 
+.learning-log-stream::before {
+  content: '';
+  position: absolute;
+  top: 0.45rem;
+  bottom: 1rem;
+  left: 0.35rem;
+  width: 1px;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    var(--border) 0.75rem,
+    var(--border) calc(100% - 0.75rem),
+    transparent
+  );
+}
+
 .learning-log-item {
+  position: relative;
   display: grid;
   gap: 0.75rem;
+  scroll-margin-top: 5rem;
+}
+
+.learning-log-item::before {
+  content: '';
+  position: absolute;
+  top: 0.35rem;
+  left: -1.27rem;
+  z-index: 1;
+  width: 0.55rem;
+  height: 0.55rem;
+  border: 2px solid var(--accent);
+  border-radius: 999px;
+  background: var(--background);
 }
 
 .learning-log-date {
@@ -1826,7 +1858,26 @@ footer svg {
 }
 
 .learning-log-content {
+  position: relative;
   min-width: 0;
+  border: 1px solid color-mix(in srgb, var(--border) 88%, transparent);
+  border-radius: 0.45rem;
+  background: color-mix(in srgb, var(--muted) 14%, transparent);
+  padding: 1rem;
+}
+
+.learning-log-content::before {
+  content: '';
+  position: absolute;
+  top: 1.25rem;
+  left: -1.55rem;
+  z-index: 1;
+  display: none;
+  width: 0.55rem;
+  height: 0.55rem;
+  border: 2px solid var(--accent);
+  border-radius: 999px;
+  background: var(--background);
 }
 
 .learning-log-entry-header {
@@ -1841,6 +1892,19 @@ footer svg {
   font-weight: 700;
 }
 
+.learning-log-permalink {
+  margin-left: 0.45rem;
+  color: var(--muted-foreground);
+  font-size: 0.85rem;
+  opacity: 0;
+  text-decoration: none;
+}
+
+.learning-log-entry-header h2:hover .learning-log-permalink,
+.learning-log-permalink:focus-visible {
+  opacity: 1;
+}
+
 .learning-log-meta {
   margin-top: 0.25rem;
   color: var(--muted-foreground);
@@ -1851,16 +1915,18 @@ footer svg {
   margin-top: 0.65rem;
   max-width: 40rem;
   color: var(--foreground);
+  line-height: 1.65;
 }
 
 .learning-log-body {
-  margin-top: 0.9rem;
+  margin-top: 0.95rem;
   max-width: 40rem;
+  line-height: 1.7;
 }
 
 .learning-log-body :where(h2) {
-  margin-top: 1.25rem;
-  margin-bottom: 0.2rem;
+  margin-top: 1.2rem;
+  margin-bottom: 0.25rem;
   color: var(--foreground);
   font-size: 1rem;
   line-height: 1.5rem;
@@ -1880,7 +1946,7 @@ footer svg {
   margin-top: 1.25rem;
   max-width: 40rem;
   border-top: 1px dashed var(--border);
-  padding-top: 0.85rem;
+  padding-top: 0.9rem;
 }
 
 .learning-log-notes h3 {
@@ -1890,22 +1956,30 @@ footer svg {
 }
 
 .learning-log-notes ul {
-  margin-top: 0.35rem;
+  margin-top: 0.45rem;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.35rem 0.75rem;
+  gap: 0.45rem;
   padding-left: 0;
   list-style: none;
 }
 
 .learning-log-notes a {
+  display: inline-flex;
+  align-items: center;
+  border: 1px dashed var(--border-strong);
+  border-radius: 0.45rem;
+  padding: 0.15rem 0.55rem;
   color: var(--accent);
-  text-underline-offset: 0.25em;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  text-decoration: none;
 }
 
 .learning-log-notes a:hover {
-  text-decoration-line: underline;
-  text-decoration-style: dashed;
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  text-decoration-line: none;
 }
 
 .learning-log-empty {
@@ -1919,17 +1993,44 @@ footer svg {
     line-height: 2.25rem;
   }
 
+  .learning-log-stream {
+    padding-left: 0;
+  }
+
+  .learning-log-stream::before {
+    content: '';
+    position: absolute;
+    top: 1.05rem;
+    bottom: 2.25rem;
+    left: 9.05rem;
+    width: 1px;
+    background: linear-gradient(
+      to bottom,
+      transparent,
+      var(--border) 1rem,
+      var(--border) calc(100% - 1rem),
+      transparent
+    );
+  }
+
   .learning-log-item {
     grid-template-columns: 9rem minmax(0, 1fr);
     gap: 1.25rem;
   }
 
+  .learning-log-item::before {
+    display: none;
+  }
+
   .learning-log-date {
-    padding-top: 0.1rem;
+    padding-top: 1.05rem;
   }
 
   .learning-log-content {
-    border-left: 1px dashed var(--border);
-    padding-left: 1.25rem;
+    padding: 1.15rem 1.25rem;
+  }
+
+  .learning-log-content::before {
+    display: block;
   }
 }

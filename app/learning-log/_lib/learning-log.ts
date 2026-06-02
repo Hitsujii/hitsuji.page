@@ -11,19 +11,12 @@ export function getPublicLearningLogs() {
     .sort((a, b) => Number(new Date(b.date)) - Number(new Date(a.date)))
 }
 
-export function getLearningLogBySlug(slug: string) {
-  return getPublicLearningLogs().find((entry) => entry.slug === slug)
-}
-
-export function getLearningLogTitle(entry: Pick<LearningLog, 'title' | 'slug'>) {
-  return entry.title || entry.slug.split('/').pop()?.replace(/-/g, ' ') || 'Learning log'
-}
-
 export function formatLearningLogDate(date: string) {
-  return new Intl.DateTimeFormat('en', {
+  return new Intl.DateTimeFormat('en-GB', {
     day: '2-digit',
     month: 'short',
     year: 'numeric',
+    timeZone: 'UTC',
   }).format(new Date(date))
 }
 

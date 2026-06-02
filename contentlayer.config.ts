@@ -639,7 +639,12 @@ export default makeSource({
       .filter((note) => !note.draft)
       .sort((a, b) => (a.title || a.slug).localeCompare(b.title || b.slug))
 
-    const publicLearningLogs = allLearningLogs.filter((entry) => !entry.draft)
+    const publicLearningLogs = allLearningLogs
+      .filter((entry) => !entry.draft)
+      .map((entry) => ({
+        ...entry,
+        path: `learning-log#${entry.slug}`,
+      }))
 
     createSearchIndex([...sortPosts(allBlogs), ...sortPosts(publicLearningLogs), ...publicNotes])
   },

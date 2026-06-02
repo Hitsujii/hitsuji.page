@@ -1,6 +1,11 @@
+import 'css/prism.css'
+import 'katex/dist/katex.css'
+
 import type { Metadata } from 'next'
+import { MDXLayoutRenderer } from 'pliny/mdx-components'
 import Breadcrumb from '@/components/Breadcrumb'
 import Link from '@/components/Link'
+import { components } from '@/components/MDXComponents'
 import { genPageMetadata } from 'app/seo'
 import {
   formatLearningLogDate,
@@ -10,7 +15,7 @@ import {
 
 export const metadata: Metadata = genPageMetadata({
   title: 'Learning Log',
-  description: 'Short notes from my learning sessions, updated notes, and what I struggled with.',
+  description: 'Short logs from my learning sessions, updated notes, and what was difficult.',
 })
 
 export default function LearningLogPage() {
@@ -22,10 +27,9 @@ export default function LearningLogPage() {
 
       <main id="main-content" className="app-layout learning-log-layout">
         <header className="learning-log-header">
-          <p className="learning-log-eyebrow">Learning journal</p>
           <h1>Learning Log</h1>
           <p>
-            Short notes from study sessions: what I learned, what got stuck, and which notes
+            Short logs from study sessions: what I learned, what was difficult, and which notes
             changed.
           </p>
         </header>
@@ -39,34 +43,51 @@ export default function LearningLogPage() {
             </p>
           </section>
         ) : (
-          <ol className="learning-log-timeline">
+          <ol className="learning-log-stream">
             {entries.map((entry) => {
               const notes = getLearningLogNotes(entry)
+              const hasBody = entry.body.raw.trim().length > 0
+              const meta = [entry.duration, entry.tags?.length ? entry.tags.join(' / ') : null]
+                .filter(Boolean)
+                .join(' · ')
 
               return (
-                <li key={entry.slug} className="learning-log-card">
-                  <div className="learning-log-date">{formatLearningLogDate(entry.date)}</div>
+                <li key={entry.slug} id={entry.slug} className="learning-log-item">
+                  <time dateTime={entry.date} className="learning-log-date">
+                    {formatLearningLogDate(entry.date)}
+                  </time>
 
-                  <article>
-                    <div className="learning-log-card-meta">
-                      <span>{entry.duration || 'Study session'}</span>
-                      {entry.tags?.length > 0 && (
-                        <>
-                          <span aria-hidden="true">·</span>
-                          <span>{entry.tags.join(' / ')}</span>
-                        </>
-                      )}
-                    </div>
+                  <article className="learning-log-content">
+                    <header className="learning-log-entry-header">
+                      <h2>
+                        {entry.title}
+                        <Link
+                          href={`/learning-log#${entry.slug}`}
+                          className="learning-log-permalink"
+                          aria-label={`Link to ${entry.title}`}
+                        >
+                          #
+                        </Link>
+                      </h2>
 
-                    <h2>
-                      <Link href={`/${entry.path}`}>{entry.title}</Link>
-                    </h2>
+                      {meta && <p className="learning-log-meta">{meta}</p>}
 
-                    {entry.summary && <p className="learning-log-summary">{entry.summary}</p>}
+                      {entry.summary && <p className="learning-log-summary">{entry.summary}</p>}
+                    </header>
+
+                    {hasBody && (
+                      <div className="learning-log-body post-content app-prose prose dark:prose-invert">
+                        <MDXLayoutRenderer
+                          code={entry.body.code}
+                          components={components}
+                          toc={entry.toc}
+                        />
+                      </div>
+                    )}
 
                     {notes.length > 0 && (
-                      <div className="learning-log-notes">
-                        <span>Updated notes:</span>
+                      <section className="learning-log-notes" aria-label="Updated notes">
+                        <h3>Updated notes</h3>
                         <ul>
                           {notes.map((note) => (
                             <li key={note.href}>
@@ -74,7 +95,7 @@ export default function LearningLogPage() {
                             </li>
                           ))}
                         </ul>
-                      </div>
+                      </section>
                     )}
                   </article>
                 </li>
