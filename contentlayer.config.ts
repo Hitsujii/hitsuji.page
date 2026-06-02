@@ -273,9 +273,13 @@ function resolveNoteSlug(rawTarget: string, file: any) {
 
   const candidates: string[] = []
 
-  if (target.startsWith('../')) {
+  if (target.startsWith('../') || target.startsWith('./')) {
     candidates.push(path.posix.normalize(`${currentDir}/${target}`))
   } else if (target.includes('/')) {
+    if (currentDir) {
+      candidates.push(path.posix.normalize(`${currentDir}/${target}`))
+    }
+
     candidates.push(target)
   } else {
     if (currentDir) {

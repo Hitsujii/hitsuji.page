@@ -103,6 +103,7 @@ export async function generateMetadata(props: {
 
   if (note) {
     return genPageMetadata({
+      robots: { index: false, follow: true },
       title: getNoteTitle(note),
       description: note.summary || 'A note from my C++ learning vault.',
     })
@@ -113,6 +114,7 @@ export async function generateMetadata(props: {
 
   if (node?.type === 'folder') {
     return genPageMetadata({
+      robots: { index: false, follow: true },
       title: node.name,
       description: 'A folder from my C++ learning vault.',
     })

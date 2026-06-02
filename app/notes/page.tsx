@@ -1,6 +1,7 @@
 import 'css/prism.css'
 import 'katex/dist/katex.css'
 
+import type { Metadata } from 'next'
 import { allNotes, type Note } from 'contentlayer/generated'
 import { MDXLayoutRenderer } from 'pliny/mdx-components'
 import { components } from '@/components/MDXComponents'
@@ -10,10 +11,15 @@ import NotesShell from '@/components/notes/NotesShell'
 import PostEnhancements from '@/components/PostEnhancements'
 import { getNotesTree, type NotesTreeNode } from './_lib/notes-tree'
 
-export const metadata = genPageMetadata({
-  title: 'Notes',
-  description: 'My C++ learning vault.',
-})
+export function generateMetadata(): Metadata {
+  const note = getRootNote()
+
+  return genPageMetadata({
+    robots: { index: false, follow: true },
+    title: note ? getNoteTitle(note) : 'Notes',
+    description: note?.summary || 'My C++ learning vault.',
+  })
+}
 
 function normalizeNotePath(value: string) {
   return decodeURI(value)
