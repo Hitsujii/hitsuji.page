@@ -63,6 +63,12 @@ jobs:
           NEXT_PUBLIC_GISCUS_REPOSITORY_ID: ${{ vars.NEXT_PUBLIC_GISCUS_REPOSITORY_ID }}
           NEXT_PUBLIC_GISCUS_CATEGORY: ${{ vars.NEXT_PUBLIC_GISCUS_CATEGORY }}
           NEXT_PUBLIC_GISCUS_CATEGORY_ID: ${{ vars.NEXT_PUBLIC_GISCUS_CATEGORY_ID }}
+      - name: Verify exported notes
+        run: |
+          test -f app/notes/page.tsx
+          test -f components/notes/NotesVaultClient.tsx
+          test -f out/notes/index.html
+          find out/notes -maxdepth 5 -type f | sort | sed -n '1,120p'
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./out
