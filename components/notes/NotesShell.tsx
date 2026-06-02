@@ -6,13 +6,19 @@ import NotesVaultClient from './NotesVaultClient'
 type NotesShellProps = {
   tree: NotesTreeNode[]
   activePath?: string
+  breadcrumbLabels?: Record<string, string>
   children: ReactNode
 }
 
-export default function NotesShell({ tree, activePath, children }: NotesShellProps) {
+export default function NotesShell({
+  tree,
+  activePath,
+  breadcrumbLabels,
+  children,
+}: NotesShellProps) {
   return (
     <>
-      <Breadcrumb />
+      <Breadcrumb labelsByHref={breadcrumbLabels} />
 
       <main id="main-content" className="app-layout notes-vault-layout pb-4">
         <NotesVaultClient tree={tree} activePath={activePath}>
