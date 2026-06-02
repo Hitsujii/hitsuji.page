@@ -56,3 +56,9 @@ tsconfig.tsbuildinfo
 
 # Generated tag data
 /app/tag-data.json
+
+# synced notes
+!/data/notes/
+!/data/notes/notes/
+!/data/notes/notes/**/
+!/data/notes/notes/**/*.md
