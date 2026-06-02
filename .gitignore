@@ -59,9 +59,8 @@ tsconfig.tsbuildinfo
 
 # synced notes
 !/data/notes/
-!/data/notes/notes/
-!/data/notes/notes/**/
-!/data/notes/notes/**/*.md
+!/data/notes/**/
+!/data/notes/**/*.md
 
 # Commit application note routes and synced markdown notes.
 /app/notes/
