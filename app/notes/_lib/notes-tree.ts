@@ -54,7 +54,10 @@ function readMarkdownTitle(filePath: string) {
 function cleanName(value: string) {
   return value
     .replace(/\.md$/i, '')
-    .replace(/(\d+)-(\d+)/g, (_, left: string, right: string) => `${Number(left)}.${Number(right)}`)
+    .replace(/(\d+)-(\d+|x)/gi, (_, left: string, right: string) => {
+      const section = right.toLowerCase()
+      return `${Number(left)}.${section === 'x' ? 'x' : Number(section)}`
+    })
     .replace(/[-_]/g, ' ')
     .replace(/\s+/g, ' ')
     .trim()
