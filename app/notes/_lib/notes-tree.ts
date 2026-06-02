@@ -156,14 +156,33 @@ export function getNotesBreadcrumbLabels(tree = getNotesTree()) {
     '/notes': 'Notes',
   }
 
-  function walk(nodes: NotesTreeNode[]) {
+  function isSectionLabel(value: string) {
+    return /^\d+(?:\.\d+|\.x)$/i.test(value)
+  }
+
+  function getBreadcrumbLabel(node: NotesTreeNode, parentLabel?: string) {
+    if (
+      node.type === 'note' &&
+      parentLabel &&
+      isSectionLabel(parentLabel) &&
+      !node.name.includes('/')
+    ) {
+      return `${parentLabel} / ${node.name}`
+    }
+
+    return node.name
+  }
+
+  function walk(nodes: NotesTreeNode[], parentLabel?: string) {
     for (const node of nodes) {
+      const label = getBreadcrumbLabel(node, parentLabel)
+
       if (node.path) {
-        labels[`/notes/${node.path}`] = node.name
+        labels[`/notes/${node.path}`] = label
       }
 
       if (node.type === 'folder') {
-        walk(node.children)
+        walk(node.children, label)
       }
     }
   }

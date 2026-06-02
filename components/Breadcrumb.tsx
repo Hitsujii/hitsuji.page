@@ -36,7 +36,7 @@ function formatSegment(segment: string, index: number, label?: string) {
     })
     .replaceAll('-', ' ')
 
-  return index > 0 ? text.toLowerCase() : text.replace(/\b\w/g, (char) => char.toUpperCase())
+  return index === 0 ? text.replace(/^\w/, (char) => char.toUpperCase()) : text
 }
 
 type BreadcrumbProps = {

@@ -131,7 +131,7 @@ export default async function NotePage(props: { params: Promise<{ slug: string[]
     const startsWithH1 = note.body.raw.trimStart().startsWith('# ')
 
     return (
-      <NotesShell tree={tree} activePath={slug}>
+      <NotesShell tree={tree} activePath={slug} breadcrumbLabels={getNotesBreadcrumbLabels(tree)}>
         {!startsWithH1 && (
           <h1 className="mb-6 text-3xl font-bold text-[var(--accent)]">{getNoteTitle(note)}</h1>
         )}
@@ -150,7 +150,7 @@ export default async function NotePage(props: { params: Promise<{ slug: string[]
   }
 
   return (
-    <NotesShell tree={tree} activePath={slug}>
+    <NotesShell tree={tree} activePath={slug} breadcrumbLabels={getNotesBreadcrumbLabels(tree)}>
       <h1 className="text-2xl font-semibold sm:text-3xl">{node.name}</h1>
 
       {node.children.length > 0 && (
