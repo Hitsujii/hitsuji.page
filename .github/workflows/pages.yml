@@ -49,6 +49,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-nextjs-${{ hashFiles('**/yarn.lock') }}-
       - run: yarn
+      - name: Verify notes sources
+        run: |
+          echo "Tracked notes files:"
+          git ls-tree -r --name-only HEAD | grep '^data/notes/' | sort || true
+          echo "Workspace notes files:"
+          find data/notes -maxdepth 6 -type f -print | sort || true
       - run: yarn build
         env:
           EXPORT: 1
