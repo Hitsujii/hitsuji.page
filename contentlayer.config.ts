@@ -80,7 +80,7 @@ function slugifyHeading(value: string) {
     .replace(/^-|-$/g, '')
 }
 
-const noteMarkdownRoot = path.join(root, 'data', 'notes', 'notes')
+const noteMarkdownRoot = path.join(root, 'data', 'notes')
 let cachedNoteSlugs: Set<string> | undefined
 
 function normalizeSlashes(value: string) {
@@ -534,7 +534,7 @@ export const Blog = defineDocumentType(() => ({
 
 export const Note = defineDocumentType(() => ({
   name: 'Note',
-  filePathPattern: 'notes/notes/**/*.md',
+  filePathPattern: 'notes/**/*.md',
   contentType: 'mdx',
   fields: {
     title: { type: 'string' },
