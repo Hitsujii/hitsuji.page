@@ -12,6 +12,7 @@ const labels: Record<string, string> = {
   search: 'Search',
   archives: 'Archives',
   notes: 'Notes',
+  'learning-log': 'Learning Log',
 }
 
 function safeDecode(value: string) {
