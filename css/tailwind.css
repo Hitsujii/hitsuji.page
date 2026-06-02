@@ -1786,159 +1786,133 @@ footer svg {
 }
 
 /* Learning log */
-.learning-log-layout,
-.learning-log-entry-layout {
+.learning-log-layout {
   padding-bottom: 64px;
 }
 
 .learning-log-header {
-  margin-top: 2rem;
-  margin-bottom: 2.5rem;
-  max-width: 42rem;
+  margin-bottom: 1.5rem;
 }
 
-.learning-log-eyebrow {
-  margin-bottom: 0.5rem;
-  font-size: 0.85rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted-foreground);
-}
-
-.learning-log-header h1,
-.learning-log-entry-header h1 {
-  font-size: clamp(2rem, 7vw, 3.5rem);
-  line-height: 1;
-  font-weight: 800;
-  color: var(--accent);
-}
-
-.learning-log-header p,
-.learning-log-entry-header p {
-  margin-top: 1rem;
-  color: var(--muted-foreground);
-}
-
-.learning-log-timeline {
-  position: relative;
-  display: grid;
-  gap: 1.25rem;
-  padding-left: 0;
-  list-style: none;
-}
-
-.learning-log-card {
-  display: grid;
-  gap: 0.75rem;
-  border-left: 1px dashed var(--border);
-  padding-left: 1rem;
-}
-
-.learning-log-date {
-  font-size: 0.875rem;
-  color: var(--muted-foreground);
-}
-
-.learning-log-card article {
-  border: 1px solid var(--border);
-  border-radius: 0.85rem;
-  background: color-mix(in srgb, var(--muted) 35%, transparent);
-  padding: 1rem;
-}
-
-.learning-log-card-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-  font-size: 0.8rem;
-  color: var(--muted-foreground);
-}
-
-.learning-log-card h2 {
-  margin-top: 0.35rem;
-  font-size: 1.35rem;
-  line-height: 1.25;
-  font-weight: 700;
-}
-
-.learning-log-card h2 a {
-  color: var(--foreground);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.25em;
-}
-
-.learning-log-card h2 a:hover {
-  color: var(--accent);
-  text-decoration-style: dashed;
-}
-
-.learning-log-summary {
-  margin-top: 0.65rem;
-  color: var(--muted-foreground);
-}
-
-.learning-log-notes,
-.learning-log-entry-notes {
-  margin-top: 1rem;
-  font-size: 0.9rem;
-}
-
-.learning-log-notes span,
-.learning-log-entry-notes h2 {
-  color: var(--muted-foreground);
+.learning-log-header h1 {
+  font-size: 1.5rem;
+  line-height: 2rem;
   font-weight: 600;
 }
 
-.learning-log-notes ul,
-.learning-log-entry-notes ul {
-  margin-top: 0.4rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
+.learning-log-header p {
+  margin-top: 0.5rem;
+  margin-bottom: 1.5rem;
+  max-width: 42rem;
+  color: var(--muted-foreground);
+  font-style: italic;
+}
+
+.learning-log-stream {
+  display: grid;
+  gap: 2.5rem;
   padding-left: 0;
   list-style: none;
 }
 
-.learning-log-notes a,
-.learning-log-entry-notes a {
-  display: inline-flex;
-  border: 1px dashed var(--border);
-  border-radius: 999px;
-  padding: 0.2rem 0.55rem;
-  color: var(--accent);
+.learning-log-item {
+  display: grid;
+  gap: 0.65rem;
 }
 
-.learning-log-notes a:hover,
-.learning-log-entry-notes a:hover {
-  border-color: var(--accent);
+.learning-log-date {
+  color: var(--muted-foreground);
+  font-size: 0.9rem;
+}
+
+.learning-log-content {
+  min-width: 0;
+}
+
+.learning-log-entry-header h2 {
+  display: inline-block;
+  color: var(--accent);
+  font-size: 1.25rem;
+  line-height: 1.65rem;
+  font-weight: 700;
+}
+
+.learning-log-meta {
+  margin-top: 0.25rem;
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+}
+
+.learning-log-summary {
+  margin-top: 0.6rem;
+  color: var(--foreground);
+}
+
+.learning-log-body {
+  margin-top: 1rem;
+}
+
+.learning-log-body :where(h2) {
+  margin-top: 1.1rem;
+  margin-bottom: 0.25rem;
+  color: var(--foreground);
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 700;
+}
+
+.learning-log-body :where(p) {
+  margin-top: 0.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.learning-log-notes {
+  margin-top: 1rem;
+}
+
+.learning-log-notes h3 {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.learning-log-notes ul {
+  margin-top: 0.35rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-left: 0;
+  list-style: none;
+}
+
+.learning-log-notes a {
+  color: var(--accent);
+  text-underline-offset: 0.25em;
+}
+
+.learning-log-notes a:hover {
+  text-decoration-line: underline;
+  text-decoration-style: dashed;
 }
 
 .learning-log-empty {
-  border: 1px dashed var(--border);
-  border-radius: 0.85rem;
-  padding: 1rem;
-}
-
-.learning-log-entry-header {
-  margin-bottom: 2rem;
-}
-
-.learning-log-entry-notes {
   border-top: 1px dashed var(--border);
   padding-top: 1rem;
 }
 
 @media (min-width: 640px) {
-  .learning-log-card {
-    grid-template-columns: 8rem minmax(0, 1fr);
+  .learning-log-header h1 {
+    font-size: 1.875rem;
+    line-height: 2.25rem;
+  }
+
+  .learning-log-item {
+    grid-template-columns: 9rem minmax(0, 1fr);
+    gap: 1.25rem;
+  }
+
+  .learning-log-content {
+    border-left: 1px dashed var(--border);
     padding-left: 1.25rem;
-  }
-
-  .learning-log-date {
-    padding-top: 1.15rem;
-  }
-
-  .learning-log-card article {
-    padding: 1.25rem;
   }
 }
