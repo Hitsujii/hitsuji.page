@@ -1205,3 +1205,584 @@ footer svg {
   line-height: 1.25rem;
   font-weight: 700;
 }
+
+
+/* Notes vault layout */
+.notes-vault-layout {
+  max-width: 48rem;
+  padding-bottom: 64px;
+}
+
+.notes-vault-shell {
+  display: grid;
+  grid-template-columns: 12rem minmax(0, 1fr);
+  column-gap: 1.5rem;
+  align-items: start;
+  min-width: 0;
+  padding-top: 1.25rem;
+}
+
+.notes-vault-shell.is-collapsed {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.notes-vault-sidebar {
+  position: sticky;
+  top: 1.5rem;
+  min-width: 0;
+  max-height: calc(100svh - 3rem);
+  overflow-y: auto;
+  border-right: 1px solid var(--border);
+  padding-right: 1rem;
+  background: var(--background);
+  scrollbar-gutter: stable;
+}
+
+.notes-vault-shell.is-collapsed .notes-vault-sidebar {
+  display: none;
+}
+
+.notes-vault-main {
+  min-width: 0;
+}
+
+.notes-vault-title {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.notes-vault-title h1 {
+  margin: 0;
+  color: var(--foreground);
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 600;
+}
+
+.notes-vault-title p {
+  margin-top: 0.25rem;
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.notes-vault-close,
+.notes-vault-toggle,
+.notes-vault-controls button {
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  background: color-mix(in srgb, var(--background) 82%, var(--muted));
+  color: var(--foreground);
+  font: inherit;
+  font-size: 0.75rem;
+  line-height: 1rem;
+  transition:
+    color 150ms ease,
+    border-color 150ms ease,
+    background-color 150ms ease,
+    transform 150ms ease;
+}
+
+.notes-vault-close {
+  padding: 0.25rem 0.5rem;
+}
+
+.notes-vault-toggle {
+  display: inline-flex;
+  width: fit-content;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+  padding: 0.4rem 0.6rem;
+}
+
+.notes-vault-shell:not(.is-collapsed) .notes-vault-toggle {
+  display: none;
+}
+
+.notes-vault-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -0.25rem;
+  margin-bottom: 0.85rem;
+}
+
+.notes-vault-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.notes-vault-controls button {
+  display: inline-grid;
+  width: 1.6rem;
+  height: 1.6rem;
+  place-items: center;
+  padding: 0;
+  text-align: center;
+}
+
+.notes-vault-controls button.is-active {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--background) 72%, var(--accent));
+  color: var(--accent);
+}
+
+.notes-vault-close:hover,
+.notes-vault-toggle:hover,
+.notes-vault-controls button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.notes-vault-toggle:active,
+.notes-vault-close:active,
+.notes-vault-controls button:active {
+  transform: scale(0.97);
+}
+
+.notes-vault-close-mobile {
+  display: none;
+}
+
+.notes-vault-content {
+  min-width: 0;
+  max-width: none;
+  padding-top: 0;
+}
+
+.notes-vault-content > :first-child {
+  margin-top: 0;
+}
+
+.notes-vault-backdrop {
+  display: none;
+}
+
+@media (max-width: 639px) {
+  html.notes-drawer-open,
+  html.notes-drawer-open body {
+    overflow: hidden;
+  }
+
+  .notes-vault-shell,
+  .notes-vault-shell.is-collapsed {
+    display: block;
+    padding-top: 1rem;
+  }
+
+  .notes-vault-toggle,
+  .notes-vault-shell:not(.is-collapsed) .notes-vault-toggle {
+    display: inline-flex;
+    margin-bottom: 1.25rem;
+  }
+
+  .notes-vault-sidebar,
+  .notes-vault-shell.is-collapsed .notes-vault-sidebar {
+    position: fixed;
+    z-index: 70;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    display: block;
+    width: min(20rem, calc(100vw - 3rem));
+    max-height: none;
+    overflow-y: auto;
+    border-right: 1px solid var(--border);
+    border-bottom: 0;
+    padding: 1rem;
+    transform: translateX(-105%);
+    transition: transform 180ms ease;
+    box-shadow: none;
+  }
+
+  .notes-vault-shell.is-mobile-open .notes-vault-sidebar {
+    transform: translateX(0);
+  }
+
+  .notes-vault-sidebar::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    right: -1px;
+    bottom: 0;
+    width: 1px;
+    background: var(--accent);
+    opacity: 0.65;
+  }
+
+  .notes-vault-backdrop {
+    position: fixed;
+    z-index: 60;
+    inset: 0;
+    display: block;
+    pointer-events: none;
+    border: 0;
+    background: color-mix(in srgb, var(--background) 42%, transparent);
+    opacity: 0;
+    transition: opacity 180ms ease;
+  }
+
+  .notes-vault-shell.is-mobile-open .notes-vault-backdrop {
+    pointer-events: auto;
+    opacity: 1;
+  }
+
+  .notes-vault-close-mobile {
+    display: inline;
+  }
+
+  .notes-vault-close-desktop {
+    display: none;
+  }
+
+  .notes-vault-toolbar {
+    justify-content: flex-start;
+    margin-bottom: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .notes-vault-sidebar,
+  .notes-vault-backdrop,
+  .notes-vault-close,
+  .notes-vault-toggle,
+  .notes-vault-controls button {
+    transition: none;
+  }
+}
+
+/* Hitsuji palette code blocks */
+:root,
+[data-theme='light'] {
+  --code-bg: color-mix(in srgb, var(--background) 62%, var(--muted));
+  --code-fg: var(--foreground);
+  --code-muted: var(--muted-foreground);
+  --code-border: var(--border);
+  --code-selection: color-mix(in srgb, var(--accent) 30%, transparent);
+
+  --code-keyword: color-mix(in srgb, var(--accent) 92%, var(--foreground));
+  --code-function: color-mix(in srgb, var(--foreground-strong) 58%, var(--accent));
+  --code-string: color-mix(in srgb, var(--accent) 72%, var(--foreground));
+  --code-number: color-mix(in srgb, var(--accent) 86%, var(--foreground));
+  --code-type: color-mix(in srgb, var(--foreground) 56%, var(--accent));
+  --code-operator: color-mix(in srgb, var(--foreground) 68%, var(--accent));
+  --code-punctuation: color-mix(in srgb, var(--foreground) 92%, var(--muted-foreground));
+  --code-comment: color-mix(in srgb, var(--muted-foreground) 92%, var(--foreground));
+  --code-line-highlight: color-mix(in srgb, var(--accent) 16%, transparent);
+}
+
+[data-theme='dark'] {
+  --code-bg: color-mix(in srgb, var(--background) 52%, var(--muted));
+  --code-fg: var(--foreground);
+  --code-muted: var(--muted-foreground);
+  --code-border: var(--border);
+  --code-selection: color-mix(in srgb, var(--accent) 34%, transparent);
+
+  --code-keyword: color-mix(in srgb, var(--accent) 92%, var(--foreground));
+  --code-function: color-mix(in srgb, var(--foreground) 58%, var(--accent));
+  --code-string: color-mix(in srgb, var(--accent) 72%, var(--foreground));
+  --code-number: color-mix(in srgb, var(--accent) 86%, var(--foreground));
+  --code-type: color-mix(in srgb, var(--foreground) 52%, var(--accent));
+  --code-operator: color-mix(in srgb, var(--foreground) 68%, var(--accent));
+  --code-punctuation: color-mix(in srgb, var(--foreground) 90%, var(--muted-foreground));
+  --code-comment: color-mix(in srgb, var(--muted-foreground) 88%, var(--foreground));
+  --code-line-highlight: color-mix(in srgb, var(--accent) 20%, transparent);
+}
+
+.post-content :where(pre.astro-code),
+.app-prose :where(pre.astro-code) {
+  --shiki-light-bg: var(--code-bg);
+  --shiki-light: var(--code-fg);
+  --shiki-dark-bg: var(--code-bg);
+  --shiki-dark: var(--code-fg);
+
+  border-color: color-mix(in srgb, var(--code-border) 72%, var(--accent));
+  background: var(--code-bg) !important;
+  color: var(--code-fg) !important;
+}
+
+.post-content :where(pre.astro-code code),
+.app-prose :where(pre.astro-code code) {
+  background: transparent !important;
+  color: inherit !important;
+}
+
+.post-content :where(pre.astro-code span),
+.app-prose :where(pre.astro-code span) {
+  color: inherit;
+}
+
+.post-content :where(pre.astro-code .highlighted),
+.app-prose :where(pre.astro-code .highlighted),
+.post-content :where(pre.astro-code .line-highlight),
+.app-prose :where(pre.astro-code .line-highlight) {
+  background: var(--code-line-highlight);
+}
+
+.post-content :where(pre.astro-code .token.comment),
+.post-content :where(pre.astro-code .token.prolog),
+.post-content :where(pre.astro-code .token.doctype),
+.post-content :where(pre.astro-code .token.cdata),
+.app-prose :where(pre.astro-code .token.comment),
+.app-prose :where(pre.astro-code .token.prolog),
+.app-prose :where(pre.astro-code .token.doctype),
+.app-prose :where(pre.astro-code .token.cdata) {
+  color: var(--code-comment) !important;
+  font-style: italic;
+}
+
+.post-content :where(pre.astro-code .token.keyword),
+.post-content :where(pre.astro-code .token.atrule),
+.post-content :where(pre.astro-code .token.selector),
+.app-prose :where(pre.astro-code .token.keyword),
+.app-prose :where(pre.astro-code .token.atrule),
+.app-prose :where(pre.astro-code .token.selector) {
+  color: var(--code-keyword) !important;
+  font-style: italic;
+}
+
+.post-content :where(pre.astro-code .token.function),
+.post-content :where(pre.astro-code .token.method),
+.app-prose :where(pre.astro-code .token.function),
+.app-prose :where(pre.astro-code .token.method) {
+  color: var(--code-function) !important;
+  font-style: normal;
+}
+
+.post-content :where(pre.astro-code .token.string),
+.post-content :where(pre.astro-code .token.char),
+.post-content :where(pre.astro-code .token.attr-value),
+.app-prose :where(pre.astro-code .token.string),
+.app-prose :where(pre.astro-code .token.char),
+.app-prose :where(pre.astro-code .token.attr-value) {
+  color: var(--code-string) !important;
+}
+
+.post-content :where(pre.astro-code .token.number),
+.post-content :where(pre.astro-code .token.boolean),
+.post-content :where(pre.astro-code .token.constant),
+.app-prose :where(pre.astro-code .token.number),
+.app-prose :where(pre.astro-code .token.boolean),
+.app-prose :where(pre.astro-code .token.constant) {
+  color: var(--code-number) !important;
+}
+
+.post-content :where(pre.astro-code .token.class-name),
+.post-content :where(pre.astro-code .token.builtin),
+.post-content :where(pre.astro-code .token.tag),
+.app-prose :where(pre.astro-code .token.class-name),
+.app-prose :where(pre.astro-code .token.builtin),
+.app-prose :where(pre.astro-code .token.tag) {
+  color: var(--code-type) !important;
+}
+
+.post-content :where(pre.astro-code .token.operator),
+.post-content :where(pre.astro-code .token.entity),
+.post-content :where(pre.astro-code .token.url),
+.app-prose :where(pre.astro-code .token.operator),
+.app-prose :where(pre.astro-code .token.entity),
+.app-prose :where(pre.astro-code .token.url) {
+  color: var(--code-operator) !important;
+}
+
+.post-content :where(pre.astro-code .token.punctuation),
+.app-prose :where(pre.astro-code .token.punctuation) {
+  color: var(--code-punctuation) !important;
+}
+
+.post-content :where(pre.astro-code .token.property),
+.post-content :where(pre.astro-code .token.variable),
+.post-content :where(pre.astro-code .token.parameter),
+.app-prose :where(pre.astro-code .token.property),
+.app-prose :where(pre.astro-code .token.variable),
+.app-prose :where(pre.astro-code .token.parameter) {
+  color: var(--code-fg) !important;
+}
+
+.post-content :where(pre.astro-code .token.deleted),
+.app-prose :where(pre.astro-code .token.deleted) {
+  color: color-mix(in srgb, red 58%, var(--foreground)) !important;
+}
+
+.post-content :where(pre.astro-code .token.inserted),
+.app-prose :where(pre.astro-code .token.inserted) {
+  color: color-mix(in srgb, green 50%, var(--foreground)) !important;
+}
+
+.post-content :where(pre.astro-code ::selection),
+.app-prose :where(pre.astro-code ::selection) {
+  background: var(--code-selection);
+}
+
+.code-file-name,
+.copy-code {
+  border-color: color-mix(in srgb, var(--code-border) 72%, var(--accent));
+  background: var(--code-bg);
+  color: var(--code-fg);
+}
+
+.copy-code:hover,
+.copy-code:focus-visible {
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--code-bg) 82%, var(--accent));
+  color: var(--accent);
+}
+
+
+/* Notes explorer final polish */
+.notes-vault-toolbar {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: -0.35rem;
+  margin-bottom: 0.7rem;
+}
+
+.notes-vault-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.notes-vault-controls button {
+  display: inline-grid;
+  width: 1.45rem;
+  height: 1.45rem;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  border-radius: 0.25rem;
+  background: transparent;
+  color: var(--muted-foreground);
+}
+
+.notes-vault-controls button:hover,
+.notes-vault-controls button:focus-visible {
+  background: color-mix(in srgb, var(--background) 72%, var(--muted));
+  color: var(--foreground);
+}
+
+.notes-vault-control-icon {
+  width: 1rem;
+  height: 1rem;
+  stroke: currentColor;
+  stroke-width: 1.65;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.notes-tree-folder-summary {
+  min-height: 1.65rem;
+  gap: 0.2rem !important;
+  border-radius: 0.25rem;
+  padding-block: 0.075rem;
+  padding-right: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.notes-tree-folder-summary:hover {
+  background: color-mix(in srgb, var(--background) 78%, var(--muted));
+}
+
+.notes-tree-folder-toggle {
+  display: inline-grid;
+  width: 1rem;
+  height: 1.35rem;
+  flex: none;
+  place-items: center;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--accent);
+  transform-origin: center;
+}
+
+.notes-tree-folder-toggle svg {
+  width: 0.85rem;
+  height: 0.85rem;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.notes-tree-folder[open] > .notes-tree-folder-summary .notes-tree-folder-toggle {
+  transform: rotate(90deg);
+  background: transparent;
+}
+
+.notes-tree-folder-summary:hover .notes-tree-folder-toggle {
+  color: var(--accent);
+}
+
+.notes-tree-folder-label {
+  line-height: 1.3rem;
+}
+
+@media (max-width: 639px) {
+  .notes-vault-toolbar {
+    justify-content: flex-start;
+    margin-top: -0.15rem;
+    margin-bottom: 0.85rem;
+  }
+
+  .notes-vault-controls {
+    gap: 0.25rem;
+  }
+
+  .notes-vault-controls button {
+    width: 1.8rem;
+    height: 1.8rem;
+  }
+
+  .notes-vault-control-icon {
+    width: 1.1rem;
+    height: 1.1rem;
+  }
+
+  .notes-tree-folder-summary {
+    min-height: 1.9rem;
+  }
+
+  .notes-tree-folder-toggle {
+    width: 1.15rem;
+    height: 1.5rem;
+  }
+}
+
+/* Notes explorer interaction polish */
+.notes-vault-controls button,
+.notes-vault-controls button:hover,
+.notes-vault-controls button:focus-visible,
+.notes-vault-controls button:active {
+  transform: none !important;
+}
+
+.notes-vault-controls button {
+  transition:
+    color 150ms ease,
+    background-color 150ms ease;
+}
+
+.notes-tree-folder-toggle {
+  transition:
+    color 150ms ease,
+    background-color 150ms ease,
+    transform 150ms ease;
+}
+
+.notes-tree-folder-summary:hover .notes-tree-folder-toggle {
+  background: color-mix(in srgb, var(--background) 68%, var(--muted));
+  color: var(--foreground);
+}
+
+.notes-tree-folder-summary:active .notes-tree-folder-toggle {
+  color: var(--accent);
+}
+
+.notes-tree-folder[open] > .notes-tree-folder-summary:hover .notes-tree-folder-toggle {
+  color: var(--accent);
+}
