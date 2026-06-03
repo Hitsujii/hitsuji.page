@@ -253,6 +253,16 @@ html[data-view-transition='running'] a {
     background: var(--background) !important;
   }
 
+  html {
+    scrollbar-gutter: stable;
+  }
+
+  @supports not (scrollbar-gutter: stable) {
+    html {
+      overflow-y: scroll;
+    }
+  }
+
   body {
     min-height: 100svh;
     display: flex;
