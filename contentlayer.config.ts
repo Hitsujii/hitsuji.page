@@ -550,6 +550,30 @@ export const Note = defineDocumentType(() => ({
   computedFields: noteComputedFields,
 }))
 
+export const LearningLog = defineDocumentType(() => ({
+  name: 'LearningLog',
+  filePathPattern: 'learning-log/**/*.mdx',
+  contentType: 'mdx',
+  fields: {
+    title: { type: 'string', required: true },
+    date: { type: 'date', required: true },
+    duration: { type: 'string' },
+    summary: { type: 'string' },
+    tags: { type: 'list', of: { type: 'string' }, default: [] },
+    notes: { type: 'json' },
+    draft: { type: 'boolean' },
+    lastmod: { type: 'date' },
+  },
+  computedFields: {
+    ...computedFields,
+    toc: { type: 'json', resolve: (doc) => extractTocHeadings(doc.body.raw) },
+    hasToc: {
+      type: 'boolean',
+      resolve: (doc) => /^##\s+Table of contents\s*$/im.test(doc.body.raw),
+    },
+  },
+}))
+
 export const Authors = defineDocumentType(() => ({
   name: 'Authors',
   filePathPattern: 'authors/**/*.mdx',
@@ -571,7 +595,7 @@ export const Authors = defineDocumentType(() => ({
 
 export default makeSource({
   contentDirPath: 'data',
-  documentTypes: [Blog, Authors, Note],
+  documentTypes: [Blog, Authors, Note, LearningLog],
   mdx: {
     cwd: process.cwd(),
     remarkPlugins: [
@@ -606,12 +630,22 @@ export default makeSource({
   onSuccess: async (importData) => {
     const generatedData = await importData()
     const allBlogs = Array.isArray(generatedData.allBlogs) ? generatedData.allBlogs : []
+    const allLearningLogs = Array.isArray(generatedData.allLearningLogs)
+      ? generatedData.allLearningLogs
+      : []
     const allNotes = Array.isArray(generatedData.allNotes) ? generatedData.allNotes : []
 
     const publicNotes = allNotes
       .filter((note) => !note.draft)
       .sort((a, b) => (a.title || a.slug).localeCompare(b.title || b.slug))
 
-    createSearchIndex([...sortPosts(allBlogs), ...publicNotes])
+    const publicLearningLogs = allLearningLogs
+      .filter((entry) => !entry.draft)
+      .map((entry) => ({
+        ...entry,
+        path: `learning-log#${entry.slug}`,
+      }))
+
+    createSearchIndex([...sortPosts(allBlogs), ...sortPosts(publicLearningLogs), ...publicNotes])
   },
 })
