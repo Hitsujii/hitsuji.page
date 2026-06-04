@@ -72,7 +72,9 @@ export default function LearningLogPage() {
 
                       {meta && <p className="learning-log-meta">{meta}</p>}
 
-                      {entry.summary && <p className="learning-log-summary">{entry.summary}</p>}
+                      {!hasBody && entry.summary && (
+                        <p className="learning-log-summary">{entry.summary}</p>
+                      )}
                     </header>
 
                     {hasBody && (
