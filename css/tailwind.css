@@ -165,7 +165,7 @@ input:-webkit-autofill:focus {
   padding-right: 4px;
 }
 
-.content-header:hover .content-header-link,
+.content-header:hover .heading-link,
 .content-header-link:hover {
   opacity: 1;
 }

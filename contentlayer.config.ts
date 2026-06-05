@@ -2,7 +2,7 @@ import { defineDocumentType, ComputedFields, makeSource } from 'contentlayer2/so
 import { writeFileSync, existsSync, readdirSync } from 'fs'
 import readingTime from 'reading-time'
 import path from 'path'
-import { fromHtmlIsomorphic } from 'hast-util-from-html-isomorphic'
+// import { fromHtmlIsomorphic } from 'hast-util-from-html-isomorphic'
 // Remark packages
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
@@ -455,17 +455,17 @@ const noteComputedFields: ComputedFields = {
 }
 
 // heroicon mini link
-const icon = fromHtmlIsomorphic(
-  `
-  <span class="content-header-link">
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 linkicon">
-  <path d="M12.232 4.232a2.5 2.5 0 0 1 3.536 3.536l-1.225 1.224a.75.75 0 0 0 1.061 1.06l1.224-1.224a4 4 0 0 0-5.656-5.656l-3 3a4 4 0 0 0 .225 5.865.75.75 0 0 0 .977-1.138 2.5 2.5 0 0 1-.142-3.667l3-3Z" />
-  <path d="M11.603 7.963a.75.75 0 0 0-.977 1.138 2.5 2.5 0 0 1 .142 3.667l-3 3a2.5 2.5 0 0 1-3.536-3.536l1.225-1.224a.75.75 0 0 0-1.061-1.06l-1.224 1.224a4 4 0 1 0 5.656 5.656l3-3a4 4 0 0 0-.225-5.865Z" />
-  </svg>
-  </span>
-`,
-  { fragment: true }
-)
+// const icon = fromHtmlIsomorphic(
+//   `
+//   <span class="content-header-link">
+//   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 linkicon">
+//   <path d="M12.232 4.232a2.5 2.5 0 0 1 3.536 3.536l-1.225 1.224a.75.75 0 0 0 1.061 1.06l1.224-1.224a4 4 0 0 0-5.656-5.656l-3 3a4 4 0 0 0 .225 5.865.75.75 0 0 0 .977-1.138 2.5 2.5 0 0 1-.142-3.667l3-3Z" />
+//   <path d="M11.603 7.963a.75.75 0 0 0-.977 1.138 2.5 2.5 0 0 1 .142 3.667l-3 3a2.5 2.5 0 0 1-3.536-3.536l1.225-1.224a.75.75 0 0 0-1.061-1.06l-1.224 1.224a4 4 0 1 0 5.656 5.656l3-3a4 4 0 0 0-.225-5.865Z" />
+//   </svg>
+//   </span>
+// `,
+//   { fragment: true }
+// )
 
 const computedFields: ComputedFields = {
   readingTime: { type: 'json', resolve: (doc) => readingTime(doc.body.raw) },
@@ -613,11 +613,18 @@ export default makeSource({
       [
         rehypeAutolinkHeadings,
         {
-          behavior: 'prepend',
+          behavior: 'append',
+          test: ['h2', 'h3', 'h4', 'h5', 'h6'],
           headingProperties: {
             className: ['content-header'],
           },
-          content: icon,
+          properties: {
+            className: ['heading-link'],
+          },
+          content: {
+            type: 'text',
+            value: '#',
+          },
         },
       ],
       rehypeKatex,

@@ -346,7 +346,7 @@ export default function PostEnhancements({ toc = [] }: PostEnhancementsProps) {
     if (!article) return
 
     enhanceTableOfContents(article, Array.isArray(toc) ? toc : [])
-    enhanceHeadings(article)
+    // enhanceHeadings(article)
     enhanceCodeBlocks(article)
   }, [toc])
 
