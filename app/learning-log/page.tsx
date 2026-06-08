@@ -59,16 +59,7 @@ export default function LearningLogPage() {
 
                   <article className="learning-log-content">
                     <header className="learning-log-entry-header">
-                      <h2>
-                        {entry.title}
-                        <Link
-                          href={`/learning-log#${entry.slug}`}
-                          className="learning-log-permalink"
-                          aria-label={`Link to ${entry.title}`}
-                        >
-                          #
-                        </Link>
-                      </h2>
+                      <h2>{entry.title}</h2>
 
                       {meta && <p className="learning-log-meta">{meta}</p>}
 
