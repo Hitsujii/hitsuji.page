@@ -9,5 +9,5 @@ This section follows my LearnCpp progress.
 
 ## Sections
 
-- [Progress](progress.md)
-- [Exercises](exercises/index.md)
+- [Progress](progress)
+- [Exercises](exercises)
