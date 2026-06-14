@@ -15,7 +15,8 @@ import {
 
 export const metadata: Metadata = genPageMetadata({
   title: 'Learning Log',
-  description: 'Short logs from my learning sessions, updated notes, and what was difficult.',
+  description:
+    'Short logs from my learning sessions: what I worked on, how long it took, and related notes.',
 })
 
 export default function LearningLogPage() {
@@ -29,8 +30,8 @@ export default function LearningLogPage() {
         <header className="learning-log-header">
           <h1>Learning Log</h1>
           <p>
-            Short logs from study sessions: what I learned, what was difficult, and which notes
-            changed.
+            Short logs from study sessions: what I worked on, how long it took, and which notes are
+            related.
           </p>
         </header>
 
@@ -47,7 +48,7 @@ export default function LearningLogPage() {
             {entries.map((entry) => {
               const notes = getLearningLogNotes(entry)
               const hasBody = entry.body.raw.trim().length > 0
-              const meta = [entry.duration, entry.tags?.length ? entry.tags.join(' / ') : null]
+              const meta = [entry.duration, entry.badges?.length ? entry.badges.join(' / ') : null]
                 .filter(Boolean)
                 .join(' · ')
 
@@ -62,10 +63,6 @@ export default function LearningLogPage() {
                       <h2>{entry.title}</h2>
 
                       {meta && <p className="learning-log-meta">{meta}</p>}
-
-                      {!hasBody && entry.summary && (
-                        <p className="learning-log-summary">{entry.summary}</p>
-                      )}
                     </header>
 
                     {hasBody && (
