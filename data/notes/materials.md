@@ -2,7 +2,6 @@
 title: Materials
 summary: Resources I use to learn C++.
 ---
-
 # Materials
 
 - [LearnCpp](https://www.learncpp.com/) - main course.

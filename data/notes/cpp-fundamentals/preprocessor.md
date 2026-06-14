@@ -2,7 +2,6 @@
 title: Preprocessor
 summary: "Textual processing before compilation."
 ---
-
 # Preprocessor
 
 Before compilation, every `.cpp` file goes through preprocessing.
@@ -50,6 +49,6 @@ This code is included in compilation only if the `MY_NAME` macro does not exist.
 
 `#if 0 ... #endif` can temporarily exclude a block of code from compilation.
 
-The same mechanism is used in [header guards](headers.md#header-guard).
+The same mechanism is used in [header guards](headers#header-guard).
 
-This is why preprocessor belongs near [headers](headers.md), even if at first it looks like suspicious magic.
+This is why preprocessor belongs near [headers](headers), even if at first it looks like suspicious magic.

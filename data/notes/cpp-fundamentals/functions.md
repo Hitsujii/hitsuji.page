@@ -2,7 +2,6 @@
 title: Functions
 summary: Small reusable pieces of program behavior.
 ---
-
 # Functions
 
 Function is a reusable block of code that performs one specific task.
@@ -87,4 +86,4 @@ Function should do one specific thing.
 
 If I can separate calculating a result from printing the result, I probably should.
 
-When functions start being used across files, their declarations usually go into [headers](headers.md).
+When functions start being used across files, their declarations usually go into [headers](headers).

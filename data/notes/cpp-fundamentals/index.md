@@ -2,7 +2,6 @@
 title: C++ fundamentals
 summary: "The C++ basics I want nearby while learning."
 ---
-
 # C++ fundamentals
 
 This is the reference part of my notes.
@@ -13,11 +12,12 @@ This section should be boring in a good way. Short explanations, examples, and l
 
 ## Notes
 
-- [Compiler](compiler.md)
-- [Initialization](initialization.md)
-- [iostream](iostream.md)
-- [Functions](functions.md)
-- [Namespaces](namespaces.md)
-- [Preprocessor](preprocessor.md)
-- [Headers](headers.md)
-- [Program design](program-design.md)
+- [Compiler](compiler)
+- [Initialization](initialization)
+- [iostream](iostream)
+- [Functions](functions)
+- [Namespaces](namespaces)
+- [Preprocessor](preprocessor)
+- [Headers](headers)
+- [Program design](program-design)
+- [Debugging](debugging)

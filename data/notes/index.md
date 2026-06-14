@@ -2,7 +2,6 @@
 title: C++ Vault
 summary: My C++ documentation written while I'm learning the language from zero.
 ---
-
 # C++ Vault
 
 Welcome to my C++ learning documentation.
@@ -15,13 +14,13 @@ This should give me a lot of laughs later when I inevitably fix my old notes, wh
 
 ## Sections
 
-- [C++ fundamentals](cpp-fundamentals/index.md)
-- [LearnCpp course](learncpp-course/index.md)
+- [C++ fundamentals](cpp-fundamentals)
+- [LearnCpp course](learncpp-course)
 
 ## Loose notes
 
-- [Materials](materials.md)
-- [Questions](questions.md)
+- [Materials](materials)
+- [Questions](questions)
 
 ## Rule for this vault
 
@@ -29,6 +28,6 @@ Notes should stay short and useful.
 
 _They probably won't._
 
-If something becomes general knowledge, I move it into [C++ fundamentals](cpp-fundamentals/index.md).
+If something becomes general knowledge, I move it into [C++ fundamentals](cpp-fundamentals).
 
-If something belongs to a course, I keep it inside that course section, for example in [LearnCpp course](learncpp-course/index.md).
+If something belongs to a course, I keep it inside that course section, for example in [LearnCpp course](learncpp-course).

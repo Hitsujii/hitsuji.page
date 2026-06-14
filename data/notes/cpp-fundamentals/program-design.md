@@ -2,7 +2,6 @@
 title: Program design
 summary: "How I want to approach small C++ programs."
 ---
-
 # Program design
 
 Before coding, design the program first.
@@ -45,7 +44,7 @@ calculateResult();
 printResult();
 ```
 
-This fits the rule that a [function](functions.md) should do one specific thing.
+This fits the rule that a [function](functions) should do one specific thing.
 
 5. Decide the order of actions.
 

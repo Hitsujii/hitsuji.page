@@ -2,7 +2,6 @@
 title: Compiler
 summary: How `.cpp` files become an executable.
 ---
-
 # Compiler
 
 Compiler translates `.cpp` files into **object files**.
@@ -47,7 +46,7 @@ If we define a function in another `.cpp` file, the current file still needs its
 int add(int x, int y);
 ```
 
-When the program grows, declarations usually move into [headers](cpp-fundamentals/headers).
+When the program grows, declarations usually move into [headers](headers).
 
 ## Flags
 

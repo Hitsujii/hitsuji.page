@@ -2,7 +2,6 @@
 title: iostream
 summary: "Console input and output with std::cout and std::cin."
 ---
-
 # iostream
 
 `#include <iostream>` includes the `iostream` header.

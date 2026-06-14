@@ -2,7 +2,6 @@
 title: Headers
 summary: "Where declarations live when code is split across files."
 ---
-
 # Headers
 
 Header is a `.h` file used mainly for declarations.
@@ -43,7 +42,7 @@ Include standard headers with angle brackets:
 #include <iostream>
 ```
 
-Do not include `.cpp` files. Add them to [compilation](compiler.md) instead.
+Do not include `.cpp` files. Add them to [compilation](compiler) instead.
 
 ## Header guard
 
@@ -64,7 +63,7 @@ How it works:
 2. `#define` defines the macro.
 3. On the next include of the same header, the code between `#ifndef` and `#endif` is skipped.
 
-Header guard uses [preprocessor](preprocessor.md) directives.
+Header guard uses [preprocessor](preprocessor) directives.
 
 Header guard does not block including the same header in different `.cpp` files.
 

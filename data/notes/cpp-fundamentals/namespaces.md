@@ -2,7 +2,6 @@
 title: Namespaces
 summary: "Separate scopes for names."
 ---
-
 # Namespaces
 
 A namespace is a separate scope for names.
@@ -39,6 +38,6 @@ Avoid:
 using namespace std;
 ```
 
-Especially do not put `using namespace std;` in [headers](headers.md).
+Especially do not put `using namespace std;` in [headers](headers).
 
 That would leak names into every file that includes the header, which sounds like a future headache generator.

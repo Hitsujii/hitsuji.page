@@ -2,7 +2,6 @@
 title: Initialization
 summary: "How variables receive their first value."
 ---
-
 # Initialization
 
 Initialization means giving an object its first value when it is created.
@@ -42,7 +41,7 @@ int x { 4.5 }; // error
 
 That is good. I want the compiler to complain before I accidentally turn `4.5` into `4` and pretend everything is fine.
 
-When a variable will receive a value later, for example through [`std::cin`](iostream.md), I still initialize it first:
+When a variable will receive a value later, for example through [`std::cin`](iostream), I still initialize it first:
 
 ```cpp
 int x {};
