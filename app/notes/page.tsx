@@ -10,6 +10,7 @@ import { genPageMetadata } from 'app/seo'
 import NotesShell from '@/components/notes/NotesShell'
 import PostEnhancements from '@/components/PostEnhancements'
 import { getNotesBreadcrumbLabels, getNotesTree, type NotesTreeNode } from './_lib/notes-tree'
+import { getNoteHref, normalizeNotePath } from './_lib/notes-path'
 
 export function generateMetadata(): Metadata {
   const note = getRootNote()
@@ -19,16 +20,6 @@ export function generateMetadata(): Metadata {
     title: note ? getNoteTitle(note) : 'Notes',
     description: note?.summary || 'My C++ learning vault.',
   })
-}
-
-function normalizeNotePath(value: string) {
-  return decodeURI(value)
-    .replace(/\\/g, '/')
-    .replace(/\.md$/i, '')
-    .replace(/^data\//i, '')
-    .replace(/^(notes\/)+/i, '')
-    .replace(/\/index$/i, '')
-    .replace(/\/$/, '')
 }
 
 function getPublicNotes() {
@@ -41,7 +32,7 @@ function getRootNote() {
       .filter(Boolean)
       .map((value) => normalizeNotePath(String(value)))
 
-    return candidates.includes('') || candidates.includes('notes')
+    return candidates.includes('')
   })
 }
 
@@ -50,11 +41,7 @@ function getNoteTitle(note: Pick<Note, 'title' | 'slug'>) {
 }
 
 function getTreeNodeHref(node: NotesTreeNode) {
-  if (node.type === 'folder') {
-    return node.path ? `/notes/${node.path}` : '/notes'
-  }
-
-  return node.href
+  return node.type === 'folder' ? getNoteHref(node.path) : node.href
 }
 
 function NotesFallbackList({ tree }: { tree: NotesTreeNode[] }) {
@@ -109,7 +96,7 @@ export default function NotesIndexPage() {
   const startsWithH1 = note.body.raw.trimStart().startsWith('# ')
 
   return (
-    <NotesShell tree={tree} breadcrumbLabels={getNotesBreadcrumbLabels(tree)}>
+    <NotesShell tree={tree} activePath="" breadcrumbLabels={getNotesBreadcrumbLabels(tree)}>
       {!startsWithH1 && (
         <h1 className="mb-6 text-3xl font-bold text-[var(--accent)]">{getNoteTitle(note)}</h1>
       )}

@@ -11,34 +11,10 @@ import { genPageMetadata } from 'app/seo'
 import NotesShell from '@/components/notes/NotesShell'
 import PostEnhancements from '@/components/PostEnhancements'
 import { findTreeNodeByPath, getNotesBreadcrumbLabels, getNotesTree } from '../_lib/notes-tree'
+import { getNoteHref, normalizeNotePath, splitNotePath } from '../_lib/notes-path'
 
 function getNoteTitle(note: Pick<Note, 'title' | 'slug'>) {
   return note.title || note.slug.split('/').pop()?.replace(/-/g, ' ') || 'Note'
-}
-
-function normalizeNotePath(value: string) {
-  const parts = decodeURI(value)
-    .replace(/\+/g, ' ')
-    .replace(/\\/g, '/')
-    .replace(/\.md$/i, '')
-    .replace(/^data\//i, '')
-    .replace(/^(notes\/)+/i, '')
-    .replace(/\/index$/i, '')
-    .replace(/\/$/, '')
-    .split('/')
-    .filter(Boolean)
-
-  const first = parts[0]?.toLowerCase()
-
-  if (first === 'knowledge' || first === 'c++ fundamentals' || first === 'cpp fundamentals') {
-    parts[0] = 'cpp-fundamentals'
-  }
-
-  if (first === 'learncpp' || first === 'learncpp course') {
-    parts[0] = 'learncpp-course'
-  }
-
-  return parts.join('/')
 }
 
 function getSlug(params: { slug: string[] }) {
@@ -63,28 +39,57 @@ function findNoteBySlug(slug: string) {
   return getPublicNotes().find((note) => getNoteCandidates(note).has(normalizedSlug))
 }
 
+function renderFolderChildren(node: NonNullable<ReturnType<typeof findTreeNodeByPath>>) {
+  if (node.type !== 'folder') return null
+
+  if (node.children.length === 0) {
+    return (
+      <p className="mt-4 text-sm text-[var(--muted-foreground)]">
+        This folder does not contain any visible notes yet.
+      </p>
+    )
+  }
+
+  return (
+    <ul className="mt-6 space-y-2">
+      {node.children.map((child) => (
+        <li key={`${child.type}:${child.path}`}>
+          <Link
+            href={child.type === 'folder' ? getNoteHref(child.path) : child.href}
+            className="text-[var(--accent)] underline-offset-4 hover:underline hover:decoration-dashed"
+          >
+            {child.name}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  )
+}
+
 export async function generateStaticParams() {
   const tree = getNotesTree()
   const paths: { slug: string[] }[] = []
+  const seen = new Set<string>()
 
   function pushPath(value: string) {
     const normalizedPath = normalizeNotePath(value)
+
     if (!normalizedPath) return
+    if (seen.has(normalizedPath)) return
+
+    seen.add(normalizedPath)
 
     paths.push({
-      slug: normalizedPath.split('/').map((segment) => encodeURI(segment)),
+      slug: splitNotePath(normalizedPath),
     })
   }
 
   function walk(nodes: typeof tree) {
     for (const node of nodes) {
-      if (node.type === 'folder') {
-        pushPath(node.path)
-        walk(node.children)
-      }
+      pushPath(node.path)
 
-      if (node.type === 'note') {
-        pushPath(node.path)
+      if (node.type === 'folder') {
+        walk(node.children)
       }
     }
   }
@@ -152,25 +157,7 @@ export default async function NotePage(props: { params: Promise<{ slug: string[]
   return (
     <NotesShell tree={tree} activePath={slug} breadcrumbLabels={getNotesBreadcrumbLabels(tree)}>
       <h1 className="text-2xl font-semibold sm:text-3xl">{node.name}</h1>
-
-      {node.children.length > 0 && (
-        <ul className="mt-6 space-y-2">
-          {node.children.map((child) => {
-            const href = child.type === 'folder' ? `/notes/${child.path}` : child.href
-
-            return (
-              <li key={`${child.type}:${child.path}`}>
-                <Link
-                  href={href}
-                  className="text-[var(--accent)] underline-offset-4 hover:underline hover:decoration-dashed"
-                >
-                  {child.name}
-                </Link>
-              </li>
-            )
-          })}
-        </ul>
-      )}
+      {renderFolderChildren(node)}
     </NotesShell>
   )
 }

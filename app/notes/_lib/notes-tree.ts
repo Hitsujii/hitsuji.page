@@ -1,5 +1,6 @@
 import fs from 'fs'
 import path from 'path'
+import { getNoteHref, normalizeNotePath } from './notes-path'
 
 export type NotesTreeNode =
   | {
@@ -20,14 +21,6 @@ const ignoredNames = new Set(['.obsidian', '.trash', '.DS_Store'])
 
 function shouldIgnore(name: string) {
   return ignoredNames.has(name) || name.startsWith('.')
-}
-
-function encodeUrlPath(value: string) {
-  return value
-    .split('/')
-    .filter(Boolean)
-    .map((part) => encodeURIComponent(part))
-    .join('/')
 }
 
 function stripYamlQuotes(value: string) {
@@ -53,7 +46,7 @@ function readMarkdownTitle(filePath: string) {
 
 function cleanName(value: string) {
   return value
-    .replace(/\.md$/i, '')
+    .replace(/\.mdx?$/i, '')
     .replace(/(\d+)-(\d+|x)/gi, (_, left: string, right: string) => {
       const section = right.toLowerCase()
       return `${Number(left)}.${section === 'x' ? 'x' : Number(section)}`
@@ -85,15 +78,19 @@ function sortEntries(a: NotesTreeNode, b: NotesTreeNode) {
 
   if (byType !== 0) return byType
 
-  return a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' })
+  return a.name.localeCompare(b.name, undefined, {
+    numeric: true,
+    sensitivity: 'base',
+  })
 }
 
 function buildFolder(dir: string, relativeDir: string): Extract<NotesTreeNode, { type: 'folder' }> {
+  const folderPath = normalizeNotePath(relativeDir)
   const children: NotesTreeNode[] = []
 
   for (const entry of listDir(dir)) {
     const entryPath = path.join(dir, entry.name)
-    const relativePath = path.posix.join(relativeDir, entry.name)
+    const relativePath = normalizeNotePath(path.posix.join(folderPath, entry.name))
 
     if (entry.isDirectory()) {
       children.push(buildFolder(entryPath, relativePath))
@@ -101,16 +98,17 @@ function buildFolder(dir: string, relativeDir: string): Extract<NotesTreeNode, {
     }
 
     if (!entry.isFile()) continue
-    if (!entry.name.endsWith('.md')) continue
+    if (!entry.name.match(/\.mdx?$/i)) continue
     if (entry.name.toLowerCase() === 'index.md') continue
+    if (entry.name.toLowerCase() === 'index.mdx') continue
 
-    const notePath = relativePath.replace(/\.md$/i, '')
+    const notePath = normalizeNotePath(relativePath)
 
     children.push({
       type: 'note',
       name: noteName(entryPath),
       path: notePath,
-      href: `/notes/${encodeUrlPath(notePath)}`,
+      href: getNoteHref(notePath),
     })
   }
 
@@ -119,7 +117,7 @@ function buildFolder(dir: string, relativeDir: string): Extract<NotesTreeNode, {
   return {
     type: 'folder',
     name: folderName(dir, path.basename(dir)),
-    path: relativeDir,
+    path: folderPath,
     children,
   }
 }
@@ -134,7 +132,7 @@ export function findTreeNodeByPath(
   nodes: NotesTreeNode[],
   targetPath: string
 ): NotesTreeNode | null {
-  const normalizedTargetPath = targetPath.replace(/^\/+|\/+$/g, '')
+  const normalizedTargetPath = normalizeNotePath(targetPath)
 
   for (const node of nodes) {
     if (node.path === normalizedTargetPath) {
@@ -158,9 +156,7 @@ export function getNotesBreadcrumbLabels(tree = getNotesTree()) {
 
   function walk(nodes: NotesTreeNode[]) {
     for (const node of nodes) {
-      if (node.path) {
-        labels[`/notes/${node.path}`] = node.name
-      }
+      labels[getNoteHref(node.path)] = node.name
 
       if (node.type === 'folder') {
         walk(node.children)
