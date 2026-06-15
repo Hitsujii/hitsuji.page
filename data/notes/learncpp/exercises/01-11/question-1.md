@@ -1,0 +1,35 @@
+---
+title: Question 1
+---
+
+# Question 1
+
+Modify the solution to the “best solution” program above so that it outputs like this (assuming user input 4):
+
+```
+Enter an integer: 4
+Double 4 is: 8
+Triple 4 is: 12
+```
+
+## Solution
+
+```cpp:main.cpp
+#include <iostream>
+
+int main()
+{
+    int x {};
+
+    std::cout << "Enter an integer: ";
+    std::cin >> x;
+
+    int doubleInteger { x * 2 };
+    int tripleInteger { x * 3 };
+
+    std::cout << "Double " << x << " is: " << doubleInteger << '\n'
+              << "Triple " << x << " is: " << tripleInteger << '\n';
+
+    return 0;
+}
+```
