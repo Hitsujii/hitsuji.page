@@ -1,136 +1,140 @@
 @reference "./tailwind.css";
 
-/**
- * CSS Styles for code highlighting.
- * Feel free to customize token styles 
- * by copying from a prismjs compatible theme:
- * https://github.com/PrismJS/prism-themes
+/*
+ * Frieren-inspired syntax palette.
+ * Colors inherit from css/tailwind.css, keeping both themes coherent.
  */
 
-/* Code title styles */
 .remark-code-title {
-  @apply rounded-xs bg-gray-700 px-5 py-3 font-mono text-sm font-bold text-gray-200 dark:bg-gray-800;
+  border: 1px solid var(--code-border);
+  border-bottom: 0;
+  border-radius: 0.375rem 0.375rem 0 0;
+  background: var(--code-bg);
+  padding: 0.75rem 1.25rem;
+  color: var(--code-fg);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 700;
 }
 
 .remark-code-title + div > pre {
-  @apply mt-0 rounded-t-none;
+  margin-top: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
 }
 
-/* Code block styles */
 .code-highlight {
-  @apply float-left min-w-full;
+  float: left;
+  min-width: 100%;
 }
 
 .code-line {
-  @apply -mx-4 block border-l-4 border-transparent pr-4 pl-4;
+  display: block;
+  margin-inline: -1rem;
+  border-left: 4px solid transparent;
+  padding-inline: 1rem;
 }
 
 .code-line.inserted {
-  @apply bg-green-500/20;
+  background: color-mix(in srgb, var(--magic) 18%, transparent);
 }
 
 .code-line.deleted {
-  @apply bg-red-500/20;
+  background: color-mix(in srgb, var(--danger) 18%, transparent);
 }
 
 .highlight-line {
-  @apply border-primary-500 -mx-4 border-l-4 bg-gray-700/50;
+  margin-inline: -1rem;
+  border-left: 4px solid var(--accent);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
 }
 
 .line-number::before {
-  @apply mr-4 -ml-2 inline-block w-4 text-right text-gray-400;
+  display: inline-block;
+  width: 1rem;
+  margin-right: 1rem;
+  margin-left: -0.5rem;
+  color: var(--code-muted);
+  text-align: right;
   content: attr(line);
 }
 
-/* Token styles */
-/**
- * MIT License
- * Copyright (c) 2018 Sarah Drasner
- * Sarah Drasner's[@sdras] Night Owl
- * Ported by Sara vieria [@SaraVieira]
- * Added by Souvik Mandal [@SimpleIndian]
- */
 .token.comment,
 .token.prolog,
+.token.doctype,
 .token.cdata {
-  color: rgb(99, 119, 119);
+  color: var(--code-comment);
   font-style: italic;
 }
 
 .token.punctuation {
-  color: rgb(199, 146, 234);
+  color: var(--code-punctuation);
 }
 
-.namespace {
-  color: rgb(178, 204, 214);
+.namespace,
+.token.class-name,
+.token.builtin,
+.token.tag {
+  color: var(--code-type);
 }
 
 .token.deleted {
-  color: rgba(239, 83, 80, 0.56);
+  color: color-mix(in srgb, var(--danger) 78%, var(--code-fg));
   font-style: italic;
 }
 
 .token.symbol,
-.token.property {
-  color: rgb(128, 203, 196);
+.token.property,
+.token.variable,
+.token.parameter {
+  color: var(--code-fg);
 }
 
-.token.tag,
 .token.operator,
-.token.keyword {
-  color: rgb(127, 219, 202);
+.token.entity,
+.token.url {
+  color: var(--code-operator);
 }
 
-.token.boolean {
-  color: rgb(255, 88, 116);
-}
-
-.token.number {
-  color: rgb(247, 140, 108);
-}
-
-.token.constant,
-.token.function,
-.token.builtin,
-.token.char {
-  color: rgb(130, 170, 255);
-}
-
-.token.selector,
-.token.doctype {
-  color: rgb(199, 146, 234);
+.token.keyword,
+.token.atrule,
+.token.selector {
+  color: var(--code-keyword);
   font-style: italic;
+}
+
+.token.boolean,
+.token.number,
+.token.constant {
+  color: var(--code-number);
+}
+
+.token.function,
+.token.method {
+  color: var(--code-function);
+}
+
+.token.char,
+.token.string,
+.token.attr-value,
+.language-css .token.string,
+.style .token.string {
+  color: var(--code-string);
 }
 
 .token.attr-name,
 .token.inserted {
-  color: rgb(173, 219, 103);
-  font-style: italic;
-}
-
-.token.string,
-.token.url,
-.token.entity,
-.language-css .token.string,
-.style .token.string {
-  color: rgb(173, 219, 103);
-}
-
-.token.class-name,
-.token.atrule,
-.token.attr-value {
-  color: rgb(255, 203, 139);
+  color: color-mix(in srgb, var(--magic) 72%, var(--code-fg));
 }
 
 .token.regex,
-.token.important,
-.token.variable {
-  color: rgb(214, 222, 235);
+.token.important {
+  color: color-mix(in srgb, var(--gold) 78%, var(--code-fg));
 }
 
 .token.important,
 .token.bold {
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .token.italic {

@@ -133,7 +133,7 @@ export default function PostLayout({ content, next, prev, children }: LayoutProp
         {siteMetadata.comments?.provider && (
           <div
             id="comment"
-            className="clear-both pt-6 pb-6 text-center text-gray-700 dark:text-gray-300"
+            className="clear-both pt-6 pb-6 text-center text-[var(--muted-foreground)]"
           >
             <Comments slug={slug} />
           </div>

@@ -74,3 +74,9 @@ tsconfig.tsbuildinfo
 !/data/notes/
 !/data/notes/**/
 !/data/notes/**/*.md
+
+# Local theme work and generated files
+.theme-backups/
+frieren-theme-dump.txt
+*.tsbuildinfo
+public/static/favicons/.old-tailwind-nextjs-starter-blog/

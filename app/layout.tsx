@@ -39,16 +39,9 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: `${metadataBasePath}/static/favicons/favicon.svg?v=14`,
+        url: `${metadataBasePath}/static/favicons/favicon.svg?v=15`,
         type: 'image/svg+xml',
         sizes: 'any',
-      },
-    ],
-    apple: [
-      {
-        url: `${metadataBasePath}/static/favicons/apple-touch-icon.png?v=14`,
-        sizes: '180x180',
-        type: 'image/png',
       },
     ],
   },
@@ -94,7 +87,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         className={`${googleSansCode.variable} ${space_grotesk.variable} scroll-smooth`}
         suppressHydrationWarning
       >
-        <link rel="alternate" type="application/rss+xml" href={`${basePath}/feed.xml`} />
+        <head>
+          <meta name="theme-color" content="#f5f7fb" />
+          <link rel="alternate" type="application/rss+xml" href={`${basePath}/feed.xml`} />
+        </head>
         <body className="flex min-h-svh flex-col bg-[var(--background)] text-[var(--foreground)] antialiased">
           <ThemeProviders>
             <Analytics analyticsConfig={siteMetadata.analytics as AnalyticsConfig} />

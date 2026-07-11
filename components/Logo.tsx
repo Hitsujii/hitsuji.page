@@ -642,7 +642,7 @@ const Logo = ({
 
             opacity: 0;
             fill: var(--logo-secondary);
-            stroke: var(--logo-primary);
+            stroke: var(--logo-detail);
             stroke-width: 4px;
             paint-order: stroke;
             transform-box: fill-box;
@@ -838,7 +838,7 @@ const Logo = ({
               <g ref={faceJellyRef} style={faceMotionStyle}>
                 <path fill="var(--logo-secondary)" d={FACE_PATH} transform={FACE_BASE_TRANSFORM} />
 
-                <path fill="var(--logo-primary)" d={CHECK_PATH} transform={FACE_BASE_TRANSFORM} />
+                <path fill="var(--logo-detail)" d={CHECK_PATH} transform={FACE_BASE_TRANSFORM} />
               </g>
             </g>
           </g>
@@ -849,7 +849,7 @@ const Logo = ({
               x="206"
               y="124"
               fill="var(--logo-secondary)"
-              stroke="var(--logo-primary)"
+              stroke="var(--logo-detail)"
               strokeWidth="3"
               paintOrder="stroke"
               fontSize="40"
@@ -864,7 +864,7 @@ const Logo = ({
               x="230"
               y="104"
               fill="var(--logo-secondary)"
-              stroke="var(--logo-primary)"
+              stroke="var(--logo-detail)"
               strokeWidth="3"
               paintOrder="stroke"
               fontSize="46"
@@ -879,7 +879,7 @@ const Logo = ({
               x="257"
               y="83"
               fill="var(--logo-secondary)"
-              stroke="var(--logo-primary)"
+              stroke="var(--logo-detail)"
               strokeWidth="3.5"
               paintOrder="stroke"
               fontSize="52"

@@ -282,10 +282,10 @@ function enhanceCodeBlocks(article: HTMLElement) {
 
     codeBlock.classList.add('astro-code', 'astro-code-themes', 'min-light', 'night-owl', 'mt-8')
 
-    codeBlock.style.setProperty('--shiki-light', '#24292eff')
-    codeBlock.style.setProperty('--shiki-dark', '#d6deeb')
-    codeBlock.style.setProperty('--shiki-light-bg', '#ffffff')
-    codeBlock.style.setProperty('--shiki-dark-bg', '#011627')
+    codeBlock.style.setProperty('--shiki-light', 'var(--code-fg)')
+    codeBlock.style.setProperty('--shiki-dark', 'var(--code-fg)')
+    codeBlock.style.setProperty('--shiki-light-bg', 'var(--code-bg)')
+    codeBlock.style.setProperty('--shiki-dark-bg', 'var(--code-bg)')
     codeBlock.style.setProperty('--file-name-offset', '-0.75rem')
     codeBlock.style.overflowX = 'auto'
 

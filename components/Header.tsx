@@ -40,7 +40,7 @@ export default function Header() {
       </a>
 
       <header className="app-layout flex flex-col items-center justify-between sm:flex-row">
-        <div className="relative flex w-full items-baseline justify-between border-b border-[var(--border)] bg-[var(--background)] py-4 sm:items-center sm:py-6">
+        <div className="relative flex w-full items-baseline justify-between border-b border-[var(--border)] bg-transparent py-4 sm:items-center sm:py-6">
           {/* <Link
             href="/"
             aria-label={title}
@@ -56,7 +56,7 @@ export default function Header() {
             onClick={() => setMenuOpen(false)}
           >
             <DeferredLogo
-              className="block h-9 w-auto transition-opacity hover:opacity-80 sm:h-11"
+              className="site-logo block h-9 w-auto sm:h-11"
               aria-hidden="true"
               playIntro={true}
             />

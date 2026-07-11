@@ -87,7 +87,7 @@ export default function Home({ posts }) {
 
           {socialLinks.some(({ href }) => Boolean(href)) && (
             <div className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-2">
-              <div className="text-sm whitespace-nowrap text-gray-600 dark:text-gray-400">
+              <div className="text-sm whitespace-nowrap text-[var(--muted-foreground)]">
                 Social Links:
               </div>
 
