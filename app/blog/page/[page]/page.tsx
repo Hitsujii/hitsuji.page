@@ -11,7 +11,9 @@ const POSTS_PER_PAGE = 4
 export const generateStaticParams = async () => {
   const publishedBlogs = allBlogs.filter((post) => !post.draft)
   const totalPages = Math.ceil(publishedBlogs.length / POSTS_PER_PAGE)
-  return getPaginatedPageNumbers(totalPages).map((page) => ({ page: String(page) }))
+  return Array.from({ length: totalPages }, (_, index) => ({
+    page: String(index + 1),
+  }))
 }
 
 export const dynamicParams = false
@@ -35,7 +37,7 @@ export default async function Page(props: { params: Promise<{ page: string }> })
   const pageNumber = parsePageNumber(params.page)
   const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE)
 
-  if (!pageNumber || pageNumber < 2 || pageNumber > totalPages) {
+  if (!pageNumber || pageNumber > totalPages) {
     return notFound()
   }
   const initialDisplayPosts = posts.slice(
