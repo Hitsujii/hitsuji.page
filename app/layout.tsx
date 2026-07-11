@@ -1,10 +1,8 @@
 import 'css/tailwind.css'
-import 'pliny/search/algolia.css'
 import 'remark-github-blockquote-alert/alert.css'
 
-import { Space_Grotesk } from 'next/font/google'
-import { Analytics, AnalyticsConfig } from 'pliny/analytics'
-import { SearchProvider, SearchConfig } from 'pliny/search'
+import { Analytics, type AnalyticsConfig } from 'pliny/analytics'
+import { KBarSearchProvider, type KBarSearchProps } from 'pliny/search/KBar'
 import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import siteMetadata from '@/data/siteMetadata'
@@ -15,19 +13,18 @@ import { ViewTransitions } from 'next-view-transitions'
 
 const googleSansCode = Google_Sans_Code({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
+  weight: 'variable',
   style: ['normal', 'italic'],
   display: 'swap',
   variable: '--font-google-sans-code',
 })
 
-const metadataBasePath = process.env.BASE_PATH || ''
+const kbarConfig: KBarSearchProps =
+  siteMetadata.search?.provider === 'kbar'
+    ? siteMetadata.search.kbarConfig
+    : { searchDocumentsPath: false }
 
-const space_grotesk = Space_Grotesk({
-  subsets: ['latin'],
-  display: 'swap',
-  variable: '--font-space-grotesk',
-})
+const metadataBasePath = process.env.BASE_PATH || ''
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteMetadata.siteUrl),
@@ -79,26 +76,24 @@ export const metadata: Metadata = {
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  const basePath = process.env.BASE_PATH || ''
   return (
     <ViewTransitions>
       <html
         lang={siteMetadata.language}
-        className={`${googleSansCode.variable} ${space_grotesk.variable} scroll-smooth`}
+        className={`${googleSansCode.variable} scroll-smooth`}
         suppressHydrationWarning
       >
         <head>
           <meta name="theme-color" content="#f5f7fb" />
-          <link rel="alternate" type="application/rss+xml" href={`${basePath}/feed.xml`} />
         </head>
         <body className="flex min-h-svh flex-col bg-[var(--background)] text-[var(--foreground)] antialiased">
           <ThemeProviders>
             <Analytics analyticsConfig={siteMetadata.analytics as AnalyticsConfig} />
-            <SearchProvider searchConfig={siteMetadata.search as SearchConfig}>
+            <KBarSearchProvider kbarConfig={kbarConfig}>
               <Header />
               {children}
               <Footer />
-            </SearchProvider>
+            </KBarSearchProvider>
           </ThemeProviders>
         </body>
       </html>

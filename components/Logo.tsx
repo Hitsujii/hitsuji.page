@@ -167,27 +167,16 @@ const formatNumber = (value: number) => {
   return Object.is(rounded, -0) ? '0' : String(rounded)
 }
 
-const createMorphPathCache = () => {
-  const morphBody = interpolate(FLAT_BODY, CIRCLE_BODY, {
-    maxSegmentLength: MORPH_MAX_SEGMENT_LENGTH,
-  })
-
-  return Array.from({ length: MORPH_CACHE_STEPS + 1 }, (_, index) => {
-    return morphBody(index / MORPH_CACHE_STEPS)
-  })
-}
-
-// Precomputed morph frames keep animation cheap at runtime.
-// Increase MORPH_CACHE_STEPS only if visible stepping appears at larger sizes.
-const BODY_MORPH_PATHS = createMorphPathCache()
+const interpolateBodyPath = interpolate(FLAT_BODY, CIRCLE_BODY, {
+  maxSegmentLength: MORPH_MAX_SEGMENT_LENGTH,
+})
 
 const getMorphPathSample = (progress: number) => {
   const index = Math.round(clamp01(progress) * MORPH_CACHE_STEPS)
-  const path = BODY_MORPH_PATHS[index] ?? FLAT_BODY
 
   return {
     index,
-    path,
+    path: interpolateBodyPath(index / MORPH_CACHE_STEPS),
   }
 }
 

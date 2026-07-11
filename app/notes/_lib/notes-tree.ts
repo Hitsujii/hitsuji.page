@@ -36,12 +36,27 @@ function titleFromMarkdown(raw: string) {
   return titleFromFrontmatter || titleFromH1 || null
 }
 
-function readMarkdownTitle(filePath: string) {
+function isDraftMarkdown(raw: string) {
+  const frontmatter = raw.match(/^---\s*\n([\s\S]*?)\n---/)
+  return /^draft:\s*true\s*$/im.test(frontmatter?.[1] ?? '')
+}
+
+function readMarkdown(filePath: string) {
   try {
-    return titleFromMarkdown(fs.readFileSync(filePath, 'utf-8'))
+    return fs.readFileSync(filePath, 'utf-8')
   } catch {
-    return null
+    return undefined
   }
+}
+
+function readMarkdownTitle(filePath: string) {
+  const raw = readMarkdown(filePath)
+  return raw && !isDraftMarkdown(raw) ? titleFromMarkdown(raw) : null
+}
+
+function isPublicMarkdown(filePath: string) {
+  const raw = readMarkdown(filePath)
+  return Boolean(raw && !isDraftMarkdown(raw))
 }
 
 function cleanName(value: string) {
@@ -93,7 +108,13 @@ function buildFolder(dir: string, relativeDir: string): Extract<NotesTreeNode, {
     const relativePath = normalizeNotePath(path.posix.join(folderPath, entry.name))
 
     if (entry.isDirectory()) {
-      children.push(buildFolder(entryPath, relativePath))
+      const folder = buildFolder(entryPath, relativePath)
+      const indexPath = path.join(entryPath, 'index.md')
+
+      if (folder.children.length > 0 || isPublicMarkdown(indexPath)) {
+        children.push(folder)
+      }
+
       continue
     }
 
@@ -101,6 +122,7 @@ function buildFolder(dir: string, relativeDir: string): Extract<NotesTreeNode, {
     if (!entry.name.match(/\.mdx?$/i)) continue
     if (entry.name.toLowerCase() === 'index.md') continue
     if (entry.name.toLowerCase() === 'index.mdx') continue
+    if (!isPublicMarkdown(entryPath)) continue
 
     const notePath = normalizeNotePath(relativePath)
 

@@ -1,0 +1,8 @@
+# Raw command/code snapshot; formatting would alter the captured output.
+learning-log-design-debug.md
+
+.contentlayer/
+.next/
+.yarn/
+out/
+public/search.json

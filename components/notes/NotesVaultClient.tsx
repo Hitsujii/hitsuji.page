@@ -12,6 +12,15 @@ type NotesVaultClientProps = {
 
 const STORAGE_KEY = 'notes-explorer-collapsed'
 const MOBILE_OPEN_KEY = 'notes-explorer-mobile-open'
+const FOCUSABLE_SELECTOR = [
+  'a[href]',
+  'button:not([disabled])',
+  'input:not([disabled])',
+  'select:not([disabled])',
+  'textarea:not([disabled])',
+  'summary',
+  '[tabindex]:not([tabindex="-1"])',
+].join(',')
 
 function isMobileViewport() {
   return window.matchMedia('(max-width: 639px)').matches
@@ -42,7 +51,7 @@ function ExplorerToolbarIcon({ command }: { command: NotesTreeCommand }) {
   )
 }
 
-function focusActiveExplorerItem() {
+function revealActiveExplorerItem(shouldFocus = false) {
   window.requestAnimationFrame(() => {
     window.requestAnimationFrame(() => {
       const currentPage = document.querySelector<HTMLElement>(
@@ -56,31 +65,54 @@ function focusActiveExplorerItem() {
       if (!activeItem) return
 
       activeItem.scrollIntoView({ block: 'center', inline: 'nearest' })
-      activeItem.focus({ preventScroll: true })
+
+      if (shouldFocus) {
+        activeItem.focus({ preventScroll: true })
+      }
     })
   })
 }
 
 export default function NotesVaultClient({ tree, activePath, children }: NotesVaultClientProps) {
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [mobileViewport, setMobileViewport] = useState(false)
   const [collapsed, setCollapsed] = useState(false)
   const [treeCommand, setTreeCommand] = useState<NotesTreeCommand>('focus')
   const [treeCommandKey, setTreeCommandKey] = useState(0)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const explorerRef = useRef<HTMLElement>(null)
+  const toggleButtonRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
-    setCollapsed(window.localStorage.getItem(STORAGE_KEY) === 'true')
+    const mediaQuery = window.matchMedia('(max-width: 639px)')
 
-    if (isMobileViewport()) {
-      setMobileOpen(window.sessionStorage.getItem(MOBILE_OPEN_KEY) === 'true')
+    const syncViewport = () => {
+      setMobileViewport(mediaQuery.matches)
+
+      if (mediaQuery.matches) {
+        setMobileOpen(window.sessionStorage.getItem(MOBILE_OPEN_KEY) === 'true')
+      } else {
+        setMobileOpen(false)
+      }
+    }
+
+    setCollapsed(window.localStorage.getItem(STORAGE_KEY) === 'true')
+    syncViewport()
+    mediaQuery.addEventListener('change', syncViewport)
+
+    return () => {
+      mediaQuery.removeEventListener('change', syncViewport)
     }
   }, [])
 
   useEffect(() => {
     setTreeCommand('focus')
     setTreeCommandKey((current) => current + 1)
-    focusActiveExplorerItem()
-  }, [activePath])
+
+    if (!mobileViewport || mobileOpen) {
+      revealActiveExplorerItem()
+    }
+  }, [activePath, mobileOpen, mobileViewport])
 
   useEffect(() => {
     document.documentElement.classList.toggle('notes-drawer-open', mobileOpen)
@@ -95,11 +127,38 @@ export default function NotesVaultClient({ tree, activePath, children }: NotesVa
   }, [mobileOpen])
 
   useEffect(() => {
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key !== 'Escape') return
+    if (!mobileViewport || !mobileOpen) return
 
-      window.sessionStorage.removeItem(MOBILE_OPEN_KEY)
-      setMobileOpen(false)
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === 'Escape') {
+        event.preventDefault()
+        closeMobileExplorer()
+        return
+      }
+
+      if (event.key !== 'Tab') return
+
+      const explorer = explorerRef.current
+      if (!explorer) return
+
+      const focusableElements = Array.from(
+        explorer.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR)
+      ).filter((element) => !element.hasAttribute('disabled'))
+      const first = focusableElements[0]
+      const last = focusableElements.at(-1)
+
+      if (!first || !last) return
+
+      if (
+        event.shiftKey &&
+        (document.activeElement === first || !explorer.contains(document.activeElement))
+      ) {
+        event.preventDefault()
+        last.focus()
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault()
+        first.focus()
+      }
     }
 
     document.addEventListener('keydown', handleKeyDown)
@@ -107,14 +166,14 @@ export default function NotesVaultClient({ tree, activePath, children }: NotesVa
     return () => {
       document.removeEventListener('keydown', handleKeyDown)
     }
-  }, [])
+  }, [mobileOpen, mobileViewport])
 
   function runTreeCommand(nextCommand: NotesTreeCommand) {
     setTreeCommand(nextCommand)
     setTreeCommandKey((current) => current + 1)
 
     if (nextCommand === 'focus') {
-      focusActiveExplorerItem()
+      revealActiveExplorerItem(true)
     }
   }
 
@@ -150,6 +209,7 @@ export default function NotesVaultClient({ tree, activePath, children }: NotesVa
   function closeMobileExplorer() {
     window.sessionStorage.removeItem(MOBILE_OPEN_KEY)
     setMobileOpen(false)
+    window.requestAnimationFrame(() => toggleButtonRef.current?.focus())
   }
 
   function handleNavClick(event: MouseEvent<HTMLElement>) {
@@ -180,10 +240,15 @@ export default function NotesVaultClient({ tree, activePath, children }: NotesVa
         .join(' ')}
     >
       <aside
+        ref={explorerRef}
         id="notes-vault-explorer"
         data-pagefind-ignore
         className="notes-vault-sidebar not-prose"
         aria-label="Notes explorer"
+        aria-hidden={mobileViewport && !mobileOpen ? true : undefined}
+        aria-modal={mobileViewport && mobileOpen ? true : undefined}
+        inert={mobileViewport && !mobileOpen ? true : undefined}
+        role={mobileViewport && mobileOpen ? 'dialog' : undefined}
       >
         <div className="notes-vault-title">
           <div>
@@ -245,14 +310,16 @@ export default function NotesVaultClient({ tree, activePath, children }: NotesVa
         type="button"
         className="notes-vault-backdrop"
         aria-label="Close notes explorer"
+        tabIndex={-1}
         onClick={closeMobileExplorer}
       />
 
-      <div className="notes-vault-main">
+      <div className="notes-vault-main" inert={mobileViewport && mobileOpen ? true : undefined}>
         <button
+          ref={toggleButtonRef}
           type="button"
           className="notes-vault-toggle focus-outline"
-          aria-expanded={mobileOpen || !collapsed}
+          aria-expanded={mobileViewport ? mobileOpen : !collapsed}
           aria-controls="notes-vault-explorer"
           onClick={openExplorer}
         >

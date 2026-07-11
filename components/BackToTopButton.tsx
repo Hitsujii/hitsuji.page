@@ -10,17 +10,28 @@ export default function BackToTopButton() {
 
   useEffect(() => {
     const rootElement = document.documentElement
+    let frameId: number | null = null
 
-    const handleScroll = () => {
+    const updateScrollState = () => {
+      frameId = null
       const scrollTotal = rootElement.scrollHeight - rootElement.clientHeight
       const scrollTop = rootElement.scrollTop
-      const nextPercent = scrollTotal > 0 ? Math.floor((scrollTop / scrollTotal) * 100) : 0
+      const nextPercent =
+        scrollTotal > 0
+          ? Math.min(100, Math.max(0, Math.floor((scrollTop / scrollTotal) * 100)))
+          : 0
 
       setScrollPercent(nextPercent)
       setVisible(scrollTotal > 0 && scrollTop / scrollTotal > 0.3)
     }
 
-    handleScroll()
+    const handleScroll = () => {
+      if (frameId === null) {
+        frameId = window.requestAnimationFrame(updateScrollState)
+      }
+    }
+
+    updateScrollState()
 
     document.addEventListener('scroll', handleScroll, { passive: true })
     window.addEventListener('resize', handleScroll)
@@ -28,6 +39,10 @@ export default function BackToTopButton() {
     return () => {
       document.removeEventListener('scroll', handleScroll)
       window.removeEventListener('resize', handleScroll)
+
+      if (frameId !== null) {
+        window.cancelAnimationFrame(frameId)
+      }
     }
   }, [])
 
@@ -53,6 +68,7 @@ export default function BackToTopButton() {
           'transition duration-500',
           visible ? 'translate-y-0 opacity-100' : 'pointer-events-none translate-y-14 opacity-0',
         ].join(' ')}
+        aria-hidden={!visible}
       >
         <button
           data-button="back-to-top"
@@ -64,7 +80,15 @@ export default function BackToTopButton() {
             'md:bg-[color-mix(in_srgb,var(--background)_35%,transparent)] md:bg-clip-padding md:backdrop-blur-lg',
           ].join(' ')}
           aria-label="Back to top"
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+          tabIndex={visible ? undefined : -1}
+          onClick={() =>
+            window.scrollTo({
+              top: 0,
+              behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                ? 'auto'
+                : 'smooth',
+            })
+          }
         >
           <span
             id="progress-indicator"

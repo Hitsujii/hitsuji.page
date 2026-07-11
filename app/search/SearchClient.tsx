@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import Link from '@/components/Link'
 import { normalizeAppPath, withBasePath } from '@/components/path-utils'
 import { IconSearch } from '@/components/icons/AstroPaperIcons'
@@ -15,9 +15,16 @@ type SearchDocument = {
   tags?: string[]
   date?: string
   lastmod?: string
+  draft?: boolean
   body?: {
     raw?: string
   }
+}
+
+function isPublicSearchDocument(value: unknown): value is SearchDocument {
+  if (!value || typeof value !== 'object') return false
+
+  return (value as { draft?: unknown }).draft !== true
 }
 
 type SearchSection = {
@@ -144,27 +151,42 @@ export default function SearchClient() {
   const [query, setQuery] = useState('')
   const [documents, setDocuments] = useState<SearchDocument[]>([])
   const [loaded, setLoaded] = useState(false)
+  const [initialized, setInitialized] = useState(false)
+  const inputRef = useRef<HTMLInputElement>(null)
+  const hasQuery = Boolean(normalize(query))
 
   useEffect(() => {
+    const controller = new AbortController()
     const params = new URLSearchParams(window.location.search)
     setQuery(params.get('q') ?? '')
+    setInitialized(true)
 
-    fetch(getSearchIndexPath())
+    fetch(getSearchIndexPath(), { signal: controller.signal })
       .then((response) => {
         if (!response.ok) throw new Error('Search index not found')
-        return response.json()
+        return response.json() as Promise<unknown>
       })
-      .then((data: SearchDocument[]) => {
-        setDocuments(Array.isArray(data) ? data : [])
+      .then((data) => {
+        if (controller.signal.aborted) return
+
+        setDocuments(Array.isArray(data) ? data.filter(isPublicSearchDocument) : [])
       })
-      .catch(() => setDocuments([]))
-      .finally(() => setLoaded(true))
+      .catch(() => {
+        if (!controller.signal.aborted) setDocuments([])
+      })
+      .finally(() => {
+        if (!controller.signal.aborted) setLoaded(true)
+      })
+
+    return () => controller.abort()
   }, [])
 
   useEffect(() => {
+    if (!initialized) return
+
     const params = new URLSearchParams(window.location.search)
 
-    if (query) {
+    if (normalize(query)) {
       params.set('q', query)
     } else {
       params.delete('q')
@@ -174,7 +196,7 @@ export default function SearchClient() {
     const nextUrl = search ? `/search?${search}` : '/search'
     window.history.replaceState(window.history.state, '', withBasePath(nextUrl))
     sessionStorage.setItem('backUrl', normalizeAppPath(nextUrl))
-  }, [query])
+  }, [initialized, query])
 
   const results = useMemo(() => {
     const term = normalize(query)
@@ -215,6 +237,7 @@ export default function SearchClient() {
 
         <input
           id="search-input"
+          ref={inputRef}
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search posts..."
@@ -222,11 +245,14 @@ export default function SearchClient() {
           type="search"
         />
 
-        {query && (
+        {hasQuery && (
           <button
             type="button"
-            onClick={() => setQuery('')}
-            className="absolute top-1/2 right-4 -translate-y-1/2 text-xs hover:text-[var(--accent)]"
+            onClick={() => {
+              setQuery('')
+              inputRef.current?.focus()
+            }}
+            className="absolute top-1/2 right-4 inline-flex min-h-6 min-w-6 -translate-y-1/2 items-center justify-center text-xs hover:text-[var(--accent)]"
           >
             Clear
           </button>
@@ -235,22 +261,32 @@ export default function SearchClient() {
 
       <div className="pagefind-ui__drawer mt-6">
         {!loaded && (
-          <p className="pagefind-ui__message text-[var(--muted-foreground)]">Loading...</p>
+          <p className="pagefind-ui__message text-[var(--muted-foreground)]" role="status">
+            Loading...
+          </p>
         )}
 
-        {loaded && !query && (
-          <p className="pagefind-ui__message text-[var(--muted-foreground)]">Search posts...</p>
+        {loaded && !hasQuery && (
+          <p className="pagefind-ui__message text-[var(--muted-foreground)]" role="status">
+            Search posts...
+          </p>
         )}
 
-        {loaded && query && results.length === 0 && (
-          <p className="pagefind-ui__message text-sm font-bold text-[var(--foreground)]">
+        {loaded && hasQuery && results.length === 0 && (
+          <p
+            className="pagefind-ui__message text-sm font-bold text-[var(--foreground)]"
+            role="status"
+          >
             No results found
           </p>
         )}
 
         {results.length > 0 && (
           <>
-            <p className="pagefind-ui__message text-sm font-bold text-[var(--foreground)]">
+            <p
+              className="pagefind-ui__message text-sm font-bold text-[var(--foreground)]"
+              role="status"
+            >
               {results.length} result{results.length === 1 ? '' : 's'} for {query}
             </p>
 
@@ -293,11 +329,11 @@ export default function SearchClient() {
 
                     {sections.length > 0 && (
                       <ul className="pagefind-ui__result-nested mt-3 space-y-2">
-                        {sections.map((section) => {
+                        {sections.map((section, sectionIndex) => {
                           const sectionSnippet = snippet(section.text, query)
 
                           return (
-                            <li key={section.title}>
+                            <li key={`${section.title}-${sectionIndex}`}>
                               <Link
                                 href={href}
                                 className="text-sm font-bold text-[var(--accent)] hover:underline hover:decoration-dashed"

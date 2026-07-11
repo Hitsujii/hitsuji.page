@@ -1,3 +1,13 @@
+const basePath = (process.env.BASE_PATH || '').replace(/^\/*|\/*$/g, '')
+const configuredSiteUrl = (process.env.NEXT_PUBLIC_SITE_URL || 'https://hitsuji.page').replace(
+  /\/+$/,
+  ''
+)
+const siteUrl =
+  basePath && !configuredSiteUrl.endsWith(`/${basePath}`)
+    ? `${configuredSiteUrl}/${basePath}`
+    : configuredSiteUrl
+
 /** @type {import("pliny/config").PlinyConfig } */
 const siteMetadata = {
   title: 'Hitsuji',
@@ -7,7 +17,7 @@ const siteMetadata = {
     'Learning C++, building for the web, and slowly turning high-cortisol decisions into projects.',
   language: 'en-us',
   theme: 'system', // system, dark or light
-  siteUrl: process.env.NEXT_PUBLIC_SITE_URL || 'https://hitsuji.page',
+  siteUrl,
   siteRepo: 'https://github.com/Hitsujii/hitsuji.page',
   siteLogo: `${process.env.BASE_PATH || ''}/static/images/logo.png`,
   socialBanner: `${process.env.BASE_PATH || ''}/static/images/og-card.png`,

@@ -57,16 +57,11 @@ const FloatingButton = ({
 
 export default function ScrollTopAndComment() {
   const [show, setShow] = useState(false)
-  const [progress, setProgress] = useState(0)
 
   useEffect(() => {
     const handleWindowScroll = () => {
       const scrollTop = window.scrollY
-      const scrollHeight = document.documentElement.scrollHeight - window.innerHeight
-      const nextProgress = scrollHeight > 0 ? Math.min((scrollTop / scrollHeight) * 100, 100) : 0
-
       setShow(scrollTop > 50)
-      setProgress(nextProgress)
     }
 
     handleWindowScroll()

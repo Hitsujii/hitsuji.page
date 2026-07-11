@@ -4,6 +4,10 @@ import ListLayout from '@/layouts/ListLayoutWithTags'
 import { allBlogs } from 'contentlayer/generated'
 import { getTagCounts } from 'app/tag-data'
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
+import siteMetadata from '@/data/siteMetadata'
+import { genPageMetadata } from 'app/seo'
+import { getPaginatedPageNumbers, parsePageNumber } from 'app/pagination'
 
 const POSTS_PER_PAGE = 4
 
@@ -12,12 +16,34 @@ export const generateStaticParams = async () => {
 
   return Object.keys(tagCounts).flatMap((tag) => {
     const postCount = tagCounts[tag]
-    const totalPages = Math.max(1, Math.ceil(postCount / POSTS_PER_PAGE))
+    const totalPages = Math.ceil(postCount / POSTS_PER_PAGE)
 
-    return Array.from({ length: totalPages }, (_, i) => ({
-      tag: encodeURI(tag),
-      page: (i + 1).toString(),
+    return getPaginatedPageNumbers(totalPages).map((page) => ({
+      tag,
+      page: String(page),
     }))
+  })
+}
+
+export const dynamicParams = false
+
+export async function generateMetadata(props: {
+  params: Promise<{ tag: string; page: string }>
+}): Promise<Metadata> {
+  const params = await props.params
+  const tag = decodeURI(params.tag)
+  const tagCounts = getTagCounts()
+  const pageNumber = parsePageNumber(params.page)
+  const totalPages = Math.ceil((tagCounts[tag] || 0) / POSTS_PER_PAGE)
+
+  if (!Object.hasOwn(tagCounts, tag) || !pageNumber || pageNumber < 2 || pageNumber > totalPages) {
+    return notFound()
+  }
+
+  const tagName = tag.replaceAll('-', ' ')
+  return genPageMetadata({
+    title: `Tag: ${tagName} - Page ${pageNumber}`,
+    description: `${siteMetadata.title} ${tagName} tagged content`,
   })
 }
 
@@ -25,7 +51,7 @@ export default async function TagPage(props: { params: Promise<{ tag: string; pa
   const params = await props.params
   const tag = decodeURI(params.tag)
   const tagName = tag.replaceAll('-', ' ')
-  const pageNumber = parseInt(params.page)
+  const pageNumber = parsePageNumber(params.page)
   const filteredPosts = allCoreContent(
     sortPosts(
       allBlogs.filter(
@@ -35,7 +61,7 @@ export default async function TagPage(props: { params: Promise<{ tag: string; pa
   )
   const totalPages = Math.ceil(filteredPosts.length / POSTS_PER_PAGE)
 
-  if (pageNumber <= 0 || pageNumber > totalPages || isNaN(pageNumber)) {
+  if (!pageNumber || pageNumber < 2 || pageNumber > totalPages) {
     return notFound()
   }
 

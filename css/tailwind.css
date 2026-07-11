@@ -139,15 +139,6 @@
   @apply my-5;
 }
 
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-.no-scrollbar {
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none; /* Firefox */
-}
-
 /* https://stackoverflow.com/questions/61083813/how-to-avoid-internal-autofill-selected-style-to-be-applied */
 input:-webkit-autofill,
 input:-webkit-autofill:focus {
@@ -158,22 +149,6 @@ input:-webkit-autofill:focus {
 
 .katex-display {
   overflow: auto hidden;
-}
-
-.content-header-link {
-  opacity: 0;
-  margin-left: -24px;
-  padding-right: 4px;
-}
-
-.content-header:hover .heading-link,
-.content-header-link:hover {
-  opacity: 1;
-}
-
-.linkicon {
-  display: inline-block;
-  vertical-align: middle;
 }
 
 /* NextPaper View Transition lock */
@@ -563,71 +538,6 @@ footer svg {
   border-bottom: 0;
 }
 
-.astro-toc {
-  margin-block: 2rem;
-}
-
-.astro-toc summary {
-  cursor: pointer;
-  color: var(--foreground);
-  font-size: 1.5rem;
-  line-height: 2rem;
-  font-weight: 600;
-}
-
-.astro-toc summary:hover {
-  color: var(--accent);
-}
-
-.astro-toc nav {
-  margin-top: 1rem;
-}
-
-.astro-toc ul {
-  margin: 0;
-  padding-inline-start: 1.25rem;
-}
-
-.astro-toc li {
-  margin-block: 0.25rem;
-}
-
-.astro-toc a {
-  color: var(--foreground);
-  text-decoration-line: underline;
-  text-decoration-style: dashed;
-  text-underline-offset: 4px;
-}
-
-.astro-toc a:hover {
-  color: var(--accent);
-}
-
-.heading-link {
-  margin-inline-start: 0.5rem;
-  color: var(--foreground) !important;
-  text-decoration-line: none !important;
-  opacity: 0.75;
-  transition:
-    opacity 150ms ease,
-    color 150ms ease;
-}
-
-@media (min-width: 768px) {
-  .heading-link {
-    opacity: 0;
-  }
-
-  .group:hover .heading-link,
-  .heading-link:focus {
-    opacity: 1;
-  }
-}
-
-.heading-link:hover {
-  color: var(--accent) !important;
-}
-
 .code-block-wrapper {
   overflow: visible;
   position: relative;
@@ -751,131 +661,6 @@ footer svg {
 }
 
 /* NextPaper AstroPaper collapsible TOC */
-.astro-toc-collapse {
-  margin-top: 0.5rem;
-  margin-bottom: 2rem;
-}
-
-.astro-toc-collapse summary {
-  width: fit-content;
-  cursor: pointer;
-  color: var(--foreground);
-  font: inherit;
-  line-height: inherit;
-}
-
-.astro-toc-collapse summary:hover {
-  color: var(--accent);
-}
-
-.astro-toc-collapse nav {
-  margin-top: 0.75rem;
-}
-
-.astro-toc-collapse ul,
-.astro-toc-collapse ol {
-  margin-top: 0.5rem;
-  margin-bottom: 0;
-  padding-inline-start: 1.5rem;
-}
-
-.astro-toc-collapse li {
-  margin-block: 0.5rem;
-}
-
-.astro-toc-collapse li::marker {
-  color: var(--accent);
-}
-
-.astro-toc-collapse a {
-  color: var(--foreground);
-  text-decoration-line: underline;
-  text-decoration-style: dashed;
-  text-underline-offset: 4px;
-}
-
-.astro-toc-collapse a:hover {
-  color: var(--accent);
-}
-
-.heading-link {
-  margin-inline-start: 0.5rem;
-  color: var(--foreground) !important;
-  text-decoration-line: none !important;
-  opacity: 0.75;
-  transition:
-    opacity 150ms ease,
-    color 150ms ease;
-}
-
-@media (min-width: 768px) {
-  .heading-link {
-    opacity: 0;
-  }
-
-  .group:hover .heading-link,
-  .heading-link:focus {
-    opacity: 1;
-  }
-}
-
-.heading-link:hover {
-  color: var(--accent) !important;
-}
-
-/* NextPaper AstroPaper forced collapsible TOC */
-.astro-toc-collapse {
-  margin-top: 0.5rem;
-  margin-bottom: 2rem;
-}
-
-.astro-toc-collapse:not([open]) nav {
-  display: none;
-}
-
-.astro-toc-collapse summary {
-  width: fit-content;
-  cursor: pointer;
-  color: var(--foreground);
-  font: inherit;
-  line-height: inherit;
-}
-
-.astro-toc-collapse summary:hover {
-  color: var(--accent);
-}
-
-.astro-toc-collapse nav {
-  margin-top: 0.75rem;
-}
-
-.astro-toc-collapse ul,
-.astro-toc-collapse ol {
-  margin-top: 0.5rem;
-  margin-bottom: 0;
-  padding-inline-start: 1.5rem;
-}
-
-.astro-toc-collapse li {
-  margin-block: 0.5rem;
-}
-
-.astro-toc-collapse li::marker {
-  color: var(--accent);
-}
-
-.astro-toc-collapse a {
-  color: var(--foreground);
-  text-decoration-line: underline;
-  text-decoration-style: dashed;
-  text-underline-offset: 4px;
-}
-
-.astro-toc-collapse a:hover {
-  color: var(--accent);
-}
-
-/* NextPaper AstroPaper fallback collapsible TOC */
 .astro-toc-collapse {
   margin-top: 0.5rem;
   margin-bottom: 2rem;
@@ -1383,12 +1168,6 @@ footer svg {
   text-align: center;
 }
 
-.notes-vault-controls button.is-active {
-  border-color: var(--accent);
-  background: color-mix(in srgb, var(--background) 72%, var(--accent));
-  color: var(--accent);
-}
-
 .notes-vault-close:hover,
 .notes-vault-toggle:hover,
 .notes-vault-controls button:hover {
@@ -1454,12 +1233,17 @@ footer svg {
     background: var(--background);
     padding: 1rem;
     transform: translateX(-105%);
-    transition: transform 180ms ease;
+    visibility: hidden;
+    transition:
+      transform 180ms ease,
+      visibility 0s linear 180ms;
     box-shadow: none;
   }
 
   .notes-vault-shell.is-mobile-open .notes-vault-sidebar {
     transform: translateX(0);
+    visibility: visible;
+    transition-delay: 0s;
   }
 
   .notes-vault-sidebar::after {
@@ -1482,12 +1266,17 @@ footer svg {
     border: 0;
     background: color-mix(in srgb, var(--background) 42%, transparent);
     opacity: 0;
-    transition: opacity 180ms ease;
+    visibility: hidden;
+    transition:
+      opacity 180ms ease,
+      visibility 0s linear 180ms;
   }
 
   .notes-vault-shell.is-mobile-open .notes-vault-backdrop {
     pointer-events: auto;
     opacity: 1;
+    visibility: visible;
+    transition-delay: 0s;
   }
 
   .notes-vault-close-mobile {
@@ -1952,30 +1741,10 @@ footer svg {
   font-weight: 700;
 }
 
-.learning-log-permalink {
-  margin-left: 0.45rem;
-  color: var(--muted-foreground);
-  font-size: 0.85rem;
-  opacity: 0;
-  text-decoration: none;
-}
-
-.learning-log-entry-header h2:hover .learning-log-permalink,
-.learning-log-permalink:focus-visible {
-  opacity: 1;
-}
-
 .learning-log-meta {
   margin-top: 0.25rem;
   color: var(--muted-foreground);
   font-size: 0.875rem;
-}
-
-.learning-log-summary {
-  margin-top: 0.65rem;
-  max-width: 40rem;
-  color: var(--foreground);
-  line-height: 1.65;
 }
 
 .learning-log-body {

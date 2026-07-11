@@ -26,6 +26,8 @@ const DeferredLogo = (props: AnimatedLogoProps) => {
     React.useState(false)
 
   const hasStartedLoadingRef = React.useRef(false)
+  const decorative =
+    props.decorative ?? (props['aria-hidden'] === true || props['aria-hidden'] === 'true')
 
   const presenceStartDelayMs = shouldResolvePresenceImmediately ? 0 : undefined
   const { status, isLoading, hasError } = useLanyardPresence(
@@ -70,7 +72,7 @@ const DeferredLogo = (props: AnimatedLogoProps) => {
     return (
       <LogoStatic
         className={props.className}
-        decorative={props.decorative ?? props['aria-hidden'] === true}
+        decorative={decorative}
         aria-label={props['aria-label']}
         onPointerDown={(event) => {
           props.onPointerDown?.(event)
@@ -99,6 +101,7 @@ const DeferredLogo = (props: AnimatedLogoProps) => {
     <AnimatedLogo
       key={shouldSleepAfterIntro ? 'animated-logo-sleep-after-intro' : 'animated-logo-awake'}
       {...props}
+      decorative={decorative}
       forceSleep={shouldSleepAfterIntro}
       idleSleep={shouldSleepAfterIntro ? 'always' : props.idleSleep}
       idleSleepDelayMs={shouldSleepAfterIntro ? 0 : props.idleSleepDelayMs}

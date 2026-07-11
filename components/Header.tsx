@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { usePathname } from 'next/navigation'
 import siteMetadata from '@/data/siteMetadata'
 import headerNavLinks from '@/data/headerNavLinks'
@@ -28,6 +28,24 @@ export default function Header() {
 
   const archivesActive = isActive('/archives')
   const searchActive = isActive('/search')
+
+  useEffect(() => {
+    setMenuOpen(false)
+  }, [pathname])
+
+  useEffect(() => {
+    if (!menuOpen) return
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return
+
+      setMenuOpen(false)
+      document.getElementById('menu-btn')?.focus()
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [menuOpen])
 
   return (
     <>
@@ -57,7 +75,7 @@ export default function Header() {
           >
             <DeferredLogo
               className="site-logo block h-9 w-auto sm:h-11"
-              aria-hidden="true"
+              decorative
               playIntro={true}
             />
           </Link>
@@ -94,6 +112,7 @@ export default function Header() {
                   <Link
                     href={link.href}
                     className={isActive(link.href) ? 'active-nav' : undefined}
+                    aria-current={isActive(link.href) ? 'page' : undefined}
                     onClick={() => setMenuOpen(false)}
                   >
                     {link.title}
@@ -108,6 +127,7 @@ export default function Header() {
                     archivesActive ? 'active-nav' : '',
                   ].join(' ')}
                   aria-label="Archives"
+                  aria-current={archivesActive ? 'page' : undefined}
                   title="Archives"
                   onClick={() => setMenuOpen(false)}
                 >

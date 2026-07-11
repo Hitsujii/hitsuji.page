@@ -1,8 +1,7 @@
 import { defineDocumentType, ComputedFields, makeSource } from 'contentlayer2/source-files'
-import { writeFileSync, existsSync, readdirSync } from 'fs'
+import { writeFileSync, existsSync, readFileSync, readdirSync } from 'fs'
 import readingTime from 'reading-time'
 import path from 'path'
-// import { fromHtmlIsomorphic } from 'hast-util-from-html-isomorphic'
 // Remark packages
 import remarkGfm from 'remark-gfm'
 import remarkMath from 'remark-math'
@@ -25,42 +24,98 @@ import siteMetadata from './data/siteMetadata'
 import { sortPosts } from 'pliny/utils/contentlayer.js'
 
 const root = process.cwd()
-const isProduction = process.env.NODE_ENV === 'production'
 
-function extractAstroPaperCodeFileName(meta?: string) {
+type MdastNode = {
+  type: string
+  children?: MdastNode[]
+  data?: Record<string, unknown>
+  meta?: string | null
+  url?: string
+  value?: string
+}
+
+type ContentlayerFile = {
+  data?: Record<string, unknown>
+  history?: unknown
+  path?: unknown
+  dirname?: unknown
+  basename?: unknown
+  stem?: unknown
+}
+
+type SearchSourceDocument = {
+  title?: string
+  summary?: string
+  path?: string
+  slug?: string
+  tags?: string[]
+  date?: string
+  lastmod?: string
+  draft?: boolean
+  body?: {
+    raw?: string
+  }
+}
+
+function asRecord(value: unknown): Record<string, unknown> | undefined {
+  return value && typeof value === 'object' ? (value as Record<string, unknown>) : undefined
+}
+
+function getRawDocumentValue(file: ContentlayerFile, key: string) {
+  const rawDocumentData = asRecord(file.data?.rawDocumentData)
+  const nestedRawDocumentData = asRecord(rawDocumentData?._raw)
+  const value = rawDocumentData?.[key] ?? nestedRawDocumentData?.[key]
+
+  return typeof value === 'string' && value.trim() ? value : undefined
+}
+
+function absoluteSiteUrl(value: string) {
+  if (/^https?:\/\//i.test(value)) return value
+
+  const baseUrl = `${siteMetadata.siteUrl.replace(/\/+$/, '')}/`
+  return new URL(value.replace(/^\/+/, ''), baseUrl).toString()
+}
+
+function getDocumentImage(images: unknown) {
+  const image =
+    typeof images === 'string'
+      ? images
+      : Array.isArray(images)
+        ? images.find((value): value is string => typeof value === 'string' && Boolean(value))
+        : undefined
+
+  return absoluteSiteUrl(image || siteMetadata.socialBanner)
+}
+
+function extractAstroPaperCodeFileName(meta?: string | null) {
   if (!meta) return undefined
 
   const match = meta.match(/(?:^|\s)file=(?:"([^"]+)"|'([^']+)'|([^\s]+))/)
   return match?.[1] ?? match?.[2] ?? match?.[3]
 }
 
-function visitAstroPaperMdast(
-  node: any,
-  visitor: (node: any, index?: number, parent?: any) => void,
-  parent?: any,
-  index?: number
-) {
-  visitor(node, index, parent)
+function visitAstroPaperMdast(node: MdastNode, visitor: (node: MdastNode) => void) {
+  visitor(node)
 
-  if (!node || !Array.isArray(node.children)) return
+  if (!Array.isArray(node.children)) return
 
-  node.children.forEach((child: any, childIndex: number) => {
-    visitAstroPaperMdast(child, visitor, node, childIndex)
+  node.children.forEach((child) => {
+    visitAstroPaperMdast(child, visitor)
   })
 }
 
 function remarkAstroPaperCodeMeta() {
-  return (tree: any) => {
-    visitAstroPaperMdast(tree, (node: any) => {
-      if (!node || node.type !== 'code') return
+  return (tree: MdastNode) => {
+    visitAstroPaperMdast(tree, (node) => {
+      if (node.type !== 'code') return
 
       const fileName = extractAstroPaperCodeFileName(node.meta)
 
       if (!fileName) return
 
-      node.data = node.data || {}
+      node.data = node.data ?? {}
       node.data.hProperties = {
-        ...(node.data.hProperties || {}),
+        ...asRecord(node.data.hProperties),
         'data-file': fileName,
         'data-meta': node.meta || '',
       }
@@ -95,32 +150,26 @@ function safeDecode(value: string) {
   }
 }
 
-function normalizeNoteAliases(value: string) {
-  const parts = normalizeSlashes(safeDecode(value)).replace(/\+/g, ' ').split('/').filter(Boolean)
-  const first = parts[0]?.toLowerCase()
-
-  if (first === 'knowledge' || first === 'c++ fundamentals' || first === 'cpp fundamentals') {
-    parts[0] = 'cpp-fundamentals'
-  }
-
-  if (first === 'learncpp' || first === 'learncpp course') {
-    parts[0] = 'learncpp-course'
-  }
-
-  return parts.join('/')
+function normalizeNoteDocPath(value: string) {
+  return normalizeSlashes(safeDecode(value))
+    .replace(/\.mdx?$/i, '')
+    .replace(/^data\//i, '')
+    .replace(/^notes\/notes\/?/i, '')
+    .replace(/^notes\/?/i, '')
+    .replace(/\/index$/i, '')
+    .replace(/^index$/i, '')
+    .replace(/^\/+/, '')
+    .replace(/\/$/, '')
 }
 
-function normalizeNoteDocPath(value: string) {
-  return normalizeNoteAliases(
-    normalizeSlashes(value)
-      .replace(/\.mdx?$/i, '')
-      .replace(/^data\//i, '')
-      .replace(/^notes\/notes\/?/i, '')
-      .replace(/^notes\/?/i, '')
-      .replace(/\/index$/i, '')
-      .replace(/^\/+/, '')
-      .replace(/\/$/, '')
-  )
+function isDraftMarkdownFile(filePath: string) {
+  try {
+    const raw = readFileSync(filePath, 'utf8')
+    const frontmatter = raw.match(/^---\s*\n([\s\S]*?)\n---/)
+    return /^draft:\s*true\s*$/im.test(frontmatter?.[1] ?? '')
+  } catch {
+    return false
+  }
 }
 
 function readNoteSlugs(dir: string, baseDir: string): string[] {
@@ -141,11 +190,19 @@ function readNoteSlugs(dir: string, baseDir: string): string[] {
       return []
     }
 
+    if (isDraftMarkdownFile(fullPath)) {
+      return []
+    }
+
     return normalizeNoteDocPath(path.relative(baseDir, fullPath))
   })
 }
 
 function getNoteSlugs() {
+  if (process.env.NODE_ENV !== 'production') {
+    return new Set(readNoteSlugs(noteMarkdownRoot, noteMarkdownRoot))
+  }
+
   if (!cachedNoteSlugs) {
     cachedNoteSlugs = new Set(readNoteSlugs(noteMarkdownRoot, noteMarkdownRoot))
   }
@@ -180,7 +237,7 @@ function normalizeNoteSourcePath(value: string) {
   return normalized
 }
 
-function collectFilePathCandidates(file: any) {
+function collectFilePathCandidates(file: ContentlayerFile) {
   const candidates: string[] = []
 
   const push = (value: unknown) => {
@@ -189,13 +246,11 @@ function collectFilePathCandidates(file: any) {
     }
   }
 
-  push(file?.data?.rawDocumentData?._raw?.sourceFilePath)
-  push(file?.data?.rawDocumentData?.sourceFilePath)
-  push(file?.data?.rawDocumentData?._raw?.flattenedPath)
-  push(file?.data?.rawDocumentData?.flattenedPath)
-  push(file?.data?.sourceFilePath)
+  push(getRawDocumentValue(file, 'sourceFilePath'))
+  push(getRawDocumentValue(file, 'flattenedPath'))
+  push(file.data?.sourceFilePath)
 
-  if (Array.isArray(file?.history)) {
+  if (Array.isArray(file.history)) {
     file.history.forEach(push)
   }
 
@@ -207,7 +262,7 @@ function collectFilePathCandidates(file: any) {
   return candidates
 }
 
-function getCurrentNotePath(file: any) {
+function getCurrentNotePath(file: ContentlayerFile) {
   const candidates = collectFilePathCandidates(file)
 
   for (const candidate of candidates) {
@@ -225,7 +280,13 @@ function getCurrentNotePath(file: any) {
   return ''
 }
 
-function getCurrentNoteDir(file: any) {
+function getCurrentNoteDir(file: ContentlayerFile) {
+  const sourceFileDir = getRawDocumentValue(file, 'sourceFileDir')
+
+  if (sourceFileDir) {
+    return normalizeNoteDocPath(sourceFileDir)
+  }
+
   const currentNotePath = getCurrentNotePath(file)
 
   if (!currentNotePath) return ''
@@ -262,7 +323,7 @@ function getWikiLinkLabel(target: string, alias?: string) {
   return target.split('#')[0]?.split('/').pop()?.replace(/\.md$/i, '').trim() || target
 }
 
-function resolveNoteSlug(rawTarget: string, file: any) {
+function resolveNoteSlug(rawTarget: string, file: ContentlayerFile) {
   const noteSlugs = getNoteSlugs()
   const currentDir = getCurrentNoteDir(file)
   const decodedTarget = safeDecode(rawTarget.trim())
@@ -306,7 +367,7 @@ function resolveNoteSlug(rawTarget: string, file: any) {
   return normalizeNoteDocPath(candidates[0] || target)
 }
 
-function noteTargetToHref(target: string, file: any) {
+function noteTargetToHref(target: string, file: ContentlayerFile) {
   const { rawPath, rawHeading } = splitHash(target)
   const slug = resolveNoteSlug(rawPath, file)
   const hash = rawHeading ? `#${slugifyHeading(rawHeading)}` : ''
@@ -325,7 +386,7 @@ function hasNonMarkdownExtension(value: string) {
   return Boolean(ext && ext !== '.md' && ext !== '.mdx')
 }
 
-function normalizeMarkdownLink(url: string, file: any) {
+function normalizeMarkdownLink(url: string, file: ContentlayerFile) {
   if (!url || isExternalUrl(url) || url.startsWith('#')) {
     return url
   }
@@ -346,6 +407,10 @@ function normalizeMarkdownLink(url: string, file: any) {
     return url
   }
 
+  if (url.startsWith('/')) {
+    return url
+  }
+
   if (hasNonMarkdownExtension(decodedPath)) {
     return url
   }
@@ -357,7 +422,7 @@ function normalizeMarkdownLink(url: string, file: any) {
   return url
 }
 
-function linkNode(url: string, label: string, file: any) {
+function linkNode(url: string, label: string, file: ContentlayerFile): MdastNode {
   if (hasNonMarkdownExtension(url)) {
     return {
       type: 'text',
@@ -372,9 +437,9 @@ function linkNode(url: string, label: string, file: any) {
   }
 }
 
-function convertWikiText(value: string, file: any) {
-  const regex = /\[\[([^\]\|]+)(?:\|([^\]]+))?\]\]/g
-  const children: any[] = []
+function convertWikiText(value: string, file: ContentlayerFile) {
+  const regex = /\[\[([^|\]]+)(?:\|([^\]]+))?\]\]/g
+  const children: MdastNode[] = []
   let lastIndex = 0
   let match: RegExpExecArray | null
 
@@ -405,17 +470,15 @@ function convertWikiText(value: string, file: any) {
   return children
 }
 
-function transformNoteLinks(node: any, file: any) {
-  if (!node) return
-
+function transformNoteLinks(node: MdastNode, file: ContentlayerFile) {
   if (node.type === 'link' && typeof node.url === 'string') {
     node.url = normalizeMarkdownLink(node.url, file)
   }
 
   if (!Array.isArray(node.children)) return
 
-  node.children = node.children.flatMap((child: any) => {
-    if (child?.type === 'text') {
+  node.children = node.children.flatMap((child) => {
+    if (child.type === 'text' && typeof child.value === 'string') {
       return convertWikiText(child.value, file)
     }
 
@@ -425,7 +488,14 @@ function transformNoteLinks(node: any, file: any) {
 }
 
 function remarkWikiLinks() {
-  return (tree: any, file: any) => {
+  return (tree: MdastNode, file: ContentlayerFile) => {
+    const sourceFilePath = getRawDocumentValue(file, 'sourceFilePath')
+    const normalizedSourcePath = sourceFilePath
+      ? normalizeSlashes(sourceFilePath).replace(/^data\//i, '')
+      : ''
+
+    if (!normalizedSourcePath.startsWith('notes/')) return
+
     transformNoteLinks(tree, file)
   }
 }
@@ -454,19 +524,6 @@ const noteComputedFields: ComputedFields = {
   },
 }
 
-// heroicon mini link
-// const icon = fromHtmlIsomorphic(
-//   `
-//   <span class="content-header-link">
-//   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-5 h-5 linkicon">
-//   <path d="M12.232 4.232a2.5 2.5 0 0 1 3.536 3.536l-1.225 1.224a.75.75 0 0 0 1.061 1.06l1.224-1.224a4 4 0 0 0-5.656-5.656l-3 3a4 4 0 0 0 .225 5.865.75.75 0 0 0 .977-1.138 2.5 2.5 0 0 1-.142-3.667l3-3Z" />
-//   <path d="M11.603 7.963a.75.75 0 0 0-.977 1.138 2.5 2.5 0 0 1 .142 3.667l-3 3a2.5 2.5 0 0 1-3.536-3.536l1.225-1.224a.75.75 0 0 0-1.061-1.06l-1.224 1.224a4 4 0 1 0 5.656 5.656l3-3a4 4 0 0 0-.225-5.865Z" />
-//   </svg>
-//   </span>
-// `,
-//   { fragment: true }
-// )
-
 const computedFields: ComputedFields = {
   readingTime: { type: 'json', resolve: (doc) => readingTime(doc.body.raw) },
   slug: {
@@ -488,14 +545,31 @@ const computedFields: ComputedFields = {
   },
 }
 
-function createSearchIndex(allBlogs) {
+function toSearchDocument(document: SearchSourceDocument) {
+  return {
+    title: document.title,
+    summary: document.summary,
+    path: document.path,
+    slug: document.slug,
+    tags: document.tags,
+    date: document.date,
+    lastmod: document.lastmod,
+    ...(document.body?.raw ? { body: { raw: document.body.raw } } : {}),
+  }
+}
+
+function createSearchIndex(documents: SearchSourceDocument[]) {
   if (
     siteMetadata?.search?.provider === 'kbar' &&
     siteMetadata.search.kbarConfig.searchDocumentsPath
   ) {
+    const publicDocuments = documents
+      .filter((document) => document.draft !== true)
+      .map(toSearchDocument)
+
     writeFileSync(
       `public/${path.basename(siteMetadata.search.kbarConfig.searchDocumentsPath)}`,
-      JSON.stringify(sortPosts(allBlogs))
+      JSON.stringify(publicDocuments)
     )
     console.log('Local search index generated...')
   }
@@ -511,6 +585,7 @@ export const Blog = defineDocumentType(() => ({
     tags: { type: 'list', of: { type: 'string' }, default: [] },
     lastmod: { type: 'date' },
     draft: { type: 'boolean' },
+    featured: { type: 'boolean' },
     summary: { type: 'string' },
     images: { type: 'json' },
     authors: { type: 'list', of: { type: 'string' } },
@@ -529,8 +604,8 @@ export const Blog = defineDocumentType(() => ({
         datePublished: doc.date,
         dateModified: doc.lastmod || doc.date,
         description: doc.summary,
-        image: doc.images ? doc.images[0] : siteMetadata.socialBanner,
-        url: `${siteMetadata.siteUrl}/${doc._raw.flattenedPath}`,
+        image: getDocumentImage(doc.images),
+        url: absoluteSiteUrl(`${doc._raw.flattenedPath}/`),
       }),
     },
   },
@@ -652,6 +727,8 @@ export default makeSource({
         path: `learning-log#${entry.slug}`,
       }))
 
-    createSearchIndex([...sortPosts(allBlogs), ...sortPosts(publicLearningLogs), ...publicNotes])
+    const publicBlogs = sortPosts(allBlogs.filter((post) => !post.draft))
+
+    createSearchIndex([...publicBlogs, ...sortPosts(publicLearningLogs), ...publicNotes])
   },
 })

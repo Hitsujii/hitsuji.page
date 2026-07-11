@@ -6,6 +6,7 @@ import { allBlogs } from 'contentlayer/generated'
 import { getTagCounts } from 'app/tag-data'
 import { genPageMetadata } from 'app/seo'
 import { Metadata } from 'next'
+import { notFound } from 'next/navigation'
 
 const POSTS_PER_PAGE = 4
 
@@ -14,6 +15,12 @@ export async function generateMetadata(props: {
 }): Promise<Metadata> {
   const params = await props.params
   const tag = decodeURI(params.tag)
+  const tagCounts = getTagCounts()
+
+  if (!Object.hasOwn(tagCounts, tag)) {
+    return notFound()
+  }
+
   const tagName = tag.replaceAll('-', ' ')
 
   return genPageMetadata({
@@ -31,13 +38,21 @@ export async function generateMetadata(props: {
 export const generateStaticParams = async () => {
   const tagCounts = getTagCounts()
   return Object.keys(tagCounts).map((tag) => ({
-    tag: encodeURI(tag),
+    tag,
   }))
 }
+
+export const dynamicParams = false
 
 export default async function TagPage(props: { params: Promise<{ tag: string }> }) {
   const params = await props.params
   const tag = decodeURI(params.tag)
+  const tagCounts = getTagCounts()
+
+  if (!Object.hasOwn(tagCounts, tag)) {
+    return notFound()
+  }
+
   const tagName = tag.replaceAll('-', ' ')
   const filteredPosts = allCoreContent(
     sortPosts(

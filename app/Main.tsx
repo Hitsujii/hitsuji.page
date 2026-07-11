@@ -7,6 +7,8 @@ import RememberBackUrl from '@/components/RememberBackUrl'
 import DiscordStatus from '@/components/DiscordStatus'
 import LocalTime from '@/components/LocalTime'
 import { IconArrowRight, IconRss } from '@/components/icons/AstroPaperIcons'
+import type { CoreContent } from 'pliny/utils/contentlayer'
+import type { Blog } from 'contentlayer/generated'
 
 const POSTS_PER_INDEX = 4
 const FEATURED_FALLBACK_COUNT = 3
@@ -18,7 +20,7 @@ const socialLinks = [
   { kind: 'mail', href: siteMetadata.email ? `mailto:${siteMetadata.email}` : undefined },
 ] as const
 
-export default function Home({ posts }) {
+export default function Home({ posts }: { posts: CoreContent<Blog>[] }) {
   const explicitFeaturedPosts = posts.filter((post) => Boolean(post.featured))
   const featuredPosts =
     explicitFeaturedPosts.length > 0
@@ -47,6 +49,7 @@ export default function Home({ posts }) {
             <Link
               href="/feed.xml"
               target="_blank"
+              prefetch={false}
               className="inline-flex translate-y-1 text-[var(--accent)] transition hover:scale-110"
               aria-label="RSS Feed"
               title="RSS Feed"

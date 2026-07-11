@@ -2,26 +2,40 @@ import ListLayout from '@/layouts/ListLayoutWithTags'
 import { allCoreContent, sortPosts } from 'pliny/utils/contentlayer'
 import { allBlogs } from 'contentlayer/generated'
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
+import { genPageMetadata } from 'app/seo'
+import { getPaginatedPageNumbers, parsePageNumber } from 'app/pagination'
 
 const POSTS_PER_PAGE = 4
 
 export const generateStaticParams = async () => {
   const publishedBlogs = allBlogs.filter((post) => !post.draft)
   const totalPages = Math.ceil(publishedBlogs.length / POSTS_PER_PAGE)
-  const paths = Array.from({ length: totalPages }, (_, i) => ({ page: (i + 1).toString() }))
+  return getPaginatedPageNumbers(totalPages).map((page) => ({ page: String(page) }))
+}
 
-  return paths
+export const dynamicParams = false
+
+export async function generateMetadata(props: {
+  params: Promise<{ page: string }>
+}): Promise<Metadata> {
+  const { page } = await props.params
+  const pageNumber = parsePageNumber(page)
+
+  return genPageMetadata({
+    title: pageNumber ? `Posts - Page ${pageNumber}` : 'Posts',
+    description: "All the articles I've posted.",
+  })
 }
 
 export default async function Page(props: { params: Promise<{ page: string }> }) {
   const params = await props.params
   const publishedBlogs = allBlogs.filter((post) => !post.draft)
   const posts = allCoreContent(sortPosts(publishedBlogs))
-  const pageNumber = parseInt(params.page as string)
+  const pageNumber = parsePageNumber(params.page)
   const totalPages = Math.ceil(posts.length / POSTS_PER_PAGE)
 
-  // Return 404 for invalid page numbers or empty pages
-  if (pageNumber <= 0 || pageNumber > totalPages || isNaN(pageNumber)) {
+  if (!pageNumber || pageNumber < 2 || pageNumber > totalPages) {
     return notFound()
   }
   const initialDisplayPosts = posts.slice(

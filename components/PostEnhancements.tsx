@@ -196,59 +196,6 @@ function enhanceTableOfContents(article: HTMLElement, toc: TocItem[]) {
   heading.insertAdjacentElement('afterend', makeCollapsedToc(fallbackList))
 }
 
-function removeGeneratedHeadingAnchors(heading: HTMLElement, id: string) {
-  const expectedHref = `#${id}`
-
-  Array.from(heading.querySelectorAll(':scope > a')).forEach((anchor) => {
-    if (!(anchor instanceof HTMLAnchorElement)) return
-
-    const href = anchor.getAttribute('href')
-    const text = anchor.textContent?.trim() ?? ''
-    const hasIcon = Boolean(anchor.querySelector('svg'))
-    const isKnownGeneratedAnchor =
-      anchor.classList.contains('anchor') ||
-      anchor.classList.contains('heading-link') ||
-      anchor.classList.contains('icon-link') ||
-      anchor.getAttribute('aria-hidden') === 'true'
-
-    if (
-      href === expectedHref &&
-      (isKnownGeneratedAnchor || hasIcon || text === '' || text === '#')
-    ) {
-      anchor.remove()
-    }
-  })
-}
-
-function enhanceHeadings(article: HTMLElement) {
-  const headings = Array.from(article.querySelectorAll('h2, h3, h4, h5, h6'))
-
-  for (const heading of headings) {
-    if (!(heading instanceof HTMLElement)) continue
-    if (heading.closest('.astro-toc-collapse')) continue
-
-    const id = ensureHeadingId(heading)
-    if (!id) continue
-
-    removeGeneratedHeadingAnchors(heading, id)
-
-    heading.classList.add('group')
-    heading.dataset.headingEnhanced = 'true'
-
-    const link = document.createElement('a')
-    link.className = 'heading-link'
-    link.href = `#${id}`
-    link.setAttribute('aria-label', `Link to ${cleanHeadingText(heading)}`)
-
-    const span = document.createElement('span')
-    span.setAttribute('aria-hidden', 'true')
-    span.textContent = '#'
-
-    link.appendChild(span)
-    heading.appendChild(link)
-  }
-}
-
 function enhanceCodeBlocks(article: HTMLElement) {
   const codeBlocks = Array.from(article.querySelectorAll('pre'))
 
@@ -346,7 +293,6 @@ export default function PostEnhancements({ toc = [] }: PostEnhancementsProps) {
     if (!article) return
 
     enhanceTableOfContents(article, Array.isArray(toc) ? toc : [])
-    // enhanceHeadings(article)
     enhanceCodeBlocks(article)
   }, [toc])
 

@@ -6,6 +6,7 @@ import SearchClient from './SearchClient'
 export const metadata = genPageMetadata({
   title: 'Search',
   description: 'Search any article ...',
+  robots: { index: false, follow: true },
 })
 
 export default function SearchPage() {

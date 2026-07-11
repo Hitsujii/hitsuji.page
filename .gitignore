@@ -38,10 +38,8 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+.env*
+!.env.example
 
 # Contentlayer
 .contentlayer
@@ -54,14 +52,7 @@ yarn-error.log*
 # TypeScript
 tsconfig.tsbuildinfo
 
-# Generated tag data
-/app/tag-data.json
-
 # synced notes
-!/data/notes/
-!/data/notes/**/
-!/data/notes/**/*.md
-
 # Commit application note routes and synced markdown notes.
 /app/notes/
 !/app/notes/
@@ -70,10 +61,6 @@ tsconfig.tsbuildinfo
 /components/notes/
 !/components/notes/
 !/components/notes/**
-
-!/data/notes/
-!/data/notes/**/
-!/data/notes/**/*.md
 
 # Local theme work and generated files
 .theme-backups/

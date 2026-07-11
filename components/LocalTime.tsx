@@ -45,6 +45,7 @@ const LocalTime = ({
       dateTime={time}
       aria-label={`Current time in ${label}: ${time}`}
       title={timeZone}
+      suppressHydrationWarning
     >
       <span>{time}</span>
       <span className="text-[var(--muted-foreground)]/80">{label}</span>
