@@ -66,7 +66,7 @@ export default function ShareLinks({ path, title }: ShareLinksProps) {
           <a
             key={name}
             href={getHref(encodedUrl, encodedTitle)}
-            className="group inline-flex scale-90 p-2 transition-transform hover:rotate-6 hover:text-[var(--accent)] sm:p-1"
+            className="group inline-flex scale-90 p-2 transition-transform hover:rotate-6 hover:text-[var(--primary-hover)] sm:p-1"
             title={label}
             target="_blank"
             rel="noopener noreferrer"

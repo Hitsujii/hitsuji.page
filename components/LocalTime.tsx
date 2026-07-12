@@ -32,7 +32,7 @@ const LocalTime = ({
   }, [timeZone])
 
   const rootClassName = [
-    'inline-flex items-center gap-1.5 text-sm text-[var(--muted-foreground)]',
+    'inline-flex items-center gap-1.5 text-sm text-[var(--text-muted)]',
     className,
   ]
     .filter(Boolean)
@@ -48,7 +48,7 @@ const LocalTime = ({
       suppressHydrationWarning
     >
       <span>{time}</span>
-      <span className="text-[var(--muted-foreground)]/80">{label}</span>
+      <span className="text-[var(--text-muted)]">{label}</span>
     </time>
   )
 }

@@ -11,6 +11,8 @@
     "lint": "eslint . --no-fix",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit --pretty false",
+    "test:colors": "node scripts/check-color-contrast.mjs",
+    "preview:colors": "node scripts/capture-color-previews.mjs",
     "format:check": "prettier --check . --ignore-unknown",
     "prepare": "husky",
     "lh:desktop": "yarn build && node scripts/lighthouse.mjs desktop",

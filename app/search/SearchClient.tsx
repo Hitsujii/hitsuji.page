@@ -233,7 +233,7 @@ export default function SearchClient() {
           Search posts...
         </label>
 
-        <IconSearch className="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-[var(--muted-foreground)]" />
+        <IconSearch className="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-[var(--text-muted)]" />
 
         <input
           id="search-input"
@@ -241,7 +241,7 @@ export default function SearchClient() {
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search posts..."
-          className="pagefind-ui__search-input w-full rounded-md border border-[var(--border)] bg-[var(--background)] py-3 pr-20 pl-12 text-[var(--foreground)] placeholder:text-[var(--muted-foreground)] focus:border-[var(--accent)] focus:ring-0 focus:outline-none"
+          className="pagefind-ui__search-input w-full rounded-md border border-[var(--border-strong)] bg-[var(--surface-elevated)] py-3 pr-20 pl-12 text-[var(--foreground)] placeholder:text-[var(--text-muted)] focus:border-[var(--focus-ring)] focus:ring-0 focus:outline-none"
           type="search"
         />
 
@@ -252,7 +252,7 @@ export default function SearchClient() {
               setQuery('')
               inputRef.current?.focus()
             }}
-            className="absolute top-1/2 right-4 inline-flex min-h-6 min-w-6 -translate-y-1/2 items-center justify-center text-xs hover:text-[var(--accent)]"
+            className="absolute top-1/2 right-4 inline-flex min-h-6 min-w-6 -translate-y-1/2 items-center justify-center text-xs text-[var(--text-muted)] hover:text-[var(--primary-hover)]"
           >
             Clear
           </button>
@@ -261,13 +261,13 @@ export default function SearchClient() {
 
       <div className="pagefind-ui__drawer mt-6">
         {!loaded && (
-          <p className="pagefind-ui__message text-[var(--muted-foreground)]" role="status">
+          <p className="pagefind-ui__message text-[var(--text-muted)]" role="status">
             Loading...
           </p>
         )}
 
         {loaded && !hasQuery && (
-          <p className="pagefind-ui__message text-[var(--muted-foreground)]" role="status">
+          <p className="pagefind-ui__message text-[var(--text-muted)]" role="status">
             Search posts...
           </p>
         )}
@@ -310,7 +310,7 @@ export default function SearchClient() {
                   >
                     <Link
                       href={href}
-                      className="pagefind-ui__result-link inline-block text-base font-bold text-[var(--accent)] underline-offset-4 hover:underline hover:decoration-dashed focus-visible:no-underline focus-visible:underline-offset-0"
+                      className="pagefind-ui__result-link inline-block text-base font-bold text-[var(--link)] underline-offset-4 visited:text-[var(--link-visited)] hover:text-[var(--link-hover)] hover:underline hover:decoration-dashed focus-visible:no-underline focus-visible:underline-offset-0"
                     >
                       <h2>{highlightText(title, query)}</h2>
                     </Link>
@@ -336,7 +336,7 @@ export default function SearchClient() {
                             <li key={`${section.title}-${sectionIndex}`}>
                               <Link
                                 href={href}
-                                className="text-sm font-bold text-[var(--accent)] hover:underline hover:decoration-dashed"
+                                className="text-sm font-bold text-[var(--link)] visited:text-[var(--link-visited)] hover:text-[var(--link-hover)] hover:underline hover:decoration-dashed"
                               >
                                 ↳ {highlightText(section.title, query)}
                               </Link>

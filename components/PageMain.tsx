@@ -16,7 +16,7 @@ export default function PageMain({ title, description, children, className = '' 
         <h1 className="text-2xl font-semibold sm:text-3xl">
           {Array.isArray(title) ? (
             <>
-              {title[0]} <span className="text-[var(--accent)]">{title[1]}</span>
+              {title[0]} <span className="text-[var(--primary)]">{title[1]}</span>
             </>
           ) : (
             title

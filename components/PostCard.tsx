@@ -30,7 +30,7 @@ export default function PostCard({ post, heading = 'h2' }: PostCardProps) {
     <li className="my-6">
       <Link
         href={href}
-        className="inline-block text-lg font-medium text-[var(--accent)] underline-offset-4 hover:underline hover:decoration-dashed focus-visible:no-underline focus-visible:underline-offset-0"
+        className="inline-block text-lg font-medium text-[var(--link)] underline-offset-4 visited:text-[var(--link-visited)] hover:text-[var(--link-hover)] hover:underline hover:decoration-dashed focus-visible:no-underline focus-visible:underline-offset-0"
       >
         <PostTitleTransition title={transitionName(title)}>
           <Heading>{title}</Heading>

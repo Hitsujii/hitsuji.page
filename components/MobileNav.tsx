@@ -39,7 +39,7 @@ const MobileNav = () => {
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 20 20"
           fill="currentColor"
-          className="h-8 w-8 text-[var(--foreground)] hover:text-[var(--accent)]"
+          className="h-8 w-8 text-[var(--foreground)] hover:text-[var(--primary-hover)]"
         >
           <path
             fillRule="evenodd"
@@ -73,7 +73,7 @@ const MobileNav = () => {
             leaveTo="translate-x-full opacity-0"
             unmount={false}
           >
-            <DialogPanel className="fixed top-0 left-0 z-70 h-full w-full bg-[color-mix(in_srgb,var(--background)_96%,transparent)] backdrop-blur-md duration-300">
+            <DialogPanel className="fixed top-0 left-0 z-70 h-full w-full bg-[color-mix(in_srgb,var(--surface-elevated)_96%,transparent)] backdrop-blur-md duration-300">
               <nav
                 ref={navRef}
                 className="mt-8 flex h-full basis-0 flex-col items-start overflow-y-auto pt-2 pl-12 text-left"
@@ -82,7 +82,7 @@ const MobileNav = () => {
                   <Link
                     key={link.title}
                     href={link.href}
-                    className="mb-4 py-2 pr-4 text-2xl font-bold tracking-widest text-[var(--foreground)] outline-0 hover:text-[var(--accent)]"
+                    className="mb-4 py-2 pr-4 text-2xl font-bold tracking-widest text-[var(--foreground)] outline-0 hover:text-[var(--primary-hover)]"
                     onClick={onToggleNav}
                   >
                     {link.title}
@@ -91,7 +91,7 @@ const MobileNav = () => {
               </nav>
 
               <button
-                className="fixed top-7 right-4 z-80 h-16 w-16 p-4 text-[var(--foreground)] hover:text-[var(--accent)]"
+                className="fixed top-7 right-4 z-80 h-16 w-16 p-4 text-[var(--foreground)] hover:text-[var(--primary-hover)]"
                 aria-label="Toggle Menu"
                 onClick={onToggleNav}
               >

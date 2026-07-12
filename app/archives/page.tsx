@@ -43,7 +43,7 @@ export default async function ArchivesPage() {
           .map(([year, yearGroup]) => (
             <div key={year}>
               <span className="text-2xl font-bold">{year}</span>
-              <sup className="text-sm text-[var(--muted-foreground)]">{yearGroup.length}</sup>
+              <sup className="text-sm text-[var(--text-muted)]">{yearGroup.length}</sup>
 
               {Object.entries(groupBy(yearGroup, (post) => new Date(post.date).getUTCMonth() + 1))
                 .sort(([monthA], [monthB]) => Number(monthB) - Number(monthA))
@@ -53,9 +53,7 @@ export default async function ArchivesPage() {
                       <span className="font-bold">
                         {monthFormatter.format(new Date(Date.UTC(2000, Number(month) - 1, 1)))}
                       </span>
-                      <sup className="text-xs text-[var(--muted-foreground)]">
-                        {monthGroup.length}
-                      </sup>
+                      <sup className="text-xs text-[var(--text-muted)]">{monthGroup.length}</sup>
                     </div>
 
                     <ul>

@@ -23,7 +23,7 @@ export default function Card({ title, description, imgSrc, href }: CardProps) {
         </div>
       )}
 
-      <h2 className="inline-block text-lg font-medium text-[var(--accent)] underline-offset-4 group-hover:underline group-hover:decoration-dashed">
+      <h2 className="inline-block text-lg font-medium text-[var(--link)] underline-offset-4 group-hover:text-[var(--link-hover)] group-hover:underline group-hover:decoration-dashed">
         {title}
       </h2>
 

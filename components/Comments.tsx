@@ -74,7 +74,13 @@ export default function Comments({ slug }: { slug: string }) {
       {loadComments ? (
         <CommentsComponent commentsConfig={commentsConfig} slug={slug} />
       ) : (
-        <button onClick={() => setLoadComments(true)}>Load Comments</button>
+        <button
+          type="button"
+          className="rounded-md border border-[var(--border-strong)] bg-[var(--surface)] px-4 py-2 text-[var(--foreground)] hover:border-[var(--primary)] hover:bg-[var(--primary-soft)] hover:text-[var(--on-primary-soft)] active:border-[var(--primary-active)]"
+          onClick={() => setLoadComments(true)}
+        >
+          Load Comments
+        </button>
       )}
     </>
   )

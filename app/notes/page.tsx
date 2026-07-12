@@ -1,4 +1,3 @@
-import 'css/prism.css'
 import 'katex/dist/katex.css'
 
 import type { Metadata } from 'next'
@@ -47,9 +46,9 @@ function getTreeNodeHref(node: NotesTreeNode) {
 function NotesFallbackList({ tree }: { tree: NotesTreeNode[] }) {
   if (tree.length === 0) {
     return (
-      <div className="rounded-md border border-[var(--border)] bg-[var(--muted)]/40 p-4">
+      <div className="rounded-md border border-[var(--border)] bg-[var(--surface-muted)] p-4">
         <h1 className="text-2xl font-semibold sm:text-3xl">Notes</h1>
-        <p className="mt-4 text-sm text-[var(--muted-foreground)]">
+        <p className="mt-4 text-sm text-[var(--text-muted)]">
           No notes were found. Add markdown files to the vault, then run yarn notes:sync to populate
           this page.
         </p>
@@ -60,7 +59,7 @@ function NotesFallbackList({ tree }: { tree: NotesTreeNode[] }) {
   return (
     <>
       <h1 className="text-2xl font-semibold sm:text-3xl">Notes</h1>
-      <p className="mt-4 text-sm text-[var(--muted-foreground)]">
+      <p className="mt-4 text-sm text-[var(--text-muted)]">
         Root <code>index.md</code> was not found, so this page is showing the top-level notes and
         folders instead.
       </p>
@@ -70,7 +69,7 @@ function NotesFallbackList({ tree }: { tree: NotesTreeNode[] }) {
           <li key={`${child.type}:${child.path}`}>
             <Link
               href={getTreeNodeHref(child)}
-              className="text-[var(--accent)] underline-offset-4 hover:underline hover:decoration-dashed"
+              className="text-[var(--link)] underline-offset-4 visited:text-[var(--link-visited)] hover:text-[var(--link-hover)] hover:underline hover:decoration-dashed"
             >
               {child.name}
             </Link>
@@ -98,7 +97,7 @@ export default function NotesIndexPage() {
   return (
     <NotesShell tree={tree} activePath="" breadcrumbLabels={getNotesBreadcrumbLabels(tree)}>
       {!startsWithH1 && (
-        <h1 className="mb-6 text-3xl font-bold text-[var(--accent)]">{getNoteTitle(note)}</h1>
+        <h1 className="mb-6 text-3xl font-bold text-[var(--primary)]">{getNoteTitle(note)}</h1>
       )}
 
       <MDXLayoutRenderer code={note.body.code} components={components} toc={note.toc} />

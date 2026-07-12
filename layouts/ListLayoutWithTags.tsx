@@ -42,13 +42,13 @@ function Pagination({ totalPages, currentPage }: PaginationProps) {
         <Link
           href={currentPage - 1 === 1 ? `/${basePath}/` : `/${basePath}/page/${currentPage - 1}`}
           rel="prev"
-          className="inline-flex items-center gap-1 select-none hover:text-[var(--accent)]"
+          className="inline-flex items-center gap-1 text-[var(--link)] select-none hover:text-[var(--link-hover)]"
         >
           <IconArrowLeft className="inline-block rtl:rotate-180" />
           Previous
         </Link>
       ) : (
-        <span className="inline-flex items-center gap-1 opacity-50 select-none">
+        <span className="inline-flex items-center gap-1 text-[var(--text-muted)] select-none">
           <IconArrowLeft className="inline-block rtl:rotate-180" />
           Previous
         </span>
@@ -62,13 +62,13 @@ function Pagination({ totalPages, currentPage }: PaginationProps) {
         <Link
           href={`/${basePath}/page/${currentPage + 1}`}
           rel="next"
-          className="inline-flex items-center gap-1 select-none hover:text-[var(--accent)]"
+          className="inline-flex items-center gap-1 text-[var(--link)] select-none hover:text-[var(--link-hover)]"
         >
           Next
           <IconArrowRight className="inline-block rtl:rotate-180" />
         </Link>
       ) : (
-        <span className="inline-flex items-center gap-1 opacity-50 select-none">
+        <span className="inline-flex items-center gap-1 text-[var(--text-muted)] select-none">
           Next
           <IconArrowRight className="inline-block rtl:rotate-180" />
         </span>
@@ -95,7 +95,7 @@ export default function ListLayoutWithTags({
         <h1 className="text-2xl font-semibold sm:text-3xl">
           {Array.isArray(title) ? (
             <>
-              {title[0]} <span className="text-[var(--accent)]">{title[1]}</span>
+              {title[0]} <span className="text-[var(--primary)]">{title[1]}</span>
             </>
           ) : (
             title

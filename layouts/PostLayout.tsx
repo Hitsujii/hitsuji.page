@@ -49,11 +49,14 @@ function AdjacentPostNav({
       aria-label="Adjacent posts"
     >
       {prev?.path ? (
-        <Link href={`/${prev.path}`} className="group flex w-full min-w-0 gap-1 hover:opacity-75">
+        <Link
+          href={`/${prev.path}`}
+          className="group flex w-full min-w-0 gap-1 hover:text-[var(--primary-hover)]"
+        >
           <IconArrowLeft className="inline-block flex-none rtl:rotate-180" />
           <div className="min-w-0">
             <span className="block">Previous post</span>
-            <div className="text-sm text-[color-mix(in_srgb,var(--accent)_85%,transparent)]">
+            <div className="text-sm text-[var(--link)] group-hover:text-[var(--link-hover)]">
               <span className="break-words">{prev.title}</span>
             </div>
           </div>
@@ -63,11 +66,11 @@ function AdjacentPostNav({
       {next?.path && (
         <Link
           href={`/${next.path}`}
-          className="group flex w-full min-w-0 justify-end gap-1 text-end hover:opacity-75 sm:col-start-2"
+          className="group flex w-full min-w-0 justify-end gap-1 text-end hover:text-[var(--primary-hover)] sm:col-start-2"
         >
           <div className="min-w-0">
             <span className="block">Next post</span>
-            <div className="text-sm text-[color-mix(in_srgb,var(--accent)_85%,transparent)]">
+            <div className="text-sm text-[var(--link)] group-hover:text-[var(--link-hover)]">
               <span className="break-words">{next.title}</span>
             </div>
           </div>
@@ -89,13 +92,13 @@ export default function PostLayout({ content, next, prev, children }: LayoutProp
 
       <main id="main-content" className="app-layout pb-4" data-pagefind-body>
         <PostEnhancements toc={content.toc} hasToc={Boolean(content.hasToc)} />
-        <h1 className="inline-block text-2xl font-bold text-[var(--accent)] sm:text-3xl">
+        <h1 className="inline-block text-2xl font-bold text-[var(--primary)] sm:text-3xl">
           <PostTitleTransition title={title.replaceAll('.', '-')}>{title}</PostTitleTransition>
         </h1>
 
         <div className="my-2 flex flex-wrap items-center gap-2">
           <Datetime date={date} lastmod={lastmod} size="lg" />
-          <span aria-hidden="true" className="text-[var(--muted-foreground)] max-sm:hidden">
+          <span aria-hidden="true" className="text-[var(--text-muted)] max-sm:hidden">
             |
           </span>
           <EditPost path={path} className="max-sm:hidden" />
@@ -131,10 +134,7 @@ export default function PostLayout({ content, next, prev, children }: LayoutProp
         </div>
 
         {siteMetadata.comments?.provider && (
-          <div
-            id="comment"
-            className="clear-both pt-6 pb-6 text-center text-[var(--muted-foreground)]"
-          >
+          <div id="comment" className="clear-both pt-6 pb-6 text-center text-[var(--text-muted)]">
             <Comments slug={slug} />
           </div>
         )}

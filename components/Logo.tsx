@@ -636,7 +636,7 @@ const Logo = ({
             paint-order: stroke;
             transform-box: fill-box;
             transform-origin: 50% 50%;
-            filter: drop-shadow(0 3px 7px rgb(0 0 0 / 0.55));
+            filter: drop-shadow(0 3px 7px var(--logo-shadow));
           }
 
           @media (max-width: 640px) {

@@ -1,5 +1,6 @@
-import 'css/tailwind.css'
 import 'remark-github-blockquote-alert/alert.css'
+import 'css/tailwind.css'
+import 'css/prism.css'
 
 import { Analytics, type AnalyticsConfig } from 'pliny/analytics'
 import { KBarSearchProvider, type KBarSearchProps } from 'pliny/search/KBar'
@@ -84,7 +85,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         suppressHydrationWarning
       >
         <head>
-          <meta name="theme-color" content="#f5f7fb" />
+          <meta name="color-scheme" content="light dark" />
+          <meta name="theme-color" content="#f8f6f1" media="(prefers-color-scheme: light)" />
+          <meta name="theme-color" content="#111824" media="(prefers-color-scheme: dark)" />
         </head>
         <body className="flex min-h-svh flex-col bg-[var(--background)] text-[var(--foreground)] antialiased">
           <ThemeProviders>

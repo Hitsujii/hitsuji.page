@@ -1,22 +1,24 @@
-@reference "./tailwind.css";
+@reference './tailwind.css';
 
 /*
- * Frieren-inspired syntax palette.
- * Colors inherit from css/tailwind.css, keeping both themes coherent.
+ * Bluebell Field Notes syntax system.
+ * The palette is defined once in css/tailwind.css; this file only maps
+ * Prism/rehype-prism-plus categories and code-specific UI states to roles.
  */
 
 .remark-code-title {
   border: 1px solid var(--code-border);
   border-bottom: 0;
   border-radius: 0.375rem 0.375rem 0 0;
-  background: var(--code-bg);
+  background: var(--code-background);
   padding: 0.75rem 1.25rem;
-  color: var(--code-fg);
+  color: var(--code-file-name);
   font-family: var(--font-sans);
   font-size: 0.875rem;
   font-weight: 700;
 }
 
+.remark-code-title + pre,
 .remark-code-title + div > pre {
   margin-top: 0;
   border-top-left-radius: 0;
@@ -30,32 +32,59 @@
 
 .code-line {
   display: block;
+  min-height: 1.5rem;
   margin-inline: -1rem;
-  border-left: 4px solid transparent;
+  border-inline-start: 3px solid transparent;
   padding-inline: 1rem;
 }
 
 .code-line.inserted {
-  background: color-mix(in srgb, var(--magic) 18%, transparent);
+  border-inline-start-color: var(--code-inserted-border);
+  background: var(--code-inserted-background);
 }
 
 .code-line.deleted {
-  background: color-mix(in srgb, var(--danger) 18%, transparent);
+  border-inline-start-color: var(--code-deleted-border);
+  background: var(--code-deleted-background);
 }
 
-.highlight-line {
-  margin-inline: -1rem;
-  border-left: 4px solid var(--accent);
-  background: color-mix(in srgb, var(--accent) 16%, transparent);
+.code-line.inserted::before,
+.code-line.deleted::before {
+  display: inline-block;
+  width: 1ch;
+  margin-inline-end: 0.5rem;
+  font-weight: 700;
+}
+
+.code-line.inserted::before {
+  color: var(--code-inserted);
+  content: '+';
+}
+
+.code-line.deleted::before {
+  color: var(--code-deleted);
+  content: '−';
+}
+
+.highlight-line,
+.code-line.highlighted,
+.code-line.line-highlight {
+  border-inline-start-color: var(--code-line-highlight-border);
+  background: var(--code-line-highlight);
+}
+
+.highlighted-word {
+  border-radius: 0.2rem;
+  background: var(--code-word-highlight);
+  box-shadow: 0 0 0 1px var(--code-word-highlight-outline);
 }
 
 .line-number::before {
   display: inline-block;
-  width: 1rem;
-  margin-right: 1rem;
-  margin-left: -0.5rem;
+  width: 2ch;
+  margin-inline: -0.25rem 1rem;
   color: var(--code-muted);
-  text-align: right;
+  text-align: end;
   content: attr(line);
 }
 
@@ -63,73 +92,104 @@
 .token.prolog,
 .token.doctype,
 .token.cdata {
-  color: var(--code-comment);
+  color: var(--code-comment) !important;
   font-style: italic;
-}
-
-.token.punctuation {
-  color: var(--code-punctuation);
-}
-
-.namespace,
-.token.class-name,
-.token.builtin,
-.token.tag {
-  color: var(--code-type);
-}
-
-.token.deleted {
-  color: color-mix(in srgb, var(--danger) 78%, var(--code-fg));
-  font-style: italic;
-}
-
-.token.symbol,
-.token.property,
-.token.variable,
-.token.parameter {
-  color: var(--code-fg);
-}
-
-.token.operator,
-.token.entity,
-.token.url {
-  color: var(--code-operator);
 }
 
 .token.keyword,
 .token.atrule,
 .token.selector {
-  color: var(--code-keyword);
-  font-style: italic;
+  color: var(--code-keyword) !important;
+  font-weight: 600;
 }
 
-.token.boolean,
-.token.number,
-.token.constant {
-  color: var(--code-number);
+.token.builtin,
+.token.tag,
+.token.type-definition {
+  color: var(--code-type) !important;
+  font-weight: 600;
+}
+
+.token.class-name,
+.token.maybe-class-name,
+.token.class {
+  color: var(--code-class) !important;
+  font-weight: 600;
 }
 
 .token.function,
-.token.method {
-  color: var(--code-function);
+.token.method,
+.token.function-variable {
+  color: var(--code-function) !important;
+  font-weight: 500;
 }
 
-.token.char,
+.token.variable,
+.token.parameter {
+  color: var(--code-variable) !important;
+}
+
+.token.property,
+.token.property-access,
+.token.literal-property,
+.token.attr-name {
+  color: var(--code-property) !important;
+}
+
 .token.string,
-.token.attr-value,
-.language-css .token.string,
-.style .token.string {
-  color: var(--code-string);
+.token.attr-value {
+  color: var(--code-string) !important;
 }
 
-.token.attr-name,
-.token.inserted {
-  color: color-mix(in srgb, var(--magic) 72%, var(--code-fg));
+.token.char {
+  color: var(--code-char) !important;
 }
 
+.token.number,
+.token.boolean {
+  color: var(--code-number) !important;
+}
+
+.token.constant {
+  color: var(--code-constant) !important;
+}
+
+.namespace {
+  color: var(--code-namespace) !important;
+}
+
+.token.template-string,
+.token.template-punctuation,
+.token.interpolation,
 .token.regex,
 .token.important {
-  color: color-mix(in srgb, var(--gold) 78%, var(--code-fg));
+  color: var(--code-template) !important;
+}
+
+.token.operator,
+.token.entity,
+.token.url {
+  color: var(--code-operator) !important;
+}
+
+.token.punctuation {
+  color: var(--code-punctuation) !important;
+}
+
+.token.directive,
+.token.directive-hash,
+.token.macro,
+.token.macro-name {
+  color: var(--code-preprocessor) !important;
+  font-weight: 600;
+}
+
+.token.inserted {
+  color: var(--code-inserted) !important;
+}
+
+.token.deleted {
+  color: var(--code-deleted) !important;
 }
 
 .token.important,
@@ -143,4 +203,10 @@
 
 .token.table {
   display: inline;
+}
+
+pre ::selection,
+pre::selection {
+  background: var(--code-selection);
+  color: var(--selection-foreground);
 }

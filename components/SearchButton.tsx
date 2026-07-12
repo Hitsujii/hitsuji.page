@@ -9,7 +9,7 @@ export default function SearchButton({ active = false }: SearchButtonProps) {
   return (
     <Link
       href="/search"
-      className={['focus-outline relative size-8 hover:text-[var(--accent)]', ''].join(' ')}
+      className="focus-outline relative size-8 hover:text-[var(--primary-hover)]"
       aria-label="Search"
       aria-current={active ? 'page' : undefined}
       title="Search"

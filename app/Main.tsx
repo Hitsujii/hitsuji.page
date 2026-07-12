@@ -50,7 +50,7 @@ export default function Home({ posts }: { posts: CoreContent<Blog>[] }) {
               href="/feed.xml"
               target="_blank"
               prefetch={false}
-              className="inline-flex translate-y-1 text-[var(--accent)] transition hover:scale-110"
+              className="inline-flex translate-y-1 text-[var(--primary)] transition hover:scale-110 hover:text-[var(--primary-hover)]"
               aria-label="RSS Feed"
               title="RSS Feed"
             >
@@ -63,7 +63,7 @@ export default function Home({ posts }: { posts: CoreContent<Blog>[] }) {
             </Link>
           </div>
 
-          <div className="max-w-2xl text-[var(--text)]">
+          <div className="max-w-2xl text-[var(--foreground)]">
             <p>
               I’m Hitsuji. I’m learning C++ from scratch, building this site myself, and
               accidentally picking up frontend along the way.
@@ -73,14 +73,14 @@ export default function Home({ posts }: { posts: CoreContent<Blog>[] }) {
               Feel free to read the{' '}
               <Link
                 href="/blog"
-                className="underline decoration-dashed underline-offset-4 hover:text-[var(--accent)]"
+                className="text-[var(--link)] underline decoration-dashed underline-offset-4 visited:text-[var(--link-visited)] hover:text-[var(--link-hover)]"
               >
                 high-cortisol posts
               </Link>{' '}
               or check out the{' '}
               <Link
                 href="/projects"
-                className="underline decoration-dashed underline-offset-4 hover:text-[var(--accent)]"
+                className="text-[var(--link)] underline decoration-dashed underline-offset-4 visited:text-[var(--link-visited)] hover:text-[var(--link-hover)]"
               >
                 projects
               </Link>{' '}
@@ -90,7 +90,7 @@ export default function Home({ posts }: { posts: CoreContent<Blog>[] }) {
 
           {socialLinks.some(({ href }) => Boolean(href)) && (
             <div className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-2">
-              <div className="text-sm whitespace-nowrap text-[var(--muted-foreground)]">
+              <div className="text-sm whitespace-nowrap text-[var(--text-muted)]">
                 Social Links:
               </div>
 
@@ -132,7 +132,10 @@ export default function Home({ posts }: { posts: CoreContent<Blog>[] }) {
         )}
 
         <div className="my-8 text-center">
-          <Link href="/blog" className="inline-flex items-center gap-1 hover:text-[var(--accent)]">
+          <Link
+            href="/blog"
+            className="inline-flex items-center gap-1 text-[var(--link)] hover:text-[var(--link-hover)]"
+          >
             All Posts
             <IconArrowRight className="inline-block size-5 rtl:-rotate-180" />
           </Link>

@@ -1,4 +1,3 @@
-import 'css/prism.css'
 import 'katex/dist/katex.css'
 
 import type { Metadata } from 'next'
@@ -44,7 +43,7 @@ function renderFolderChildren(node: NonNullable<ReturnType<typeof findTreeNodeBy
 
   if (node.children.length === 0) {
     return (
-      <p className="mt-4 text-sm text-[var(--muted-foreground)]">
+      <p className="mt-4 text-sm text-[var(--text-muted)]">
         This folder does not contain any visible notes yet.
       </p>
     )
@@ -56,7 +55,7 @@ function renderFolderChildren(node: NonNullable<ReturnType<typeof findTreeNodeBy
         <li key={`${child.type}:${child.path}`}>
           <Link
             href={child.type === 'folder' ? getNoteHref(child.path) : child.href}
-            className="text-[var(--accent)] underline-offset-4 hover:underline hover:decoration-dashed"
+            className="text-[var(--link)] underline-offset-4 visited:text-[var(--link-visited)] hover:text-[var(--link-hover)] hover:underline hover:decoration-dashed"
           >
             {child.name}
           </Link>
@@ -138,7 +137,7 @@ export default async function NotePage(props: { params: Promise<{ slug: string[]
     return (
       <NotesShell tree={tree} activePath={slug} breadcrumbLabels={getNotesBreadcrumbLabels(tree)}>
         {!startsWithH1 && (
-          <h1 className="mb-6 text-3xl font-bold text-[var(--accent)]">{getNoteTitle(note)}</h1>
+          <h1 className="mb-6 text-3xl font-bold text-[var(--primary)]">{getNoteTitle(note)}</h1>
         )}
 
         <MDXLayoutRenderer code={note.body.code} components={components} toc={note.toc} />

@@ -19,7 +19,7 @@ const siteMetadata = {
   theme: 'system', // system, dark or light
   siteUrl,
   siteRepo: 'https://github.com/Hitsujii/hitsuji.page',
-  siteLogo: `${process.env.BASE_PATH || ''}/static/images/logo.png`,
+  siteLogo: `${process.env.BASE_PATH || ''}/static/favicons/favicon.svg`,
   socialBanner: `${process.env.BASE_PATH || ''}/static/images/og-card.png`,
   mastodon: '',
   email: 'hi@hitsuji.page',

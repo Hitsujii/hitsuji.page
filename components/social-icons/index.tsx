@@ -47,7 +47,7 @@ export default function SocialIcon({ kind, href, size = 24 }: SocialIconProps) {
 
   return (
     <a
-      className="group inline-flex p-2 transition-transform hover:rotate-6 hover:text-[var(--accent)] sm:p-1"
+      className="group inline-flex p-2 transition-transform hover:rotate-6 hover:text-[var(--primary-hover)] sm:p-1"
       target={kind === 'mail' ? undefined : '_blank'}
       rel={kind === 'mail' ? undefined : 'noopener noreferrer'}
       href={href}

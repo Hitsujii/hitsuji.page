@@ -31,7 +31,7 @@ export default function AuthorLayout({ children, content }: Props) {
           <h2 className="text-xl font-semibold">{name}</h2>
 
           {(occupation || company) && (
-            <p className="mt-1 text-sm text-[var(--muted-foreground)]">
+            <p className="mt-1 text-sm text-[var(--text-muted)]">
               {[occupation, company].filter(Boolean).join(' at ')}
             </p>
           )}

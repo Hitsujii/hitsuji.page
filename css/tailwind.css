@@ -11,32 +11,30 @@
     var(--font-google-sans-code), 'Google Sans Code', ui-monospace, SFMono-Regular, Menlo, Monaco,
     Consolas, 'Liberation Mono', 'Courier New', monospace;
 
-  /* Colors */
-  /* Copied from https://tailwindcss.com/docs/theme#default-theme-variable-reference */
-  /* FRIEREN_THEME_V1: cold, quiet and slightly magical. */
-  --color-primary-50: #f2f6ff;
-  --color-primary-100: #e6edff;
-  --color-primary-200: #cddcff;
-  --color-primary-300: #abc4ff;
-  --color-primary-400: #83a5f1;
-  --color-primary-500: #6688d4;
-  --color-primary-600: #526fba;
-  --color-primary-700: #435a98;
-  --color-primary-800: #394b7b;
-  --color-primary-900: #323f63;
-  --color-primary-950: #1d263d;
+  /* Bluebell Archive ramps. Components use the semantic tokens below. */
+  --color-primary-50: #f4f6fc;
+  --color-primary-100: #e8edf9;
+  --color-primary-200: #d0dbf3;
+  --color-primary-300: #adc2e9;
+  --color-primary-400: #7f9dda;
+  --color-primary-500: #5e7bc5;
+  --color-primary-600: #3f5fa9;
+  --color-primary-700: #334f91;
+  --color-primary-800: #293f78;
+  --color-primary-900: #233662;
+  --color-primary-950: #151f3a;
 
-  --color-gray-50: oklch(0.985 0.002 247.839);
-  --color-gray-100: oklch(0.967 0.003 264.542);
-  --color-gray-200: oklch(0.928 0.006 264.531);
-  --color-gray-300: oklch(0.872 0.01 258.338);
-  --color-gray-400: oklch(0.707 0.022 261.325);
-  --color-gray-500: oklch(0.551 0.027 264.364);
-  --color-gray-600: oklch(0.446 0.03 256.802);
-  --color-gray-700: oklch(0.373 0.034 259.733);
-  --color-gray-800: oklch(0.278 0.033 256.848);
-  --color-gray-900: oklch(0.21 0.034 264.665);
-  --color-gray-950: oklch(0.13 0.028 261.692);
+  --color-gray-50: #f7f8f8;
+  --color-gray-100: #eef1f2;
+  --color-gray-200: #dde3e6;
+  --color-gray-300: #c6d0d5;
+  --color-gray-400: #93a3ad;
+  --color-gray-500: #667783;
+  --color-gray-600: #4f606c;
+  --color-gray-700: #3c4c58;
+  --color-gray-800: #293944;
+  --color-gray-900: #1b2832;
+  --color-gray-950: #101820;
 
   /* Line heights */
   --line-height-11: 2.75rem;
@@ -64,31 +62,31 @@
   ::before,
   ::backdrop,
   ::file-selector-button {
-    border-color: var(--color-gray-200, currentColor);
+    border-color: var(--border, currentColor);
   }
 
   a,
   button {
-    outline-color: var(--color-primary-500);
+    outline-color: var(--focus-ring, var(--color-primary-600));
   }
 
   a:focus-visible,
   button:focus-visible {
     outline: 2px solid;
     border-radius: var(--radius-sm);
-    outline-color: var(--color-primary-500);
+    outline-color: var(--focus-ring, var(--color-primary-600));
   }
 }
 
 @layer utilities {
   .prose {
     & a {
-      color: var(--color-primary-500);
+      color: var(--link, var(--color-primary-600));
       &:hover {
-        color: var(--color-primary-600);
+        color: var(--link-hover, var(--color-primary-700));
       }
       & code {
-        color: var(--color-primary-400);
+        color: var(--inline-code-foreground, var(--color-primary-700));
       }
     }
     & :where(h1, h2) {
@@ -99,22 +97,22 @@
       font-weight: 600;
     }
     & :where(code):not(pre code) {
-      color: var(--color-primary-600);
+      color: var(--inline-code-foreground, var(--color-primary-700));
     }
   }
 
   .prose-invert {
     & a {
-      color: var(--color-primary-500);
+      color: var(--link, var(--color-primary-400));
       &:hover {
-        color: var(--color-primary-400);
+        color: var(--link-hover, var(--color-primary-300));
       }
       & code {
-        color: var(--color-primary-400);
+        color: var(--inline-code-foreground, var(--color-primary-300));
       }
     }
     & :where(h1, h2, h3, h4, h5, h6) {
-      color: var(--color-gray-100);
+      color: var(--foreground-strong, var(--color-gray-100));
     }
   }
 }
@@ -128,7 +126,9 @@
 }
 
 .footnotes {
-  @apply mt-12 border-t border-gray-200 pt-8 dark:border-gray-700;
+  margin-top: 3rem;
+  border-top: 1px solid var(--border);
+  padding-top: 2rem;
 }
 
 .data-footnote-backref {
@@ -170,11 +170,30 @@ html[data-view-transition='running'] a {
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --color-accent: var(--accent);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-muted: var(--muted);
-  --color-muted-foreground: var(--muted-foreground);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-text-muted: var(--text-muted);
   --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-soft: var(--primary-soft);
+  --color-link: var(--link);
+  --color-link-hover: var(--link-hover);
+  --color-link-visited: var(--link-visited);
+  --color-secondary: var(--secondary);
+  --color-accent-warm: var(--accent-warm);
+  --color-info: var(--info);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-destructive: var(--destructive);
+
+  /* Compatibility aliases for existing Tailwind utilities and Pliny UI. */
+  --color-accent: var(--primary);
+  --color-accent-foreground: var(--on-primary);
+  --color-muted: var(--surface-muted);
+  --color-muted-foreground: var(--text-muted);
   --font-app: var(--font-google-sans-code);
   --font-sans:
     var(--font-google-sans-code), 'Google Sans Code', ui-monospace, SFMono-Regular, Menlo, Monaco,
@@ -185,50 +204,213 @@ html[data-view-transition='running'] a {
   :root,
   [data-theme='light'] {
     color-scheme: light;
-    --background: #f5f7fb;
-    --foreground: #3b4658;
-    --foreground-strong: #1c2638;
-    --accent: #48639d;
-    --accent-foreground: #f8f9fc;
-    --muted: #e8edf5;
-    --muted-foreground: #5b697f;
-    --border: #d5deeb;
-    --border-strong: #8a99af;
-    --control-border: #7f8ea4;
-    --ring: #5f7fc2;
+    --background: #f8f6f1;
+    --surface: #f1f2f3;
+    --surface-muted: #e8ecf2;
+    --surface-elevated: #fffefb;
 
-    --magic: #6db4c2;
-    --gold: #b39a65;
-    --danger: #a84e63;
+    --foreground: #202a3a;
+    --foreground-strong: #111824;
+    --text-muted: #596477;
 
-    --logo-primary: #858aa1;
-    --logo-secondary: #f7f4ec;
-    --logo-detail: #536176;
-    --logo-glow: color-mix(in srgb, var(--magic) 30%, transparent);
+    --border: #c5cbd5;
+    --border-strong: #788497;
+    --control-border: #788497;
+
+    --primary: #3f5fa9;
+    --primary-hover: #334f91;
+    --primary-active: #293f78;
+    --on-primary: #ffffff;
+    --primary-soft: #dce5f6;
+    --on-primary-soft: #293f78;
+
+    --link: #3f5fa9;
+    --link-hover: #334f91;
+    --link-visited: #674f8b;
+    --secondary: #52667f;
+    --secondary-soft: #e4e9ef;
+    --accent-plant: #5b704f;
+    --accent-plant-soft: #e2ebdc;
+    --accent-warm: #955432;
+    --accent-warm-soft: #f2e4da;
+
+    --focus-ring: #365daf;
+    --selection: #cbd8f0;
+    --selection-foreground: #182234;
+    --scrollbar-thumb: #788497;
+
+    --inline-code-background: #e7eaf0;
+    --inline-code-foreground: #29364b;
+    --code-background: #eef0f4;
+    --code-foreground: #202b3b;
+    --code-muted: #606b7d;
+    --code-border: #aeb7c5;
+    --code-keyword: #3f5fa9;
+    --code-type: #356c73;
+    --code-class: #6d4f8e;
+    --code-function: #8a4858;
+    --code-variable: #29374c;
+    --code-property: #6d4f8e;
+    --code-string: #446d42;
+    --code-char: #5b692c;
+    --code-number: #95502d;
+    --code-constant: #7f4d79;
+    --code-operator: #344b6c;
+    --code-punctuation: #4b586a;
+    --code-comment: #5c6676;
+    --code-preprocessor: #794d88;
+    --code-namespace: #326783;
+    --code-template: #765a33;
+    --code-file-name: #35445a;
+    --code-selection: #cbd8f0;
+    --code-line-highlight: #e7ebf3;
+    --code-line-highlight-border: #4666a9;
+    --code-word-highlight: #e8ebf2;
+    --code-word-highlight-outline: #67758e;
+    --code-inserted: #3b663c;
+    --code-inserted-background: #e4efe4;
+    --code-inserted-border: #527b4e;
+    --code-deleted: #8c3843;
+    --code-deleted-background: #f4e9ea;
+    --code-deleted-border: #a74a54;
+
+    --info: #315e9a;
+    --info-soft: #dce8f5;
+    --success: #4f6e45;
+    --success-soft: #e2ebdc;
+    --warning: #805519;
+    --warning-soft: #f5e8c9;
+    --destructive: #a13f46;
+    --destructive-soft: #f3dee0;
+
+    --presence-online: var(--success);
+    --presence-away: var(--warning);
+    --presence-busy: var(--destructive);
+    --presence-offline: var(--text-muted);
+    --presence-sleeping: var(--primary);
+
+    --logo-primary: #8290aa;
+    --logo-secondary: #fffefb;
+    --logo-detail: #46566f;
+    --logo-glow: color-mix(in srgb, var(--primary) 26%, transparent);
+    --logo-shadow: color-mix(in srgb, var(--foreground-strong) 28%, transparent);
+
+    /* Compatibility aliases; new work should use the semantic names above. */
+    --accent: var(--primary);
+    --accent-foreground: var(--on-primary);
+    --muted: var(--surface-muted);
+    --muted-foreground: var(--text-muted);
+    --ring: var(--focus-ring);
+    --magic: var(--accent-plant);
+    --gold: var(--accent-warm);
+    --danger: var(--destructive);
+    --code-bg: var(--code-background);
+    --code-fg: var(--code-foreground);
   }
 
   [data-theme='dark'] {
     color-scheme: dark;
-    --background: #101724;
-    --foreground: #dce4f0;
-    --foreground-strong: #f4f7fb;
-    --accent: #91abe0;
-    --accent-foreground: #101724;
-    --muted: #1a2636;
-    --muted-foreground: #a8b5c7;
-    --border: #2c3b50;
-    --border-strong: #6e8099;
-    --control-border: #6e8099;
-    --ring: #9cb6e7;
+    --background: #111824;
+    --surface: #182233;
+    --surface-muted: #1d293b;
+    --surface-elevated: #223046;
 
-    --magic: #78c2ce;
-    --gold: #c4ad79;
-    --danger: #d17d8e;
+    --foreground: #ecebe7;
+    --foreground-strong: #f8f6f1;
+    --text-muted: #b6becc;
 
-    --logo-primary: #929ab0;
-    --logo-secondary: #eef0f5;
-    --logo-detail: #65748a;
-    --logo-glow: color-mix(in srgb, var(--magic) 38%, transparent);
+    --border: #36445b;
+    --border-strong: #6b7b95;
+    --control-border: #6b7b95;
+
+    --primary: #9bb8fa;
+    --primary-hover: #b5c9fa;
+    --primary-active: #829fdf;
+    --on-primary: #17213a;
+    --primary-soft: #293a5d;
+    --on-primary-soft: #d7e2ff;
+
+    --link: #9bb8fa;
+    --link-hover: #b5c9fa;
+    --link-visited: #c2a8dc;
+    --secondary: #a6bcd1;
+    --secondary-soft: #26364c;
+    --accent-plant: #a3be91;
+    --accent-plant-soft: #283e2d;
+    --accent-warm: #e2ab80;
+    --accent-warm-soft: #48301f;
+
+    --focus-ring: #a6c1ff;
+    --selection: #314a79;
+    --selection-foreground: #f4f1e9;
+    --scrollbar-thumb: #6b7b95;
+
+    --inline-code-background: #26344a;
+    --inline-code-foreground: #dce6fa;
+    --code-background: #0d1521;
+    --code-foreground: #e8eaf0;
+    --code-muted: #8e9aaf;
+    --code-border: #465873;
+    --code-keyword: #9db9ff;
+    --code-type: #80c7cd;
+    --code-class: #d1a9eb;
+    --code-function: #f1b3be;
+    --code-variable: #e6e9ef;
+    --code-property: #d1a9eb;
+    --code-string: #a8d49e;
+    --code-char: #c7d694;
+    --code-number: #f0b28a;
+    --code-constant: #deabd2;
+    --code-operator: #b8caec;
+    --code-punctuation: #aab4c4;
+    --code-comment: #98a4b6;
+    --code-preprocessor: #e4a4e2;
+    --code-namespace: #79b7e1;
+    --code-template: #e5c18f;
+    --code-file-name: #d6deed;
+    --code-selection: #314a79;
+    --code-line-highlight: #1b2a43;
+    --code-line-highlight-border: #789eed;
+    --code-word-highlight: #22314b;
+    --code-word-highlight-outline: #708bc1;
+    --code-inserted: #a9d3a0;
+    --code-inserted-background: #1a3325;
+    --code-inserted-border: #729d69;
+    --code-deleted: #f0a7ae;
+    --code-deleted-background: #3a2228;
+    --code-deleted-border: #c46d78;
+
+    --info: #9ec5f6;
+    --info-soft: #203650;
+    --success: #a9cc99;
+    --success-soft: #283e2d;
+    --warning: #f0c47e;
+    --warning-soft: #48391d;
+    --destructive: #f2a3ac;
+    --destructive-soft: #4d2930;
+
+    --presence-online: var(--success);
+    --presence-away: var(--warning);
+    --presence-busy: var(--destructive);
+    --presence-offline: var(--text-muted);
+    --presence-sleeping: var(--primary);
+
+    --logo-primary: #9aabd0;
+    --logo-secondary: #f4f1e9;
+    --logo-detail: #7183a5;
+    --logo-glow: color-mix(in srgb, var(--primary) 34%, transparent);
+    --logo-shadow: color-mix(in srgb, #000000 52%, transparent);
+
+    --accent: var(--primary);
+    --accent-foreground: var(--on-primary);
+    --muted: var(--surface-muted);
+    --muted-foreground: var(--text-muted);
+    --ring: var(--focus-ring);
+    --magic: var(--accent-plant);
+    --gold: var(--accent-warm);
+    --danger: var(--destructive);
+    --code-bg: var(--code-background);
+    --code-fg: var(--code-foreground);
   }
 
   *,
@@ -237,9 +419,9 @@ html[data-view-transition='running'] a {
   ::backdrop,
   ::file-selector-button {
     border-color: var(--border);
-    outline-color: color-mix(in srgb, var(--accent) 75%, transparent);
-    scrollbar-width: auto;
-    scrollbar-color: var(--muted) transparent;
+    outline-color: var(--focus-ring);
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
   }
 
   html,
@@ -257,12 +439,12 @@ html[data-view-transition='running'] a {
     background-image:
       radial-gradient(
         circle at 14% -10%,
-        color-mix(in srgb, var(--accent) 10%, transparent),
+        color-mix(in srgb, var(--primary) 9%, transparent),
         transparent 30rem
       ),
       radial-gradient(
         circle at 92% 2%,
-        color-mix(in srgb, var(--magic) 7%, transparent),
+        color-mix(in srgb, var(--accent-warm) 4%, transparent),
         transparent 26rem
       );
     background-attachment: fixed;
@@ -293,14 +475,33 @@ html[data-view-transition='running'] a {
 
   a,
   button {
-    outline-color: var(--accent);
-    outline-offset: 1px;
+    outline-color: var(--focus-ring);
+    outline-offset: 3px;
   }
 
   a:focus-visible,
-  button:focus-visible {
-    outline: 2px dashed var(--accent);
+  button:focus-visible,
+  input:focus-visible,
+  textarea:focus-visible,
+  select:focus-visible,
+  summary:focus-visible {
+    outline: 2px solid var(--focus-ring);
+    outline-offset: 3px;
     text-decoration-line: none;
+  }
+
+  input,
+  textarea,
+  select {
+    border-color: var(--control-border);
+    background: var(--surface-elevated);
+    color: var(--foreground);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: var(--text-muted);
+    opacity: 1;
   }
 
   button:not(:disabled),
@@ -313,8 +514,8 @@ html[data-view-transition='running'] a {
   }
 
   ::selection {
-    background: color-mix(in srgb, var(--accent) 75%, transparent);
-    color: var(--accent-foreground);
+    background: var(--selection);
+    color: var(--selection-foreground);
   }
 
   :target {
@@ -335,9 +536,10 @@ html[data-view-transition='running'] a {
   }
 
   .active-nav {
+    color: var(--primary);
     text-decoration-line: underline;
     text-decoration-style: wavy;
-    text-decoration-color: var(--gold);
+    text-decoration-color: var(--accent-warm);
     text-decoration-thickness: 2px;
     text-underline-offset: 8px;
   }
@@ -353,11 +555,11 @@ html[data-view-transition='running'] a {
 
   .focus-outline {
     outline: 2px solid transparent;
-    outline-offset: 1px;
+    outline-offset: 3px;
   }
 
   .focus-outline:focus-visible {
-    outline: 2px dashed var(--accent);
+    outline: 2px solid var(--focus-ring);
   }
 
   @media (max-width: 639px) {
@@ -389,7 +591,7 @@ html[data-view-transition='running'] a {
 .post-content :where(h1, h2, h3, h4, th),
 .app-prose :where(h1, h2, h3, h4, th) {
   margin-bottom: 0.75rem;
-  color: var(--foreground);
+  color: var(--foreground-strong);
 }
 
 .post-content :where(h3),
@@ -404,16 +606,26 @@ html[data-view-transition='running'] a {
 
 .post-content :where(a),
 .app-prose :where(a) {
-  color: var(--foreground);
+  color: var(--link);
   overflow-wrap: break-word;
   text-decoration-line: underline;
   text-decoration-style: dashed;
   text-underline-offset: 4px;
 }
 
+.post-content :where(a:visited),
+.app-prose :where(a:visited) {
+  color: var(--link-visited);
+}
+
 .post-content :where(a:hover),
 .app-prose :where(a:hover) {
-  color: var(--accent);
+  color: var(--link-hover);
+}
+
+.post-content :where(a:active),
+.app-prose :where(a:active) {
+  color: var(--primary-active);
 }
 
 .post-content :where(ul),
@@ -423,7 +635,7 @@ html[data-view-transition='running'] a {
 
 .post-content :where(li)::marker,
 .app-prose :where(li)::marker {
-  color: var(--accent);
+  color: var(--primary);
 }
 
 .post-content :where(hr),
@@ -439,7 +651,7 @@ html[data-view-transition='running'] a {
 
 .post-content :where(figcaption),
 .app-prose :where(figcaption) {
-  opacity: 0.75;
+  color: var(--text-muted);
 }
 
 .post-content :where(th, td),
@@ -450,15 +662,62 @@ html[data-view-transition='running'] a {
 
 .post-content :where(th),
 .app-prose :where(th) {
+  background: var(--surface-muted);
   padding-block: 0.375rem;
+}
+
+.post-content :where(tbody tr:nth-child(even)),
+.app-prose :where(tbody tr:nth-child(even)) {
+  background: color-mix(in srgb, var(--surface-muted) 48%, transparent);
+}
+
+.post-content :where(blockquote),
+.app-prose :where(blockquote) {
+  border-inline-start-color: var(--secondary);
+  background: color-mix(in srgb, var(--secondary-soft) 52%, transparent);
+  color: var(--foreground);
+}
+
+/* GitHub-style MDX alerts follow data-theme instead of the system preference. */
+.markdown-alert {
+  --color-border-default: var(--border) !important;
+
+  border-radius: 0 0.375rem 0.375rem 0;
+  background: var(--surface);
+  color: var(--foreground);
+}
+
+.markdown-alert.markdown-alert-note {
+  --color-accent-fg: var(--info) !important;
+  --color-accent-emphasis: var(--info) !important;
+}
+
+.markdown-alert.markdown-alert-tip {
+  --color-success-fg: var(--success) !important;
+  --color-success-emphasis: var(--success) !important;
+}
+
+.markdown-alert.markdown-alert-important {
+  --color-done-fg: var(--primary) !important;
+  --color-done-emphasis: var(--primary) !important;
+}
+
+.markdown-alert.markdown-alert-warning {
+  --color-attention-fg: var(--warning) !important;
+  --color-attention-emphasis: var(--warning) !important;
+}
+
+.markdown-alert.markdown-alert-caution {
+  --color-danger-fg: var(--destructive) !important;
+  --color-danger-emphasis: var(--destructive) !important;
 }
 
 .post-content :where(code):not(pre code),
 .app-prose :where(code):not(pre code) {
   border-radius: 0.25rem;
-  background: color-mix(in srgb, var(--muted) 75%, transparent);
+  background: var(--inline-code-background);
   padding: 0.25rem;
-  color: var(--foreground);
+  color: var(--inline-code-foreground);
   overflow-wrap: break-word;
 }
 
@@ -471,7 +730,9 @@ html[data-view-transition='running'] a {
 
 .post-content :where(pre),
 .app-prose :where(pre) {
-  border: 1px solid var(--border);
+  border: 1px solid var(--code-border);
+  background: var(--code-background);
+  color: var(--code-foreground);
 }
 
 .post-content :where(pre code),
@@ -507,6 +768,8 @@ footer svg {
   min-height: 3.125rem;
   padding-block: 0;
   border: 1px solid var(--control-border);
+  background: var(--surface-elevated);
+  color: var(--foreground);
   box-shadow: none;
   font: inherit;
   font-weight: 400;
@@ -514,8 +777,9 @@ footer svg {
 
 #pagefind-search .pagefind-ui__search-input:focus,
 #pagefind-search .pagefind-ui__search-input:focus-visible {
-  border-color: var(--border);
-  outline: 1px solid var(--accent);
+  border-color: var(--focus-ring);
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
   box-shadow: none;
 }
 
@@ -529,7 +793,7 @@ footer svg {
 
 #pagefind-search mark {
   border-radius: 0.2rem;
-  background: color-mix(in srgb, var(--gold) 52%, var(--background));
+  background: var(--accent-warm-soft);
   color: var(--foreground-strong);
   padding-inline: 0.125rem;
 }
@@ -557,7 +821,7 @@ footer svg {
   overflow: hidden;
   border: 1px solid var(--border);
   border-radius: 0.375rem;
-  background: var(--background);
+  background: var(--surface-elevated);
   padding: 0.125rem 0.5rem;
   color: var(--foreground);
   font-size: 0.75rem;
@@ -574,8 +838,8 @@ footer svg {
   height: 0.35rem;
   flex: none;
   border-radius: 9999px;
-  background: var(--magic);
-  box-shadow: 0 0 0.45rem color-mix(in srgb, var(--magic) 55%, transparent);
+  background: var(--secondary);
+  box-shadow: 0 0 0.45rem color-mix(in srgb, var(--secondary) 48%, transparent);
 }
 
 .code-block-wrapper pre {
@@ -592,9 +856,9 @@ footer svg {
   top: -0.75rem;
   inset-inline-end: 0.75rem;
   z-index: 2;
-  border: 1px solid var(--muted);
+  border: 1px solid var(--code-border);
   border-radius: 0.25rem;
-  background: var(--muted);
+  background: var(--surface-muted);
   padding: 0.25rem 0.5rem;
   color: var(--foreground);
   font-size: 0.75rem;
@@ -615,8 +879,8 @@ footer svg {
 
 .copy-code:hover,
 .copy-code:focus-visible {
-  border-color: var(--accent);
-  color: var(--accent);
+  border-color: var(--primary);
+  color: var(--primary-hover);
 }
 
 #back-button {
@@ -657,7 +921,7 @@ footer svg {
 }
 
 [data-button='back-to-top']:hover {
-  color: var(--accent);
+  color: var(--primary-hover);
 }
 
 /* NextPaper AstroPaper collapsible TOC */
@@ -679,7 +943,7 @@ footer svg {
 }
 
 .astro-toc-collapse summary:hover {
-  color: var(--accent);
+  color: var(--primary-hover);
 }
 
 .astro-toc-collapse nav {
@@ -698,18 +962,18 @@ footer svg {
 }
 
 .astro-toc-collapse li::marker {
-  color: var(--accent);
+  color: var(--primary);
 }
 
 .astro-toc-collapse a {
-  color: var(--foreground);
+  color: var(--link);
   text-decoration-line: underline;
   text-decoration-style: dashed;
   text-underline-offset: 4px;
 }
 
 .astro-toc-collapse a:hover {
-  color: var(--accent);
+  color: var(--link-hover);
 }
 
 /* NextPaper AstroPaper heading anchors right-only */
@@ -739,7 +1003,7 @@ footer svg {
 .heading-link:hover,
 .heading-link:focus,
 .heading-link:focus-visible {
-  color: var(--accent) !important;
+  color: var(--link-hover) !important;
 }
 
 .heading-link span {
@@ -759,18 +1023,18 @@ footer svg {
   margin-top: 0;
   margin-bottom: 0;
   overflow-x: auto;
-  border: 1px solid var(--border);
+  border: 1px solid var(--code-border);
   border-radius: 0.375rem;
-  background: var(--shiki-light-bg, #f0f3f9);
-  color: var(--shiki-light, #273246);
+  background: var(--shiki-light-bg, var(--code-background));
+  color: var(--shiki-light, var(--code-foreground));
   padding: 1rem;
   outline-color: var(--border);
 }
 
 [data-theme='dark'] .post-content :where(pre.astro-code),
 [data-theme='dark'] .app-prose :where(pre.astro-code) {
-  background: var(--shiki-dark-bg, #121c2b);
-  color: var(--shiki-dark, #dce4f0);
+  background: var(--shiki-dark-bg, var(--code-background));
+  color: var(--shiki-dark, var(--code-foreground));
 }
 
 .post-content :where(pre.astro-code code),
@@ -851,44 +1115,6 @@ footer svg {
   color: var(--accent);
 }
 
-/* Prism tokens mapped closer to AstroPaper's Night Owl Shiki output. */
-[data-theme='dark'] .post-content :where(pre.astro-code .token.keyword),
-[data-theme='dark'] .app-prose :where(pre.astro-code .token.keyword) {
-  color: #c792ea;
-  font-style: italic;
-}
-
-[data-theme='dark'] .post-content :where(pre.astro-code .token.function),
-[data-theme='dark'] .app-prose :where(pre.astro-code .token.function) {
-  color: #82aaff;
-  font-style: italic;
-}
-
-[data-theme='dark'] .post-content :where(pre.astro-code .token.string),
-[data-theme='dark'] .app-prose :where(pre.astro-code .token.string) {
-  color: #ecc48d;
-}
-
-[data-theme='dark'] .post-content :where(pre.astro-code .token.number),
-[data-theme='dark'] .post-content :where(pre.astro-code .token.boolean),
-[data-theme='dark'] .app-prose :where(pre.astro-code .token.number),
-[data-theme='dark'] .app-prose :where(pre.astro-code .token.boolean) {
-  color: #f78c6c;
-}
-
-[data-theme='dark'] .post-content :where(pre.astro-code .token.operator),
-[data-theme='dark'] .post-content :where(pre.astro-code .token.punctuation),
-[data-theme='dark'] .app-prose :where(pre.astro-code .token.operator),
-[data-theme='dark'] .app-prose :where(pre.astro-code .token.punctuation) {
-  color: #d6deeb;
-}
-
-[data-theme='dark'] .post-content :where(pre.astro-code .token.comment),
-[data-theme='dark'] .app-prose :where(pre.astro-code .token.comment) {
-  color: #637777;
-  font-style: italic;
-}
-
 /* NextPaper AstroPaper newsletter parity */
 .newsletter-section {
   margin-top: 2rem;
@@ -931,7 +1157,7 @@ footer svg {
   flex: 1 1 auto;
   border: 1px solid var(--control-border) !important;
   border-radius: 0.375rem !important;
-  background: var(--background) !important;
+  background: var(--surface-elevated) !important;
   padding: 0.5rem 1rem !important;
   color: var(--foreground) !important;
   font: inherit !important;
@@ -940,15 +1166,15 @@ footer svg {
 
 .newsletter-section input[type='email']::placeholder,
 .newsletter-section input[type='text']::placeholder {
-  color: var(--muted-foreground);
+  color: var(--text-muted);
 }
 
 .newsletter-section input[type='email']:focus,
 .newsletter-section input[type='email']:focus-visible,
 .newsletter-section input[type='text']:focus,
 .newsletter-section input[type='text']:focus-visible {
-  border-color: var(--accent) !important;
-  outline: 2px dashed var(--accent) !important;
+  border-color: var(--focus-ring) !important;
+  outline: 2px solid var(--focus-ring) !important;
   outline-offset: 3px;
   box-shadow: none !important;
 }
@@ -956,11 +1182,11 @@ footer svg {
 .newsletter-section button,
 .newsletter-section input[type='submit'] {
   min-height: 2.75rem;
-  border: 1px solid var(--accent) !important;
+  border: 1px solid var(--primary) !important;
   border-radius: 0.375rem !important;
-  background: var(--accent) !important;
+  background: var(--primary) !important;
   padding: 0.5rem 1rem !important;
-  color: var(--accent-foreground) !important;
+  color: var(--on-primary) !important;
   font: inherit !important;
   font-weight: 700 !important;
   line-height: 1.25rem;
@@ -974,12 +1200,19 @@ footer svg {
 
 .newsletter-section button:hover,
 .newsletter-section input[type='submit']:hover {
-  opacity: 0.85;
+  border-color: var(--primary-hover) !important;
+  background: var(--primary-hover) !important;
+}
+
+.newsletter-section button:active,
+.newsletter-section input[type='submit']:active {
+  border-color: var(--primary-active) !important;
+  background: var(--primary-active) !important;
 }
 
 .newsletter-section button:focus-visible,
 .newsletter-section input[type='submit']:focus-visible {
-  outline: 2px dashed var(--accent) !important;
+  outline: 2px solid var(--focus-ring) !important;
   outline-offset: 3px;
 }
 
@@ -995,6 +1228,14 @@ footer svg {
   font-size: 0.875rem;
   line-height: 1.25rem;
   text-align: center;
+}
+
+.newsletter-section [class*='text-red'] {
+  color: var(--destructive) !important;
+}
+
+.newsletter-section [class*='text-green'] {
+  color: var(--success) !important;
 }
 
 @media (max-width: 640px) {
@@ -1021,8 +1262,9 @@ footer svg {
 
 #pagefind-search .pagefind-ui__search-input:focus,
 #pagefind-search .pagefind-ui__search-input:focus-visible {
-  border-color: var(--accent);
-  outline: none;
+  border-color: var(--focus-ring);
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
   box-shadow: none;
 }
 
@@ -1303,43 +1545,7 @@ footer svg {
   }
 }
 
-/* Hitsuji palette code blocks */
-:root,
-[data-theme='light'] {
-  --code-bg: color-mix(in srgb, var(--background) 62%, var(--muted));
-  --code-fg: var(--foreground);
-  --code-muted: var(--muted-foreground);
-  --code-border: var(--border);
-  --code-selection: color-mix(in srgb, var(--accent) 30%, transparent);
-
-  --code-keyword: color-mix(in srgb, var(--accent) 92%, var(--foreground));
-  --code-function: color-mix(in srgb, var(--foreground-strong) 58%, var(--accent));
-  --code-string: color-mix(in srgb, var(--accent) 72%, var(--foreground));
-  --code-number: color-mix(in srgb, var(--accent) 86%, var(--foreground));
-  --code-type: color-mix(in srgb, var(--foreground) 56%, var(--accent));
-  --code-operator: color-mix(in srgb, var(--foreground) 68%, var(--accent));
-  --code-punctuation: color-mix(in srgb, var(--foreground) 92%, var(--muted-foreground));
-  --code-comment: color-mix(in srgb, var(--muted-foreground) 92%, var(--foreground));
-  --code-line-highlight: color-mix(in srgb, var(--accent) 16%, transparent);
-}
-
-[data-theme='dark'] {
-  --code-bg: color-mix(in srgb, var(--background) 52%, var(--muted));
-  --code-fg: var(--foreground);
-  --code-muted: var(--muted-foreground);
-  --code-border: var(--border);
-  --code-selection: color-mix(in srgb, var(--accent) 34%, transparent);
-
-  --code-keyword: color-mix(in srgb, var(--accent) 92%, var(--foreground));
-  --code-function: color-mix(in srgb, var(--foreground) 58%, var(--accent));
-  --code-string: color-mix(in srgb, var(--accent) 72%, var(--foreground));
-  --code-number: color-mix(in srgb, var(--accent) 86%, var(--foreground));
-  --code-type: color-mix(in srgb, var(--foreground) 52%, var(--accent));
-  --code-operator: color-mix(in srgb, var(--foreground) 68%, var(--accent));
-  --code-punctuation: color-mix(in srgb, var(--foreground) 90%, var(--muted-foreground));
-  --code-comment: color-mix(in srgb, var(--muted-foreground) 88%, var(--foreground));
-  --code-line-highlight: color-mix(in srgb, var(--accent) 20%, transparent);
-}
+/* Code block structure. Token category mapping lives in css/prism.css. */
 
 .post-content :where(pre.astro-code),
 .app-prose :where(pre.astro-code) {
@@ -1368,116 +1574,28 @@ footer svg {
 .app-prose :where(pre.astro-code .highlighted),
 .post-content :where(pre.astro-code .line-highlight),
 .app-prose :where(pre.astro-code .line-highlight) {
+  border-inline-start-color: var(--code-line-highlight-border);
   background: var(--code-line-highlight);
-}
-
-.post-content :where(pre.astro-code .token.comment),
-.post-content :where(pre.astro-code .token.prolog),
-.post-content :where(pre.astro-code .token.doctype),
-.post-content :where(pre.astro-code .token.cdata),
-.app-prose :where(pre.astro-code .token.comment),
-.app-prose :where(pre.astro-code .token.prolog),
-.app-prose :where(pre.astro-code .token.doctype),
-.app-prose :where(pre.astro-code .token.cdata) {
-  color: var(--code-comment) !important;
-  font-style: italic;
-}
-
-.post-content :where(pre.astro-code .token.keyword),
-.post-content :where(pre.astro-code .token.atrule),
-.post-content :where(pre.astro-code .token.selector),
-.app-prose :where(pre.astro-code .token.keyword),
-.app-prose :where(pre.astro-code .token.atrule),
-.app-prose :where(pre.astro-code .token.selector) {
-  color: var(--code-keyword) !important;
-  font-style: italic;
-}
-
-.post-content :where(pre.astro-code .token.function),
-.post-content :where(pre.astro-code .token.method),
-.app-prose :where(pre.astro-code .token.function),
-.app-prose :where(pre.astro-code .token.method) {
-  color: var(--code-function) !important;
-  font-style: normal;
-}
-
-.post-content :where(pre.astro-code .token.string),
-.post-content :where(pre.astro-code .token.char),
-.post-content :where(pre.astro-code .token.attr-value),
-.app-prose :where(pre.astro-code .token.string),
-.app-prose :where(pre.astro-code .token.char),
-.app-prose :where(pre.astro-code .token.attr-value) {
-  color: var(--code-string) !important;
-}
-
-.post-content :where(pre.astro-code .token.number),
-.post-content :where(pre.astro-code .token.boolean),
-.post-content :where(pre.astro-code .token.constant),
-.app-prose :where(pre.astro-code .token.number),
-.app-prose :where(pre.astro-code .token.boolean),
-.app-prose :where(pre.astro-code .token.constant) {
-  color: var(--code-number) !important;
-}
-
-.post-content :where(pre.astro-code .token.class-name),
-.post-content :where(pre.astro-code .token.builtin),
-.post-content :where(pre.astro-code .token.tag),
-.app-prose :where(pre.astro-code .token.class-name),
-.app-prose :where(pre.astro-code .token.builtin),
-.app-prose :where(pre.astro-code .token.tag) {
-  color: var(--code-type) !important;
-}
-
-.post-content :where(pre.astro-code .token.operator),
-.post-content :where(pre.astro-code .token.entity),
-.post-content :where(pre.astro-code .token.url),
-.app-prose :where(pre.astro-code .token.operator),
-.app-prose :where(pre.astro-code .token.entity),
-.app-prose :where(pre.astro-code .token.url) {
-  color: var(--code-operator) !important;
-}
-
-.post-content :where(pre.astro-code .token.punctuation),
-.app-prose :where(pre.astro-code .token.punctuation) {
-  color: var(--code-punctuation) !important;
-}
-
-.post-content :where(pre.astro-code .token.property),
-.post-content :where(pre.astro-code .token.variable),
-.post-content :where(pre.astro-code .token.parameter),
-.app-prose :where(pre.astro-code .token.property),
-.app-prose :where(pre.astro-code .token.variable),
-.app-prose :where(pre.astro-code .token.parameter) {
-  color: var(--code-fg) !important;
-}
-
-.post-content :where(pre.astro-code .token.deleted),
-.app-prose :where(pre.astro-code .token.deleted) {
-  color: color-mix(in srgb, var(--danger) 78%, var(--foreground)) !important;
-}
-
-.post-content :where(pre.astro-code .token.inserted),
-.app-prose :where(pre.astro-code .token.inserted) {
-  color: color-mix(in srgb, var(--magic) 72%, var(--foreground)) !important;
 }
 
 .post-content :where(pre.astro-code ::selection),
 .app-prose :where(pre.astro-code ::selection) {
   background: var(--code-selection);
+  color: var(--selection-foreground);
 }
 
 .code-file-name,
 .copy-code {
-  border-color: color-mix(in srgb, var(--code-border) 72%, var(--accent));
+  border-color: var(--code-border);
   background: var(--code-bg);
-  color: var(--code-fg);
+  color: var(--code-file-name);
 }
 
 .copy-code:hover,
 .copy-code:focus-visible {
-  border-color: var(--accent);
-  background: color-mix(in srgb, var(--code-bg) 82%, var(--accent));
-  color: var(--accent);
+  border-color: var(--primary);
+  background: var(--primary-soft);
+  color: var(--on-primary-soft);
 }
 
 /* Notes explorer final polish */

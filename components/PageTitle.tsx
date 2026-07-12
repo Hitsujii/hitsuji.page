@@ -20,7 +20,7 @@ export default function PageTitle({ children, viewTransitionTitle, asChild = fal
 
   return (
     <PostTitleTransition title={title}>
-      <h1 className="inline-block text-2xl font-bold text-[var(--accent)] sm:text-3xl">
+      <h1 className="inline-block text-2xl font-bold text-[var(--primary)] sm:text-3xl">
         {children}
       </h1>
     </PostTitleTransition>

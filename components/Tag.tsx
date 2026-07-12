@@ -27,8 +27,8 @@ export default function Tag({ text, size = 'sm', count, transition = true }: Pro
       className={[
         'inline-flex items-center gap-0.5 border-b-2 border-dashed border-[var(--foreground)]',
         'text-[var(--foreground)] visited:text-[var(--foreground)]',
-        'hover:-mt-0.5 hover:border-[var(--accent)] hover:text-[var(--accent)]',
-        'focus-visible:border-transparent focus-visible:text-[var(--accent)]',
+        'hover:-mt-0.5 hover:border-[var(--primary)] hover:text-[var(--primary-hover)]',
+        'focus-visible:border-transparent focus-visible:text-[var(--primary)]',
         size === 'lg' ? 'text-lg' : 'text-sm',
       ].join(' ')}
       aria-label={count ? `View ${count} posts tagged ${label}` : `View posts tagged ${label}`}
@@ -36,7 +36,7 @@ export default function Tag({ text, size = 'sm', count, transition = true }: Pro
       <IconHash className={size === 'lg' ? 'size-5 opacity-80' : 'size-4 opacity-80'} />
       <span>{label}</span>
       {typeof count === 'number' && (
-        <span className="ml-1 text-sm text-[var(--muted-foreground)]">({count})</span>
+        <span className="ml-1 text-sm text-[var(--text-muted)]">({count})</span>
       )}
     </Link>
   )

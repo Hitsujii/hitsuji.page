@@ -47,7 +47,7 @@ export default function BackToTopButton() {
   }, [])
 
   const progressStyle = {
-    backgroundImage: `conic-gradient(var(--accent), var(--accent) ${scrollPercent}%, transparent ${scrollPercent}%)`,
+    backgroundImage: `conic-gradient(var(--primary), var(--primary) ${scrollPercent}%, transparent ${scrollPercent}%)`,
   } as CSSProperties
 
   const topProgressStyle = {
@@ -57,7 +57,7 @@ export default function BackToTopButton() {
   return (
     <>
       <div className="progress-container fixed top-0 left-0 z-10 h-1 w-full bg-[var(--background)]">
-        <div id="myBar" className="progress-bar h-1 bg-[var(--accent)]" style={topProgressStyle} />
+        <div id="myBar" className="progress-bar h-1 bg-[var(--primary)]" style={topProgressStyle} />
       </div>
 
       <div
@@ -99,7 +99,7 @@ export default function BackToTopButton() {
 
           <IconArrowLeft className="inline-block rotate-90 md:hidden" />
 
-          <span className="sr-only text-sm group-hover:text-[var(--accent)] md:not-sr-only">
+          <span className="sr-only text-sm group-hover:text-[var(--primary-hover)] md:not-sr-only">
             <IconArrowNarrowUp className="inline-block size-4" />
             Back to top
           </span>

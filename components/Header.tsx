@@ -52,21 +52,13 @@ export default function Header() {
       <a
         id="skip-to-content"
         href="#main-content"
-        className="absolute inset-s-16 -top-full z-50 bg-[var(--background)] px-3 py-2 text-[var(--accent)] backdrop-blur-lg transition-all focus:top-4"
+        className="absolute inset-s-16 -top-full z-50 border border-[var(--border-strong)] bg-[var(--surface-elevated)] px-3 py-2 text-[var(--primary)] transition-all focus:top-4"
       >
         Skip to content
       </a>
 
       <header className="app-layout flex flex-col items-center justify-between sm:flex-row">
         <div className="relative flex w-full items-baseline justify-between border-b border-[var(--border)] bg-transparent py-4 sm:items-center sm:py-6">
-          {/* <Link
-            href="/"
-            aria-label={title}
-            className="absolute py-1 text-xl leading-8 font-semibold whitespace-nowrap text-[var(--foreground)] hover:text-[var(--accent)] sm:static sm:my-auto sm:text-2xl sm:leading-none"
-            onClick={() => setMenuOpen(false)}
-          >
-            {title}
-          </Link> */}
           <Link
             href="/"
             aria-label={title}
@@ -102,7 +94,7 @@ export default function Header() {
               id="menu-items"
               className={[
                 'mt-4 w-44 grid-cols-2 place-content-center gap-2 sm:mt-0 sm:flex sm:w-auto sm:gap-x-5 sm:gap-y-0 sm:[&>li]:h-8',
-                '[&>li>a]:block [&>li>a]:px-4 [&>li>a]:py-3 [&>li>a]:text-center [&>li>a]:font-medium [&>li>a]:hover:text-[var(--accent)]',
+                '[&>li>a]:block [&>li>a]:px-4 [&>li>a]:py-3 [&>li>a]:text-center [&>li>a]:font-medium [&>li>a]:hover:text-[var(--primary-hover)]',
                 'sm:[&>li>a]:px-2 sm:[&>li>a]:py-1',
                 menuOpen ? 'grid' : 'hidden',
               ].join(' ')}
@@ -123,7 +115,7 @@ export default function Header() {
                 <Link
                   href="/archives"
                   className={[
-                    'focus-outline flex size-full justify-center p-3 hover:text-[var(--accent)] sm:relative sm:size-8 sm:p-0',
+                    'focus-outline flex size-full justify-center p-3 hover:text-[var(--primary-hover)] sm:relative sm:size-8 sm:p-0',
                     archivesActive ? 'active-nav' : '',
                   ].join(' ')}
                   aria-label="Archives"

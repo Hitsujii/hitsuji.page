@@ -49,7 +49,7 @@ const FloatingButton = ({
     type="button"
     aria-label={label}
     onClick={onClick}
-    className="focus-outline rounded-full border border-[var(--border)] bg-[var(--background)] p-2 text-[var(--foreground)] shadow-sm transition-all hover:-translate-y-0.5 hover:border-[var(--accent)] hover:text-[var(--accent)]"
+    className="focus-outline rounded-full border border-[var(--border-strong)] bg-[var(--surface-elevated)] p-2 text-[var(--foreground)] transition-all hover:-translate-y-0.5 hover:border-[var(--primary)] hover:text-[var(--primary-hover)]"
   >
     {children}
   </button>

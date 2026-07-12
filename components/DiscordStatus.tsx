@@ -23,35 +23,35 @@ const STATUS_META: Record<
 > = {
   online: {
     label: 'Online',
-    color: '#23a55a',
+    color: 'var(--presence-online)',
   },
   idle: {
     label: 'Away',
-    color: '#f0b232',
+    color: 'var(--presence-away)',
   },
   dnd: {
     label: 'Busy',
-    color: '#f23f43',
+    color: 'var(--presence-busy)',
   },
   offline: {
     label: 'Offline',
-    color: '#80848e',
+    color: 'var(--presence-offline)',
   },
 }
 
 const SLEEPING_META = {
   label: 'Sleeping',
-  color: '#5865f2',
+  color: 'var(--presence-sleeping)',
 }
 
 const LOADING_META = {
   label: 'Checking status',
-  color: '#80848e',
+  color: 'var(--presence-offline)',
 }
 
 const ERROR_META = {
   label: 'Status unavailable',
-  color: '#80848e',
+  color: 'var(--presence-offline)',
 }
 
 const LoadingDots = () => {
@@ -98,7 +98,7 @@ const DiscordStatus = ({
         : STATUS_META[status]
 
   const rootClassName = [
-    'inline-flex items-center gap-1.5 text-sm text-[var(--muted-foreground)]',
+    'inline-flex items-center gap-1.5 text-sm text-[var(--text-muted)]',
     className,
   ]
     .filter(Boolean)

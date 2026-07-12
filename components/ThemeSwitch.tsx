@@ -11,7 +11,9 @@ export default function ThemeSwitch() {
   const syncThemeColor = () => {
     window.requestAnimationFrame(() => {
       const bg = window.getComputedStyle(document.body).backgroundColor
-      document.querySelector('meta[name="theme-color"]')?.setAttribute('content', bg)
+      document
+        .querySelectorAll('meta[name="theme-color"]')
+        .forEach((element) => element.setAttribute('content', bg))
     })
   }
 
@@ -32,7 +34,7 @@ export default function ThemeSwitch() {
     <button
       id="theme-btn"
       type="button"
-      className="focus-outline relative size-12 p-4 sm:size-8 hover:[&>svg]:stroke-[var(--accent)]"
+      className="focus-outline relative size-12 p-4 sm:size-8 hover:[&>svg]:stroke-[var(--primary-hover)]"
       aria-label={mounted ? resolvedTheme || 'system' : 'theme'}
       aria-live="polite"
       onClick={toggleTheme}

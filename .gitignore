@@ -67,3 +67,5 @@ tsconfig.tsbuildinfo
 frieren-theme-dump.txt
 *.tsbuildinfo
 public/static/favicons/.old-tailwind-nextjs-starter-blog/
+.dump/
+artifacts/color-previews/

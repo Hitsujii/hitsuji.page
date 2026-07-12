@@ -118,7 +118,7 @@ export default function NotesTree({
                     'marker:hidden [&::-webkit-details-marker]:hidden',
                     active
                       ? 'text-[var(--foreground)]'
-                      : 'text-[var(--muted-foreground)] hover:text-[var(--foreground)]',
+                      : 'text-[var(--text-muted)] hover:text-[var(--foreground)]',
                   ].join(' ')}
                   style={{ paddingLeft: folderIndent(depth) }}
                 >
@@ -132,7 +132,7 @@ export default function NotesTree({
                     href={node.path ? `/notes/${node.path}` : '/notes'}
                     data-notes-nav-kind="folder"
                     data-notes-active={active ? 'true' : undefined}
-                    className="notes-tree-folder-label min-w-0 truncate underline-offset-4 hover:text-[var(--accent)] hover:underline hover:decoration-dashed"
+                    className="notes-tree-folder-label min-w-0 truncate underline-offset-4 hover:text-[var(--primary-hover)] hover:underline hover:decoration-dashed"
                     onClick={(event) => event.stopPropagation()}
                     title={node.name}
                   >
@@ -166,8 +166,8 @@ export default function NotesTree({
               className={[
                 'block min-w-0 truncate border-l py-1 pr-2 text-sm underline-offset-4 transition',
                 active
-                  ? 'border-[var(--accent)] text-[var(--accent)]'
-                  : 'border-transparent text-[var(--muted-foreground)] hover:border-[var(--border)] hover:text-[var(--foreground)]',
+                  ? 'border-[var(--primary)] text-[var(--primary)]'
+                  : 'border-transparent text-[var(--text-muted)] hover:border-[var(--border)] hover:text-[var(--foreground)]',
               ].join(' ')}
               style={noteItemStyle(depth)}
               title={node.name}

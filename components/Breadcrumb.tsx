@@ -63,10 +63,10 @@ export default function Breadcrumb({ labelsByHref = {} }: BreadcrumbProps) {
     <nav className="app-layout mt-8 mb-1" aria-label="breadcrumb">
       <ul className="font-light [&>li]:inline">
         <li>
-          <Link href="/" className="opacity-80 hover:opacity-100">
+          <Link href="/" className="text-[var(--text-muted)] hover:text-[var(--link-hover)]">
             Home
           </Link>{' '}
-          <span aria-hidden="true" className="opacity-80">
+          <span aria-hidden="true" className="text-[var(--text-muted)]">
             &raquo;
           </span>{' '}
         </li>
@@ -85,15 +85,18 @@ export default function Breadcrumb({ labelsByHref = {} }: BreadcrumbProps) {
           return (
             <li key={`${segment}-${index}`}>
               {isLast ? (
-                <span className="opacity-75" aria-current="page">
+                <span className="text-[var(--text-muted)]" aria-current="page">
                   {formatSegment(segment, index, label)}
                 </span>
               ) : (
                 <>
-                  <Link href={href} className="opacity-70 hover:opacity-100">
+                  <Link
+                    href={href}
+                    className="text-[var(--text-muted)] hover:text-[var(--link-hover)]"
+                  >
                     {formatSegment(segment, index, label)}
                   </Link>{' '}
-                  <span aria-hidden="true" className="opacity-70">
+                  <span aria-hidden="true" className="text-[var(--text-muted)]">
                     &raquo;
                   </span>{' '}
                 </>
