@@ -290,11 +290,6 @@ html[data-view-transition='running'] a {
     --presence-sleeping: var(--primary);
 
     /* Muted Frieren-inspired mark: silver-blue wool with a deep slate detail. */
-    --logo-primary: #8290aa;
-    --logo-secondary: #fffefb;
-    --logo-detail: #46566f;
-    --logo-glow: transparent;
-    --logo-shadow: transparent;
 
     /* Compatibility aliases; new work should use the semantic names above. */
     --accent: var(--primary);
@@ -397,11 +392,6 @@ html[data-view-transition='running'] a {
     --presence-sleeping: var(--primary);
 
     /* Slightly lighter silver-blue for legibility on graphite. */
-    --logo-primary: #9aabd0;
-    --logo-secondary: #f4f1e9;
-    --logo-detail: #7183a5;
-    --logo-glow: transparent;
-    --logo-shadow: transparent;
 
     --accent: var(--primary);
     --accent-foreground: var(--on-primary);
@@ -535,13 +525,6 @@ html[data-view-transition='running'] a {
     text-underline-offset: 8px;
   }
 
-  .site-logo {
-    filter: none;
-  }
-
-  .site-logo:hover {
-    filter: none;
-  }
 
   .focus-outline {
     outline: 2px solid transparent;

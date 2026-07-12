@@ -8,7 +8,6 @@ import Link from './Link'
 import SearchButton from './SearchButton'
 import ThemeSwitch from './ThemeSwitch'
 import { IconArchive, IconMenuDeep, IconUnderline, IconX } from './icons/AstroPaperIcons'
-import DeferredLogo from './DeferredLogo'
 
 const normalizePath = (path: string) => path.replace(/\/$/, '') || '/'
 
@@ -62,14 +61,10 @@ export default function Header() {
           <Link
             href="/"
             aria-label={title}
-            className="group absolute -bottom-px -left-[5px] flex items-center transition-transform duration-150 active:scale-95 sm:my-auto"
+            className="focus-outline absolute py-1 text-xl leading-8 font-semibold whitespace-nowrap text-[var(--foreground)] transition-colors duration-150 hover:text-[var(--primary-hover)] sm:static sm:my-auto sm:text-2xl sm:leading-none"
             onClick={() => setMenuOpen(false)}
           >
-            <DeferredLogo
-              className="site-logo block h-9 w-auto sm:h-11"
-              decorative
-              playIntro={true}
-            />
+            {title}
           </Link>
 
           <nav
