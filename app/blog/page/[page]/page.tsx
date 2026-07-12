@@ -4,7 +4,7 @@ import { allBlogs } from 'contentlayer/generated'
 import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { genPageMetadata } from 'app/seo'
-import { getPaginatedPageNumbers, parsePageNumber } from 'app/pagination'
+import { parsePageNumber } from 'app/pagination'
 
 const POSTS_PER_PAGE = 4
 
