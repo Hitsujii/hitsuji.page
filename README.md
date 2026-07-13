@@ -57,25 +57,25 @@ If you use comments, newsletter or analytics, add your provider settings and env
 Install dependencies:
 
 ```bash
-yarn install
+npm install
 ```
 
 Start the dev server:
 
 ```bash
-yarn dev
+npm run dev
 ```
 
 Build for production:
 
 ```bash
-yarn build
+npm run build
 ```
 
 Run linting:
 
 ```bash
-yarn lint
+npm run lint
 ```
 
 ## Content

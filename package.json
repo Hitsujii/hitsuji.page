@@ -15,11 +15,11 @@
     "preview:colors": "node scripts/capture-color-previews.mjs",
     "format:check": "prettier --check . --ignore-unknown",
     "prepare": "husky",
-    "lh:desktop": "yarn build && node scripts/lighthouse.mjs desktop",
-    "lh:report": "(yarn start > /tmp/hitsuji-next.log 2>&1 & echo $! > /tmp/hitsuji-next.pid) && sleep 5 && npx lighthouse http://localhost:3000 --only-categories=performance --preset=desktop --chrome-flags=\"--headless\" --output=html --output-path=./lighthouse-report.html && kill \"$(cat /tmp/hitsuji-next.pid)\"",
-    "lh:mobile": "yarn build && node scripts/lighthouse.mjs mobile",
+    "lh:desktop": "npm run build && node scripts/lighthouse.mjs desktop",
+    "lh:report": "(npm run start > /tmp/hitsuji-next.log 2>&1 & echo $! > /tmp/hitsuji-next.pid) && sleep 5 && npx lighthouse http://localhost:3000 --only-categories=performance --preset=desktop --chrome-flags=\"--headless\" --output=html --output-path=./lighthouse-report.html && kill \"$(cat /tmp/hitsuji-next.pid)\"",
+    "lh:mobile": "npm run build && node scripts/lighthouse.mjs mobile",
     "notes:sync": "bash -lc 'set -euo pipefail; NOTES=\"${CPP_NOTES:-/home/hitsuji/Learning/programming/cpp/notes}\"; test -d \"$NOTES\"; SRC=\"$NOTES\"; if [ -d \"$NOTES/notes\" ] && [ -z \"$(find \"$NOTES\" -maxdepth 1 -type f -name \"*.md\" -print -quit)\" ]; then SRC=\"$NOTES/notes\"; fi; rm -rf data/notes; mkdir -p data/notes; rsync -a --delete --delete-excluded --exclude=\".*/\" --exclude=\".*\" --exclude=\".obsidian/\" --exclude=\".trash/\" --include=\"*/\" --include=\"*.md\" --exclude=\"*\" \"$SRC/\" data/notes/; echo \"Synced markdown notes from $SRC\"'",
-    "notes:resync": "bash -lc 'set -euo pipefail; rm -rf data/notes .contentlayer .next public/search.json; yarn notes:sync'"
+    "notes:resync": "bash -lc 'set -euo pipefail; rm -rf data/notes .contentlayer .next public/search.json; npm run notes:sync'"
   },
   "dependencies": {
     "@headlessui/react": "2.2.9",
@@ -76,14 +76,14 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
-      "yarn eslint --fix",
-      "yarn prettier --write"
+      "eslint --fix",
+      "prettier --write"
     ],
     "*.{json,css,md,mdx}": [
-      "yarn prettier --write"
+      "prettier --write"
     ]
   },
-  "packageManager": "yarn@3.6.1",
+  "packageManager": "npm@10.9.7",
   "author": "Hitsuji <dev.hitsuji@gmail.com>",
   "repository": {
     "type": "git",

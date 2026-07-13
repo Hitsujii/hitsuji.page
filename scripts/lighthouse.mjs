@@ -3,6 +3,7 @@ import fs from 'node:fs/promises'
 import { createServer } from 'node:net'
 
 const mode = process.argv[2] ?? 'desktop'
+const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm'
 
 const getFreePort = () => {
   return new Promise((resolve, reject) => {
@@ -92,7 +93,7 @@ const targetUrl = `http://localhost:${port}`
 const outputPath =
   mode === 'mobile' ? '/tmp/hitsuji-lighthouse-mobile.json' : '/tmp/hitsuji-lighthouse.json'
 
-const server = spawn('yarn', ['next', 'start', '-p', String(port)], {
+const server = spawn(npmCommand, ['exec', '--', 'next', 'start', '-p', String(port)], {
   stdio: ['ignore', 'pipe', 'pipe'],
   shell: false,
 })
@@ -108,7 +109,6 @@ server.stderr.on('data', (chunk) => {
 const lighthouseArgs =
   mode === 'mobile'
     ? [
-        'dlx',
         'lighthouse',
         targetUrl,
         '--only-categories=performance',
@@ -123,7 +123,6 @@ const lighthouseArgs =
         `--output-path=${outputPath}`,
       ]
     : [
-        'dlx',
         'lighthouse',
         targetUrl,
         '--only-categories=performance',
@@ -135,7 +134,7 @@ const lighthouseArgs =
 
 try {
   await waitForServer(targetUrl, server)
-  await run('yarn', lighthouseArgs)
+  await run(npmCommand, ['exec', '--yes', '--', ...lighthouseArgs])
   await printReport(outputPath)
 } finally {
   server.kill('SIGTERM')

@@ -17,7 +17,6 @@ const config = [
     ignores: [
       '.contentlayer/**',
       '.next/**',
-      '.yarn/**',
       'node_modules/**',
       'out/**',
       'public/**',

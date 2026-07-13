@@ -49,8 +49,8 @@ function NotesFallbackList({ tree }: { tree: NotesTreeNode[] }) {
       <div className="rounded-md border border-[var(--border)] bg-[var(--surface-muted)] p-4">
         <h1 className="text-2xl font-semibold sm:text-3xl">Notes</h1>
         <p className="mt-4 text-sm text-[var(--text-muted)]">
-          No notes were found. Add markdown files to the vault, then run yarn notes:sync to populate
-          this page.
+          No notes were found. Add markdown files to the vault, then run npm run notes:sync to
+          populate this page.
         </p>
       </div>
     )
