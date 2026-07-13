@@ -56,25 +56,28 @@ export default function Header() {
         Skip to content
       </a>
 
-      <header className="app-layout flex flex-col items-center justify-between sm:flex-row">
-        <div className="relative flex w-full items-baseline justify-between border-b border-[var(--border)] bg-transparent py-4 sm:items-center sm:py-6">
+      <header className="app-layout flex flex-col items-center justify-between md:flex-row">
+        <div className="relative flex w-full items-baseline justify-between border-b border-[var(--border)] bg-transparent py-4 md:items-center md:py-6">
           <Link
             href="/"
-            aria-label={title}
-            className="focus-outline absolute py-1 text-xl leading-8 font-semibold whitespace-nowrap text-[var(--foreground)] transition-colors duration-150 hover:text-[var(--primary-hover)] sm:static sm:my-auto sm:text-2xl sm:leading-none"
+            aria-label={`${title} home`}
+            className="site-mark-link focus-outline absolute start-0 top-3.5 flex min-h-11 items-center py-1 text-xl leading-none whitespace-nowrap md:static md:h-10 md:min-h-0 md:py-0 md:text-[1.4375rem]"
             onClick={() => setMenuOpen(false)}
           >
-            {title}
+            <span aria-hidden="true" className="site-mark">
+              <span className="site-mark__glyph">羊</span>
+              <span className="site-mark__plus">++</span>
+            </span>
           </Link>
 
           <nav
             id="nav-menu"
-            className="flex w-full flex-col items-center sm:ms-2 sm:flex-row sm:justify-end sm:space-x-4 sm:py-0"
+            className="flex w-full flex-col items-center md:ms-2 md:flex-row md:justify-end md:space-x-4 md:py-0"
             aria-label="Primary navigation"
           >
             <button
               id="menu-btn"
-              className="focus-outline self-end p-2 sm:hidden"
+              className="focus-outline self-end p-2 md:hidden"
               aria-label={menuOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={menuOpen}
               aria-controls="menu-items"
@@ -88,9 +91,9 @@ export default function Header() {
             <ul
               id="menu-items"
               className={[
-                'mt-4 w-44 grid-cols-2 place-content-center gap-2 sm:mt-0 sm:flex sm:w-auto sm:gap-x-5 sm:gap-y-0 sm:[&>li]:h-8',
+                'mt-4 w-44 grid-cols-2 place-content-center gap-2 md:mt-0 md:flex md:w-auto md:gap-x-5 md:gap-y-0 md:[&>li]:h-8',
                 '[&>li>a]:block [&>li>a]:px-4 [&>li>a]:py-3 [&>li>a]:text-center [&>li>a]:font-medium [&>li>a]:hover:text-[var(--primary-hover)]',
-                'sm:[&>li>a]:px-2 sm:[&>li>a]:py-1',
+                'md:[&>li>a]:px-2 md:[&>li>a]:py-1',
                 menuOpen ? 'grid' : 'hidden',
               ].join(' ')}
             >
@@ -106,11 +109,11 @@ export default function Header() {
                   </Link>
                 </li>
               ))}
-              <li className="col-span-2 sm:col-span-1">
+              <li className="col-span-2 md:col-span-1">
                 <Link
                   href="/archives"
                   className={[
-                    'focus-outline flex size-full justify-center p-3 hover:text-[var(--primary-hover)] sm:relative sm:size-8 sm:p-0',
+                    'focus-outline flex size-full justify-center p-3 hover:text-[var(--primary-hover)] md:relative md:size-8 md:p-0',
                     archivesActive ? 'active-nav' : '',
                   ].join(' ')}
                   aria-label="Archives"
@@ -118,12 +121,12 @@ export default function Header() {
                   title="Archives"
                   onClick={() => setMenuOpen(false)}
                 >
-                  <IconArchive className="hidden sm:absolute sm:top-1/2 sm:left-1/2 sm:block sm:size-6 sm:-translate-x-1/2 sm:-translate-y-1/2" />
-                  <span className="sm:sr-only">Archives</span>
+                  <IconArchive className="hidden md:absolute md:top-1/2 md:left-1/2 md:block md:size-6 md:-translate-x-1/2 md:-translate-y-1/2" />
+                  <span className="md:sr-only">Archives</span>
                   {archivesActive && (
                     <IconUnderline
                       aria-hidden="true"
-                      className="scale-125 max-sm:hidden sm:absolute sm:bottom-0 sm:w-6"
+                      className="scale-125 max-md:hidden md:absolute md:bottom-0 md:w-6"
                     />
                   )}
                 </Link>

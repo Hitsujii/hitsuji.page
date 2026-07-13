@@ -1,0 +1,663 @@
+diff --git a/app/Main.tsx b/app/Main.tsx
+index 62775ba..65729d0 100644
+--- a/app/Main.tsx
++++ b/app/Main.tsx
+@@ -43,8 +43,10 @@ export default function Home({ posts }: { posts: CoreContent<Blog>[] }) {
+             <LocalTime />
+           </div>
+ 
+-          <div className="my-4 flex items-center gap-3 sm:my-8">
+-            <h1 className="text-4xl font-bold sm:text-5xl">Hi World!!</h1>
++          <div className="my-5 flex items-center gap-3 sm:my-8">
++            <h1 className="title-mark">
++              <span className="title-mark__glyph">Hi World!!</span>
++            </h1>
+ 
+             <Link
+               href="/feed.xml"
+diff --git a/app/layout.tsx b/app/layout.tsx
+index 46ae4de..e3eada7 100644
+--- a/app/layout.tsx
++++ b/app/layout.tsx
+@@ -86,8 +86,8 @@ export default function RootLayout({ children }: { children: React.ReactNode })
+       >
+         <head>
+           <meta name="color-scheme" content="light dark" />
+-          <meta name="theme-color" content="#f8f6f1" media="(prefers-color-scheme: light)" />
+-          <meta name="theme-color" content="#111824" media="(prefers-color-scheme: dark)" />
++          <meta name="theme-color" content="#f8f4e8" media="(prefers-color-scheme: light)" />
++          <meta name="theme-color" content="#121521" media="(prefers-color-scheme: dark)" />
+         </head>
+         <body className="flex min-h-svh flex-col bg-[var(--background)] text-[var(--foreground)] antialiased">
+           <ThemeProviders>
+diff --git a/components/Header.tsx b/components/Header.tsx
+index 0f7c2f9..293e450 100644
+--- a/components/Header.tsx
++++ b/components/Header.tsx
+@@ -56,25 +56,28 @@ export default function Header() {
+         Skip to content
+       </a>
+ 
+-      <header className="app-layout flex flex-col items-center justify-between sm:flex-row">
+-        <div className="relative flex w-full items-baseline justify-between border-b border-[var(--border)] bg-transparent py-4 sm:items-center sm:py-6">
++      <header className="app-layout flex flex-col items-center justify-between md:flex-row">
++        <div className="relative flex w-full items-baseline justify-between border-b border-[var(--border)] bg-transparent py-4 md:items-center md:py-6">
+           <Link
+             href="/"
+-            aria-label={title}
+-            className="focus-outline absolute py-1 text-xl leading-8 font-semibold whitespace-nowrap text-[var(--foreground)] transition-colors duration-150 hover:text-[var(--primary-hover)] sm:static sm:my-auto sm:text-2xl sm:leading-none"
++            aria-label={`${title} home`}
++            className="site-mark-link focus-outline absolute start-0 top-3.5 flex min-h-11 items-center py-1 text-xl leading-none whitespace-nowrap md:static md:h-10 md:min-h-0 md:py-0 md:text-[1.4375rem]"
+             onClick={() => setMenuOpen(false)}
+           >
+-            {title}
++            <span aria-hidden="true" className="site-mark">
++              <span className="site-mark__glyph">羊</span>
++              <span className="site-mark__plus">++</span>
++            </span>
+           </Link>
+ 
+           <nav
+             id="nav-menu"
+-            className="flex w-full flex-col items-center sm:ms-2 sm:flex-row sm:justify-end sm:space-x-4 sm:py-0"
++            className="flex w-full flex-col items-center md:ms-2 md:flex-row md:justify-end md:space-x-4 md:py-0"
+             aria-label="Primary navigation"
+           >
+             <button
+               id="menu-btn"
+-              className="focus-outline self-end p-2 sm:hidden"
++              className="focus-outline self-end p-2 md:hidden"
+               aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+               aria-expanded={menuOpen}
+               aria-controls="menu-items"
+@@ -88,9 +91,9 @@ export default function Header() {
+             <ul
+               id="menu-items"
+               className={[
+-                'mt-4 w-44 grid-cols-2 place-content-center gap-2 sm:mt-0 sm:flex sm:w-auto sm:gap-x-5 sm:gap-y-0 sm:[&>li]:h-8',
++                'mt-4 w-44 grid-cols-2 place-content-center gap-2 md:mt-0 md:flex md:w-auto md:gap-x-5 md:gap-y-0 md:[&>li]:h-8',
+                 '[&>li>a]:block [&>li>a]:px-4 [&>li>a]:py-3 [&>li>a]:text-center [&>li>a]:font-medium [&>li>a]:hover:text-[var(--primary-hover)]',
+-                'sm:[&>li>a]:px-2 sm:[&>li>a]:py-1',
++                'md:[&>li>a]:px-2 md:[&>li>a]:py-1',
+                 menuOpen ? 'grid' : 'hidden',
+               ].join(' ')}
+             >
+@@ -106,11 +109,11 @@ export default function Header() {
+                   </Link>
+                 </li>
+               ))}
+-              <li className="col-span-2 sm:col-span-1">
++              <li className="col-span-2 md:col-span-1">
+                 <Link
+                   href="/archives"
+                   className={[
+-                    'focus-outline flex size-full justify-center p-3 hover:text-[var(--primary-hover)] sm:relative sm:size-8 sm:p-0',
++                    'focus-outline flex size-full justify-center p-3 hover:text-[var(--primary-hover)] md:relative md:size-8 md:p-0',
+                     archivesActive ? 'active-nav' : '',
+                   ].join(' ')}
+                   aria-label="Archives"
+@@ -118,12 +121,12 @@ export default function Header() {
+                   title="Archives"
+                   onClick={() => setMenuOpen(false)}
+                 >
+-                  <IconArchive className="hidden sm:absolute sm:top-1/2 sm:left-1/2 sm:block sm:size-6 sm:-translate-x-1/2 sm:-translate-y-1/2" />
+-                  <span className="sm:sr-only">Archives</span>
++                  <IconArchive className="hidden md:absolute md:top-1/2 md:left-1/2 md:block md:size-6 md:-translate-x-1/2 md:-translate-y-1/2" />
++                  <span className="md:sr-only">Archives</span>
+                   {archivesActive && (
+                     <IconUnderline
+                       aria-hidden="true"
+-                      className="scale-125 max-sm:hidden sm:absolute sm:bottom-0 sm:w-6"
++                      className="scale-125 max-md:hidden md:absolute md:bottom-0 md:w-6"
+                     />
+                   )}
+                 </Link>
+diff --git a/css/tailwind.css b/css/tailwind.css
+index d5c7fec..4e17491 100644
+--- a/css/tailwind.css
++++ b/css/tailwind.css
+@@ -11,30 +11,30 @@
+     var(--font-google-sans-code), 'Google Sans Code', ui-monospace, SFMono-Regular, Menlo, Monaco,
+     Consolas, 'Liberation Mono', 'Courier New', monospace;
+ 
+-  /* Archive Blue ramp. Neutral and restrained, based on the older light theme. */
+-  --color-primary-50: #f1f7fb;
+-  --color-primary-100: #e1eff7;
+-  --color-primary-200: #c1dfef;
+-  --color-primary-300: #91c7e1;
+-  --color-primary-400: #55a7ce;
+-  --color-primary-500: #2387ba;
+-  --color-primary-600: #006cac;
+-  --color-primary-700: #005b91;
+-  --color-primary-800: #084d77;
+-  --color-primary-900: #0d405f;
+-  --color-primary-950: #08293f;
+-
+-  --color-gray-50: #fafafa;
+-  --color-gray-100: #f4f4f5;
+-  --color-gray-200: #e6e6e7;
+-  --color-gray-300: #d3d4d6;
+-  --color-gray-400: #a7aaaf;
+-  --color-gray-500: #767a80;
+-  --color-gray-600: #5f6369;
+-  --color-gray-700: #484b50;
+-  --color-gray-800: #303235;
+-  --color-gray-900: #222326;
+-  --color-gray-950: #151618;
++  /* Vintage technical-book indigo. Components use the semantic tokens below. */
++  --color-primary-50: #f3f3fb;
++  --color-primary-100: #e7e7f8;
++  --color-primary-200: #d1d2f1;
++  --color-primary-300: #afb2e5;
++  --color-primary-400: #888ed5;
++  --color-primary-500: #6870c1;
++  --color-primary-600: #5159ac;
++  --color-primary-700: #41488f;
++  --color-primary-800: #353b75;
++  --color-primary-900: #2e3461;
++  --color-primary-950: #1b1e3a;
++
++  --color-gray-50: #faf8f2;
++  --color-gray-100: #f0ede6;
++  --color-gray-200: #dedad4;
++  --color-gray-300: #c5c1bd;
++  --color-gray-400: #97959a;
++  --color-gray-500: #6f6f79;
++  --color-gray-600: #585967;
++  --color-gray-700: #424453;
++  --color-gray-800: #2d3040;
++  --color-gray-900: #202332;
++  --color-gray-950: #121521;
+ 
+   /* Line heights */
+   --line-height-11: 2.75rem;
+@@ -204,84 +204,84 @@ html[data-view-transition='running'] a {
+   :root,
+   [data-theme='light'] {
+     color-scheme: light;
+-    --background: #fdfdfd;
+-    --surface: #f7f7f7;
+-    --surface-muted: #eceeef;
+-    --surface-elevated: #ffffff;
+-
+-    --foreground: #282728;
+-    --foreground-strong: #171717;
+-    --text-muted: #62666d;
+-
+-    --border: #dedfe2;
+-    --border-strong: #8f949c;
+-    --control-border: #8f949c;
+-
+-    --primary: #006cac;
+-    --primary-hover: #005b91;
+-    --primary-active: #00466f;
+-    --on-primary: #ffffff;
+-    --primary-soft: #e6f1f7;
+-    --on-primary-soft: #124e6d;
+-
+-    --link: #006cac;
+-    --link-hover: #005b91;
+-    --link-visited: #695d83;
+-    --secondary: #59636d;
+-    --secondary-soft: #eceff1;
+-    --accent-plant: #647c70;
+-    --accent-plant-soft: #e8eeea;
+-    --accent-warm: #8a7145;
+-    --accent-warm-soft: #f2eee6;
+-
+-    --focus-ring: #006cac;
+-    --selection: #d9edf7;
+-    --selection-foreground: #15384b;
+-    --scrollbar-thumb: #9fa4ab;
+-
+-    --inline-code-background: #eef0f1;
+-    --inline-code-foreground: #24323b;
+-    --code-background: #f3f4f5;
+-    --code-foreground: #282b2e;
+-    --code-muted: #666b71;
+-    --code-border: #c8ccd1;
+-    --code-keyword: #006cac;
+-    --code-type: #3f7174;
+-    --code-class: #6f5b82;
+-    --code-function: #86565d;
+-    --code-variable: #30383e;
+-    --code-property: #6f5b82;
+-    --code-string: #4f704e;
+-    --code-char: #68723f;
+-    --code-number: #8c5a3c;
+-    --code-constant: #785c76;
+-    --code-operator: #405b6c;
+-    --code-punctuation: #555b61;
+-    --code-comment: #62686e;
+-    --code-preprocessor: #765e7d;
+-    --code-namespace: #3f6c82;
+-    --code-template: #796744;
+-    --code-file-name: #3d4950;
+-    --code-selection: #d9edf7;
+-    --code-line-highlight: #e9eff2;
+-    --code-line-highlight-border: #2e7197;
+-    --code-word-highlight: #eceff1;
+-    --code-word-highlight-outline: #7f8790;
+-    --code-inserted: #4f704e;
+-    --code-inserted-background: #e8f0e8;
+-    --code-inserted-border: #6f8c6b;
+-    --code-deleted: #8b4a51;
+-    --code-deleted-background: #f2e8e9;
+-    --code-deleted-border: #a9676d;
+-
+-    --info: #315f86;
+-    --info-soft: #e3edf4;
+-    --success: #566f5c;
+-    --success-soft: #e8eeea;
+-    --warning: #7f6333;
+-    --warning-soft: #f2eee2;
+-    --destructive: #964c53;
+-    --destructive-soft: #f1e5e6;
++    --background: #f8f4e8;
++    --surface: #f1ecdf;
++    --surface-muted: #e6e0d5;
++    --surface-elevated: #fffaf0;
++
++    --foreground: #26283a;
++    --foreground-strong: #171827;
++    --text-muted: #5e6475;
++
++    --border: #cec6b8;
++    --border-strong: #7c7785;
++    --control-border: #777382;
++
++    --primary: #4850a2;
++    --primary-hover: #3b438d;
++    --primary-active: #30376f;
++    --on-primary: #fffaf0;
++    --primary-soft: #e2e1f2;
++    --on-primary-soft: #303574;
++
++    --link: #40579b;
++    --link-hover: #344781;
++    --link-visited: #6b4c89;
++    --secondary: #52697f;
++    --secondary-soft: #e4e8eb;
++    --accent-plant: #4f7469;
++    --accent-plant-soft: #e1ebe5;
++    --accent-warm: #a05a43;
++    --accent-warm-soft: #f0ded3;
++
++    --focus-ring: #3e50b0;
++    --selection: #d8d9ef;
++    --selection-foreground: #20233d;
++    --scrollbar-thumb: #817c8e;
++
++    --inline-code-background: #e9e7e8;
++    --inline-code-foreground: #2c3044;
++    --code-background: #efedf0;
++    --code-foreground: #25293a;
++    --code-muted: #626879;
++    --code-border: #b9b5c1;
++    --code-keyword: #4850a2;
++    --code-type: #356d75;
++    --code-class: #6b4c89;
++    --code-function: #8a4964;
++    --code-variable: #2e3348;
++    --code-property: #6b4c89;
++    --code-string: #406c4c;
++    --code-char: #5a6b30;
++    --code-number: #925333;
++    --code-constant: #7d4d75;
++    --code-operator: #374b70;
++    --code-punctuation: #525a6a;
++    --code-comment: #626879;
++    --code-preprocessor: #754f8b;
++    --code-namespace: #356886;
++    --code-template: #745a34;
++    --code-file-name: #38465d;
++    --code-selection: #d8d9ef;
++    --code-line-highlight: #e5e6ee;
++    --code-line-highlight-border: #525eb1;
++    --code-word-highlight: #e4e3eb;
++    --code-word-highlight-outline: #6d748b;
++    --code-inserted: #3f6845;
++    --code-inserted-background: #e1ece2;
++    --code-inserted-border: #567c58;
++    --code-deleted: #8d3f50;
++    --code-deleted-background: #f2e2e5;
++    --code-deleted-border: #a95464;
++
++    --info: #365d96;
++    --info-soft: #dfe8f3;
++    --success: #4f704f;
++    --success-soft: #e1ebe2;
++    --warning: #80581f;
++    --warning-soft: #f2e7cc;
++    --destructive: #983f50;
++    --destructive-soft: #f3dfe3;
+ 
+     --presence-online: var(--success);
+     --presence-away: var(--warning);
+@@ -289,8 +289,6 @@ html[data-view-transition='running'] a {
+     --presence-offline: var(--text-muted);
+     --presence-sleeping: var(--primary);
+ 
+-    /* Muted Frieren-inspired mark: silver-blue wool with a deep slate detail. */
+-
+     /* Compatibility aliases; new work should use the semantic names above. */
+     --accent: var(--primary);
+     --accent-foreground: var(--on-primary);
+@@ -306,84 +304,84 @@ html[data-view-transition='running'] a {
+ 
+   [data-theme='dark'] {
+     color-scheme: dark;
+-    --background: #18191b;
+-    --surface: #202226;
+-    --surface-muted: #282b30;
+-    --surface-elevated: #2e3136;
+-
+-    --foreground: #e8e8e6;
+-    --foreground-strong: #f7f7f5;
+-    --text-muted: #a9adb4;
+-
+-    --border: #3b3f46;
+-    --border-strong: #626871;
+-    --control-border: #777d86;
+-
+-    --primary: #87aabd;
+-    --primary-hover: #a3bfce;
+-    --primary-active: #7398ac;
+-    --on-primary: #172126;
+-    --primary-soft: #293840;
+-    --on-primary-soft: #c4d7e1;
+-
+-    --link: #8fb1c4;
+-    --link-hover: #b1c9d6;
+-    --link-visited: #b4a5bd;
+-    --secondary: #a8b0b8;
+-    --secondary-soft: #2c3035;
+-    --accent-plant: #91a394;
+-    --accent-plant-soft: #2c352f;
+-    --accent-warm: #bea06e;
+-    --accent-warm-soft: #3a3328;
+-
+-    --focus-ring: #9ab8c8;
+-    --selection: #344953;
+-    --selection-foreground: #f5f5f3;
+-    --scrollbar-thumb: #626871;
+-
+-    --inline-code-background: #272a2e;
+-    --inline-code-foreground: #d8dde0;
+-    --code-background: #111214;
+-    --code-foreground: #dedfe1;
+-    --code-muted: #8f949c;
+-    --code-border: #3f444b;
+-    --code-keyword: #8daec2;
+-    --code-type: #83aaa8;
+-    --code-class: #b3a1bc;
+-    --code-function: #c6a2a7;
+-    --code-variable: #d7d9dc;
+-    --code-property: #b3a1bc;
+-    --code-string: #96ad91;
+-    --code-char: #abb58c;
+-    --code-number: #c6a083;
+-    --code-constant: #b9a0b4;
+-    --code-operator: #aab8c2;
+-    --code-punctuation: #9ca1a8;
+-    --code-comment: #858b92;
+-    --code-preprocessor: #b5a0b8;
+-    --code-namespace: #88a7ba;
+-    --code-template: #baa887;
+-    --code-file-name: #c4c8cc;
+-    --code-selection: #344953;
+-    --code-line-highlight: #20272b;
+-    --code-line-highlight-border: #6f93a6;
+-    --code-word-highlight: #272e32;
+-    --code-word-highlight-outline: #68727a;
+-    --code-inserted: #9bb398;
+-    --code-inserted-background: #243128;
+-    --code-inserted-border: #718b70;
+-    --code-deleted: #ca969b;
+-    --code-deleted-background: #372628;
+-    --code-deleted-border: #9d696f;
+-
+-    --info: #8faec0;
+-    --info-soft: #26343c;
+-    --success: #91a394;
+-    --success-soft: #2c352f;
+-    --warning: #c0a26d;
+-    --warning-soft: #3a3328;
+-    --destructive: #c78f95;
+-    --destructive-soft: #402d30;
++    --background: #121521;
++    --surface: #191e2d;
++    --surface-muted: #22283a;
++    --surface-elevated: #2b3144;
++
++    --foreground: #ebe9e3;
++    --foreground-strong: #fffaf0;
++    --text-muted: #a9adbc;
++
++    --border: #353c50;
++    --border-strong: #69738d;
++    --control-border: #77829d;
++
++    --primary: #9faeff;
++    --primary-hover: #b9c7ff;
++    --primary-active: #8798ea;
++    --on-primary: #181b2d;
++    --primary-soft: #2c335d;
++    --on-primary-soft: #dde3ff;
++
++    --link: #a2b7ef;
++    --link-hover: #c0cef8;
++    --link-visited: #c6a7d4;
++    --secondary: #aebdd2;
++    --secondary-soft: #273247;
++    --accent-plant: #8fb9a8;
++    --accent-plant-soft: #263b35;
++    --accent-warm: #e09a7d;
++    --accent-warm-soft: #492f2b;
++
++    --focus-ring: #b4c3ff;
++    --selection: #354074;
++    --selection-foreground: #fffaf0;
++    --scrollbar-thumb: #68738d;
++
++    --inline-code-background: #272e43;
++    --inline-code-foreground: #e0e5fa;
++    --code-background: #0d1019;
++    --code-foreground: #e7e8ef;
++    --code-muted: #929aab;
++    --code-border: #404960;
++    --code-keyword: #aab8ff;
++    --code-type: #82c4ca;
++    --code-class: #c9a8df;
++    --code-function: #e7a8ba;
++    --code-variable: #e5e7ed;
++    --code-property: #c9a8df;
++    --code-string: #9cca9d;
++    --code-char: #c2d18f;
++    --code-number: #e9ae88;
++    --code-constant: #d6a8d0;
++    --code-operator: #bdc9e7;
++    --code-punctuation: #abb2c2;
++    --code-comment: #939aaa;
++    --code-preprocessor: #d7a5dd;
++    --code-namespace: #83b5dc;
++    --code-template: #dfbe88;
++    --code-file-name: #d5dbea;
++    --code-selection: #354074;
++    --code-line-highlight: #1a2340;
++    --code-line-highlight-border: #8498ee;
++    --code-word-highlight: #222b45;
++    --code-word-highlight-outline: #7481a2;
++    --code-inserted: #9dcc9f;
++    --code-inserted-background: #1f382a;
++    --code-inserted-border: #6e9b70;
++    --code-deleted: #efa0ad;
++    --code-deleted-background: #3b222b;
++    --code-deleted-border: #bd6675;
++
++    --info: #9abff0;
++    --info-soft: #203653;
++    --success: #9bc6a0;
++    --success-soft: #263b35;
++    --warning: #ebbd77;
++    --warning-soft: #47391f;
++    --destructive: #ee9ba8;
++    --destructive-soft: #492731;
+ 
+     --presence-online: var(--success);
+     --presence-away: var(--warning);
+@@ -391,8 +389,6 @@ html[data-view-transition='running'] a {
+     --presence-offline: var(--text-muted);
+     --presence-sleeping: var(--primary);
+ 
+-    /* Slightly lighter silver-blue for legibility on graphite. */
+-
+     --accent: var(--primary);
+     --accent-foreground: var(--on-primary);
+     --muted: var(--surface-muted);
+@@ -525,7 +521,6 @@ html[data-view-transition='running'] a {
+     text-underline-offset: 8px;
+   }
+ 
+-
+   .focus-outline {
+     outline: 2px solid transparent;
+     outline-offset: 3px;
+@@ -1954,3 +1949,88 @@ footer svg {
+     display: block;
+   }
+ }
++
++/* Metallic wordmark inspired by early C++ book-cover lettering. */
++.site-mark-link {
++  color: var(--primary);
++  text-decoration-line: none;
++}
++
++.site-mark {
++  --mark-edge: #1f2466;
++  --mark-glow: rgb(255 255 255 / 60%);
++
++  display: inline-flex;
++  align-items: center;
++  gap: 0.075em;
++  line-height: 0.9;
++  white-space: nowrap;
++
++  font-family: var(--font-logo, var(--font-mono, ui-monospace, monospace));
++
++  transform: skewX(-6deg);
++
++  filter: drop-shadow(1px 1px 0.4px var(--mark-edge)) drop-shadow(-1px 1px 0.4px var(--mark-glow));
++}
++
++.site-mark__glyph,
++.site-mark__plus {
++  color: #6872c0;
++  line-height: 1.1;
++}
++
++@supports ((background-clip: text) or (-webkit-background-clip: text)) {
++  .site-mark__glyph,
++  .site-mark__plus {
++    background-image: linear-gradient(180deg, #363d94 10%, #6872c0 55%, #eef0fc 90%);
++    background-clip: text;
++    -webkit-background-clip: text;
++    color: transparent;
++    -webkit-text-fill-color: transparent;
++  }
++}
++
++.site-mark__glyph {
++  font-size: 1.5em;
++  font-weight: 800;
++  letter-spacing: -0.02em;
++}
++
++.site-mark__plus {
++  font-size: 1.1em;
++  font-weight: 900;
++  transform: translateY(0.02em);
++}
++
++/* Keep the home-page title strong without competing with the wordmark. */
++.title-mark {
++  color: var(--foreground-strong);
++  font-size: clamp(2.25rem, 1.85rem + 2vw, 3rem);
++  font-weight: 800;
++  line-height: 1;
++  letter-spacing: -0.045em;
++}
++
++.title-mark__glyph {
++  display: inline-block;
++  transform: skewX(-2deg);
++  transform-origin: left center;
++  text-shadow: 0.035em 0.035em 0 color-mix(in srgb, var(--primary) 18%, transparent);
++}
++
++@media (forced-colors: active) {
++  .site-mark {
++    filter: none;
++  }
++
++  .site-mark__glyph,
++  .site-mark__plus {
++    color: CanvasText;
++    background-image: none;
++    -webkit-text-fill-color: CanvasText;
++  }
++
++  .title-mark__glyph {
++    text-shadow: none;
++  }
++}
+diff --git a/public/static/favicons/favicon.svg b/public/static/favicons/favicon.svg
+index 0193e2a..fd9df48 100644
+--- a/public/static/favicons/favicon.svg
++++ b/public/static/favicons/favicon.svg
+@@ -1,12 +1,12 @@
+ <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Hitsuji">
+   <style>
+     :root {
+-      --accent: #3f5fa9;
++      --accent: #4850a2;
+     }
+ 
+     @media (prefers-color-scheme: dark) {
+       :root {
+-        --accent: #9bb8fa;
++        --accent: #aebaff;
+       }
+     }
+ 
+diff --git a/public/static/favicons/safari-pinned-tab.svg b/public/static/favicons/safari-pinned-tab.svg
+index a62adb9..7397e1c 100644
+--- a/public/static/favicons/safari-pinned-tab.svg
++++ b/public/static/favicons/safari-pinned-tab.svg
+@@ -8,7 +8,7 @@
+ Created by potrace 1.11, written by Peter Selinger 2001-2013
+ </metadata>
+ <g transform="translate(0.000000,107.000000) scale(0.100000,-0.100000)"
+-fill="#3f5fa9" stroke="none">
++fill="#4850a2" stroke="none">
+ <path d="M609 942 c-17 -18 -95 -88 -289 -258 -117 -102 -177 -155 -204 -179
+ -6 -5 -31 -28 -56 -50 l-45 -39 -1 -144 -1 -143 21 18 c11 10 25 23 31 28 7 6
+ 46 41 88 79 86 77 86 77 216 196 52 47 103 93 115 103 11 10 50 45 86 77 l65
+diff --git a/public/static/favicons/site.webmanifest b/public/static/favicons/site.webmanifest
+index 65ffe8e..8cb95b8 100644
+--- a/public/static/favicons/site.webmanifest
++++ b/public/static/favicons/site.webmanifest
+@@ -9,7 +9,7 @@
+       "purpose": "any"
+     }
+   ],
+-  "theme_color": "#f8f6f1",
+-  "background_color": "#f8f6f1",
++  "theme_color": "#f8f4e8",
++  "background_color": "#f8f4e8",
+   "display": "standalone"
+ }
+diff --git a/yarn.lock b/yarn.lock
+index df27a8e..7e8cc86 100644
+Binary files a/yarn.lock and b/yarn.lock differ

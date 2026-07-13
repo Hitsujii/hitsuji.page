@@ -43,8 +43,10 @@ export default function Home({ posts }: { posts: CoreContent<Blog>[] }) {
             <LocalTime />
           </div>
 
-          <div className="my-4 flex items-center gap-3 sm:my-8">
-            <h1 className="text-4xl font-bold sm:text-5xl">Hi World!!</h1>
+          <div className="my-5 flex items-center gap-3 sm:my-8">
+            <h1 className="title-mark">
+              <span className="title-mark__glyph">Hi World!!</span>
+            </h1>
 
             <Link
               href="/feed.xml"

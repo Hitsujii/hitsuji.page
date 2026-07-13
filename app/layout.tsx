@@ -86,8 +86,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       >
         <head>
           <meta name="color-scheme" content="light dark" />
-          <meta name="theme-color" content="#f8f6f1" media="(prefers-color-scheme: light)" />
-          <meta name="theme-color" content="#111824" media="(prefers-color-scheme: dark)" />
+          <meta name="theme-color" content="#f8f4e8" media="(prefers-color-scheme: light)" />
+          <meta name="theme-color" content="#121521" media="(prefers-color-scheme: dark)" />
         </head>
         <body className="flex min-h-svh flex-col bg-[var(--background)] text-[var(--foreground)] antialiased">
           <ThemeProviders>

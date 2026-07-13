@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Hitsuji">
   <style>
     :root {
-      --accent: #3f5fa9;
+      --accent: #4850a2;
     }
 
     @media (prefers-color-scheme: dark) {
       :root {
-        --accent: #9bb8fa;
+        --accent: #aebaff;
       }
     }
 
