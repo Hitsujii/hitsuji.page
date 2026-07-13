@@ -1970,7 +1970,7 @@ footer svg {
 
   transform: skewX(-6deg);
 
-  filter: drop-shadow(1px 1px 0.4px var(--mark-edge)) drop-shadow(-1px 1px 0.4px var(--mark-glow));
+  filter: drop-shadow(1px 1px 0.4px var(--mark-edge));
 }
 
 .site-mark__glyph,
