@@ -6,6 +6,7 @@ import NewsletterForm from 'pliny/ui/NewsletterForm'
 import RememberBackUrl from '@/components/RememberBackUrl'
 import DiscordStatus from '@/components/DiscordStatus'
 import LocalTime from '@/components/LocalTime'
+import AvatarWindow from '@/components/AvatarWindow'
 import { IconArrowRight, IconRss } from '@/components/icons/AstroPaperIcons'
 import type { CoreContent } from 'pliny/utils/contentlayer'
 import type { Blog } from 'contentlayer/generated'
@@ -37,72 +38,62 @@ export default function Home({ posts }: { posts: CoreContent<Blog>[] }) {
       <RememberBackUrl />
 
       <main id="main-content" data-layout="index" data-home-path="/" className="app-layout">
-        <section id="hero" className="border-b border-[var(--border)] pt-8 pb-6">
-          <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+        <section id="hero" className="home-hero">
+          <div className="home-hero__status">
             <DiscordStatus />
+            <span aria-hidden="true">/</span>
             <LocalTime />
           </div>
 
-          <div className="my-5 flex items-center gap-3 sm:my-8">
-            <h1 className="title-mark">
-              <span className="title-mark__glyph">Hi World!!</span>
-            </h1>
+          <div className="home-hero__grid">
+            <div className="home-hero__copy">
+              <p className="home-hero__kicker">{'// C++, web & avoidable complexity'}</p>
 
-            <Link
-              href="/feed.xml"
-              target="_blank"
-              prefetch={false}
-              className="inline-flex translate-y-1 text-[var(--primary)] transition hover:scale-110 hover:text-[var(--primary-hover)]"
-              aria-label="RSS Feed"
-              title="RSS Feed"
-            >
-              <IconRss
-                width={20}
-                height={20}
-                className="scale-125 stroke-current stroke-3 rtl:-rotate-90"
-              />
-              <span className="sr-only">RSS Feed</span>
-            </Link>
-          </div>
+              <div className="home-hero__title-row">
+                <h1 className="title-mark">
+                  <span className="title-mark__glyph">Hi World!!</span>
+                </h1>
 
-          <div className="max-w-2xl text-[var(--foreground)]">
-            <p>
-              I’m Hitsuji. I’m learning C++ from scratch, building this site myself, and
-              accidentally picking up frontend along the way.
-            </p>
-
-            <p className="mt-2">
-              Feel free to read the{' '}
-              <Link
-                href="/blog"
-                className="text-[var(--link)] underline decoration-dashed underline-offset-4 visited:text-[var(--link-visited)] hover:text-[var(--link-hover)]"
-              >
-                high-cortisol posts
-              </Link>{' '}
-              or check out the{' '}
-              <Link
-                href="/projects"
-                className="text-[var(--link)] underline decoration-dashed underline-offset-4 visited:text-[var(--link-visited)] hover:text-[var(--link-hover)]"
-              >
-                projects
-              </Link>{' '}
-              to see how the overengineering is going.
-            </p>
-          </div>
-
-          {socialLinks.some(({ href }) => Boolean(href)) && (
-            <div className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-2">
-              <div className="text-sm whitespace-nowrap text-[var(--text-muted)]">
-                Social Links:
+                <Link
+                  href="/feed.xml"
+                  target="_blank"
+                  prefetch={false}
+                  className="home-hero__rss"
+                  aria-label="RSS Feed"
+                  title="RSS Feed"
+                >
+                  <IconRss width={20} height={20} className="stroke-current stroke-3" />
+                  <span className="sr-only">RSS Feed</span>
+                </Link>
               </div>
 
-              <div className="flex flex-wrap items-center gap-1">
-                {socialLinks.map(({ kind, href }) => (
-                  <SocialIcon key={kind} kind={kind} href={href} size={24} />
-                ))}
+              <div className="home-hero__intro">
+                <p>
+                  I’m Hitsuji. I’m learning C++ from scratch, building this site myself, and
+                  accidentally picking up frontend along the way.
+                </p>
+
+                <p>
+                  Feel free to read the <Link href="/blog">high-cortisol posts</Link> or check out
+                  the <Link href="/projects">projects</Link> to see how the overengineering is
+                  going.
+                </p>
               </div>
+
+              {socialLinks.some(({ href }) => Boolean(href)) && (
+                <div className="home-hero__socials">
+                  <span>links[]:</span>
+                  <div>
+                    {socialLinks.map(({ kind, href }) => (
+                      <SocialIcon key={kind} kind={kind} href={href} size={24} />
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-          )}
+
+            <AvatarWindow className="home-hero__avatar" priority />
+          </div>
         </section>
 
         {featuredPosts.length > 0 && (
@@ -113,8 +104,11 @@ export default function Home({ posts }: { posts: CoreContent<Blog>[] }) {
               recentPosts.length > 0 ? 'border-b border-[var(--border)]' : '',
             ].join(' ')}
           >
-            <h2 className="text-2xl font-semibold tracking-wide">Featured</h2>
-            <ul>
+            <div className="section-heading">
+              <h2>Featured</h2>
+              <span>{String(featuredPosts.length).padStart(2, '0')}</span>
+            </div>
+            <ul className="post-list">
               {featuredPosts.map((post) => (
                 <PostCard key={post.path ?? post.slug} post={post} heading="h3" />
               ))}
@@ -124,8 +118,11 @@ export default function Home({ posts }: { posts: CoreContent<Blog>[] }) {
 
         {recentPosts.length > 0 && (
           <section id="recent-posts" className="pt-12 pb-6">
-            <h2 className="text-2xl font-semibold tracking-wide">Recent Posts</h2>
-            <ul>
+            <div className="section-heading">
+              <h2>Recent posts</h2>
+              <span>{String(recentPosts.length).padStart(2, '0')}</span>
+            </div>
+            <ul className="post-list">
               {recentPosts.map((post) => (
                 <PostCard key={post.path ?? post.slug} post={post} heading="h3" />
               ))}
@@ -134,10 +131,7 @@ export default function Home({ posts }: { posts: CoreContent<Blog>[] }) {
         )}
 
         <div className="my-8 text-center">
-          <Link
-            href="/blog"
-            className="inline-flex items-center gap-1 text-[var(--link)] hover:text-[var(--link-hover)]"
-          >
+          <Link href="/blog" className="command-link">
             All Posts
             <IconArrowRight className="inline-block size-5 rtl:-rotate-180" />
           </Link>

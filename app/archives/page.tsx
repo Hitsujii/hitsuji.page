@@ -56,7 +56,7 @@ export default async function ArchivesPage() {
                       <sup className="text-xs text-[var(--text-muted)]">{monthGroup.length}</sup>
                     </div>
 
-                    <ul>
+                    <ul className="post-list archive-post-list">
                       {monthGroup
                         .sort(
                           (a, b) =>

@@ -7,6 +7,7 @@ import Breadcrumb from '@/components/Breadcrumb'
 import Link from '@/components/Link'
 import PostCard from '@/components/PostCard'
 import RememberBackUrl from '@/components/RememberBackUrl'
+import PageHeader from '@/components/PageHeader'
 import { IconArrowLeft, IconArrowRight } from '@/components/icons/AstroPaperIcons'
 
 interface PaginationProps {
@@ -92,10 +93,9 @@ export default function ListLayout({
       <Breadcrumb />
 
       <main id="main-content" className="app-layout pb-4">
-        <h1 className="text-2xl font-semibold sm:text-3xl">{title}</h1>
-        {description && <p className="mt-2 mb-6 italic">{description}</p>}
+        <PageHeader title={title} description={description} />
 
-        <ul>
+        <ul className="post-list">
           {!displayPosts.length && 'No posts found.'}
           {displayPosts.map((post) => (
             <PostCard key={post.path ?? post.slug} post={post} />

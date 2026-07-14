@@ -12,7 +12,7 @@ const siteUrl =
 const siteMetadata = {
   title: 'Hitsuji',
   author: 'Hitsuji',
-  headerTitle: '羊',
+  headerTitle: '羊++',
   description:
     'Learning C++, building for the web, and slowly turning high-cortisol decisions into projects.',
   language: 'en-us',

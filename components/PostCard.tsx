@@ -27,17 +27,17 @@ export default function PostCard({ post, heading = 'h2' }: PostCardProps) {
   const Heading = heading as ElementType
 
   return (
-    <li className="my-6">
-      <Link
-        href={href}
-        className="inline-block text-lg font-medium text-[var(--link)] underline-offset-4 visited:text-[var(--link-visited)] hover:text-[var(--link-hover)] hover:underline hover:decoration-dashed focus-visible:no-underline focus-visible:underline-offset-0"
-      >
-        <PostTitleTransition title={transitionName(title)}>
-          <Heading>{title}</Heading>
-        </PostTitleTransition>
-      </Link>
-      <Datetime date={date} lastmod={lastmod} />
-      {summary && <p>{summary}</p>}
+    <li className="post-card">
+      <Datetime date={date} lastmod={lastmod} className="post-card__date" showIcon={false} />
+
+      <div className="post-card__body">
+        <Link href={href} className="post-card__link">
+          <PostTitleTransition title={transitionName(title)}>
+            <Heading>{title}</Heading>
+          </PostTitleTransition>
+        </Link>
+        {summary && <p className="post-card__summary">{summary}</p>}
+      </div>
     </li>
   )
 }

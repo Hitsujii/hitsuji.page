@@ -61,13 +61,17 @@ export default function Breadcrumb({ labelsByHref = {} }: BreadcrumbProps) {
 
   return (
     <nav className="app-layout mt-8 mb-1" aria-label="breadcrumb">
-      <ul className="font-light [&>li]:inline">
+      <ul className="breadcrumb-list font-light [&>li]:inline">
         <li>
-          <Link href="/" className="text-[var(--text-muted)] hover:text-[var(--link-hover)]">
-            Home
+          <Link
+            href="/"
+            aria-label="Home"
+            className="text-[var(--text-muted)] hover:text-[var(--link-hover)]"
+          >
+            ~
           </Link>{' '}
-          <span aria-hidden="true" className="text-[var(--text-muted)]">
-            &raquo;
+          <span aria-hidden="true" className="breadcrumb-separator">
+            /
           </span>{' '}
         </li>
 
@@ -96,8 +100,8 @@ export default function Breadcrumb({ labelsByHref = {} }: BreadcrumbProps) {
                   >
                     {formatSegment(segment, index, label)}
                   </Link>{' '}
-                  <span aria-hidden="true" className="text-[var(--text-muted)]">
-                    &raquo;
+                  <span aria-hidden="true" className="breadcrumb-separator">
+                    /
                   </span>{' '}
                 </>
               )}

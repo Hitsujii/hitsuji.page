@@ -25,7 +25,7 @@ export default function Tag({ text, size = 'sm', count, transition = true }: Pro
       href={`/tags/${tagSlug}`}
       style={style}
       className={[
-        'inline-flex items-center gap-0.5 border-b-2 border-dashed border-[var(--foreground)]',
+        'tag-link inline-flex items-center gap-0.5 border-b-2 border-dashed border-[var(--foreground)]',
         'text-[var(--foreground)] visited:text-[var(--foreground)]',
         'hover:-mt-0.5 hover:border-[var(--primary)] hover:text-[var(--primary-hover)]',
         'focus-visible:border-transparent focus-visible:text-[var(--primary)]',

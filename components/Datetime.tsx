@@ -5,6 +5,7 @@ type DatetimeProps = {
   lastmod?: string | null
   size?: 'sm' | 'lg'
   className?: string
+  showIcon?: boolean
 }
 
 const monthFormatter = new Intl.DateTimeFormat('en', {
@@ -22,15 +23,23 @@ function formatAstroPaperDate(value: string) {
   return `${parsedDate.getUTCDate()} ${monthFormatter.format(parsedDate)}, ${parsedDate.getUTCFullYear()}`
 }
 
-export default function Datetime({ date, lastmod, size = 'sm', className = '' }: DatetimeProps) {
+export default function Datetime({
+  date,
+  lastmod,
+  size = 'sm',
+  className = '',
+  showIcon = true,
+}: DatetimeProps) {
   const isModified = Boolean(lastmod && lastmod > date)
   const displayDate = isModified ? lastmod || date : date
 
   return (
     <div className={['flex items-center gap-x-2 text-[var(--text-muted)]', className].join(' ')}>
-      <IconCalendar
-        className={['inline-block size-6 min-w-5.5', size === 'sm' ? 'scale-90' : ''].join(' ')}
-      />
+      {showIcon && (
+        <IconCalendar
+          className={['inline-block size-6 min-w-5.5', size === 'sm' ? 'scale-90' : ''].join(' ')}
+        />
+      )}
       {isModified && (
         <span className={['text-sm', size === 'lg' ? 'sm:text-base' : ''].join(' ')}>Updated:</span>
       )}

@@ -92,17 +92,22 @@ export default function PostLayout({ content, next, prev, children }: LayoutProp
 
       <main id="main-content" className="app-layout pb-4" data-pagefind-body>
         <PostEnhancements toc={content.toc} hasToc={Boolean(content.hasToc)} />
-        <h1 className="inline-block text-2xl font-bold text-[var(--primary)] sm:text-3xl">
-          <PostTitleTransition title={title.replaceAll('.', '-')}>{title}</PostTitleTransition>
-        </h1>
-
-        <div className="my-2 flex flex-wrap items-center gap-2">
-          <Datetime date={date} lastmod={lastmod} size="lg" />
-          <span aria-hidden="true" className="text-[var(--text-muted)] max-sm:hidden">
-            |
+        <header className="article-header">
+          <span className="article-header__sigil" aria-hidden="true">
+            {'// article'}
           </span>
-          <EditPost path={path} className="max-sm:hidden" />
-        </div>
+          <h1>
+            <PostTitleTransition title={title.replaceAll('.', '-')}>{title}</PostTitleTransition>
+          </h1>
+
+          <div className="article-header__meta">
+            <Datetime date={date} lastmod={lastmod} size="lg" showIcon={false} />
+            <span aria-hidden="true" className="max-sm:hidden">
+              /
+            </span>
+            <EditPost path={path} className="max-sm:hidden" />
+          </div>
+        </header>
 
         <article
           id="article"

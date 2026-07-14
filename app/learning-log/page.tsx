@@ -6,6 +6,7 @@ import Breadcrumb from '@/components/Breadcrumb'
 import Link from '@/components/Link'
 import { components } from '@/components/MDXComponents'
 import { genPageMetadata } from 'app/seo'
+import PageHeader from '@/components/PageHeader'
 import {
   formatLearningLogDate,
   getLearningLogNotes,
@@ -26,13 +27,10 @@ export default function LearningLogPage() {
       <Breadcrumb />
 
       <main id="main-content" className="app-layout learning-log-layout">
-        <header className="learning-log-header">
-          <h1>Learning Log</h1>
-          <p>
-            Short logs from study sessions: what I worked on, how long it took, and which notes are
-            related.
-          </p>
-        </header>
+        <PageHeader
+          title="Learning Log"
+          description="Short logs from study sessions: what I worked on, how long it took, and which notes are related."
+        />
 
         {entries.length === 0 ? (
           <section className="learning-log-empty">

@@ -29,6 +29,7 @@ const metadataBasePath = process.env.BASE_PATH || ''
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteMetadata.siteUrl),
+  manifest: `${metadataBasePath}/static/favicons/site.webmanifest`,
   title: {
     default: siteMetadata.title,
     template: `%s | ${siteMetadata.title}`,
@@ -37,7 +38,7 @@ export const metadata: Metadata = {
   icons: {
     icon: [
       {
-        url: `${metadataBasePath}/static/favicons/favicon.svg?v=15`,
+        url: `${metadataBasePath}/static/favicons/favicon.svg?v=16`,
         type: 'image/svg+xml',
         sizes: 'any',
       },
@@ -86,8 +87,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       >
         <head>
           <meta name="color-scheme" content="light dark" />
-          <meta name="theme-color" content="#f8f4e8" media="(prefers-color-scheme: light)" />
-          <meta name="theme-color" content="#121521" media="(prefers-color-scheme: dark)" />
+          <meta name="theme-color" content="#f5f9ff" media="(prefers-color-scheme: light)" />
+          <meta name="theme-color" content="#0b1120" media="(prefers-color-scheme: dark)" />
         </head>
         <body className="flex min-h-svh flex-col bg-[var(--background)] text-[var(--foreground)] antialiased">
           <ThemeProviders>

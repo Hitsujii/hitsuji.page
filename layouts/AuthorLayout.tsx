@@ -1,7 +1,8 @@
 import { ReactNode } from 'react'
 import type { Authors } from 'contentlayer/generated'
-import Image from '@/components/Image'
 import SocialIcon from '@/components/social-icons'
+import AvatarWindow from '@/components/AvatarWindow'
+import PageHeader from '@/components/PageHeader'
 
 interface Props {
   children: ReactNode
@@ -13,36 +14,42 @@ export default function AuthorLayout({ children, content }: Props) {
 
   return (
     <main id="main-content" className="app-layout pb-4">
-      <h1 className="text-2xl font-semibold sm:text-3xl">About</h1>
-      <p className="mt-2 mb-6 italic">A bit about me and this blog.</p>
+      <PageHeader title="About" description="A bit about me and this blog." />
 
-      <section className="mb-8 flex flex-col gap-4 border-b border-[var(--border)] pb-6 sm:flex-row sm:items-center">
+      <section className="author-card">
         {avatar && (
-          <Image
+          <AvatarWindow
             src={avatar}
-            alt={name}
-            width={96}
-            height={96}
-            className="size-24 rounded-full border border-[var(--border)] object-cover"
+            alt={`${name}'s profile image: Frieren holding a C++ programming book`}
+            fileName="about_me.cpp"
+            size={176}
+            className="author-card__avatar"
           />
         )}
 
-        <div className="min-w-0">
-          <h2 className="text-xl font-semibold">{name}</h2>
+        <div className="author-card__body">
+          <p className="author-card__type" aria-hidden="true">
+            struct Author {'{'}
+          </p>
+          <h2>{name}</h2>
 
           {(occupation || company) && (
-            <p className="mt-1 text-sm text-[var(--text-muted)]">
+            <p className="author-card__meta">
               {[occupation, company].filter(Boolean).join(' at ')}
             </p>
           )}
 
-          <div className="mt-2 flex flex-wrap items-center gap-1">
+          <div className="author-card__socials">
             <SocialIcon kind="mail" href={email ? `mailto:${email}` : undefined} size={24} />
             <SocialIcon kind="github" href={github} size={24} />
             <SocialIcon kind="linkedin" href={linkedin} size={24} />
             <SocialIcon kind="x" href={twitter} size={24} />
             <SocialIcon kind="bluesky" href={bluesky} size={24} />
           </div>
+
+          <p className="author-card__type" aria-hidden="true">
+            {'}'};
+          </p>
         </div>
       </section>
 

@@ -2,6 +2,7 @@ import Breadcrumb from '@/components/Breadcrumb'
 import Link from '@/components/Link'
 import projectsData from '@/data/projectsData'
 import { genPageMetadata } from 'app/seo'
+import PageHeader from '@/components/PageHeader'
 
 export const metadata = genPageMetadata({
   title: 'Projects',
@@ -14,30 +15,26 @@ export default function Projects() {
       <Breadcrumb />
 
       <main id="main-content" className="app-layout pb-4">
-        <h1 className="text-2xl font-semibold sm:text-3xl">Projects</h1>
-        <p className="mt-2 mb-6 italic">Things I have built or worked on.</p>
+        <PageHeader title="Projects" description="Things I have built or worked on." />
 
         {projectsData.length > 0 ? (
-          <ul>
+          <ul className="project-list">
             {projectsData.map((project) => {
               const href = project.href
 
               return (
-                <li key={project.title} className="my-6">
+                <li key={project.title} className="project-card">
                   {href ? (
-                    <Link
-                      href={href}
-                      className="inline-block text-lg font-medium text-[var(--link)] underline-offset-4 visited:text-[var(--link-visited)] hover:text-[var(--link-hover)] hover:underline hover:decoration-dashed focus-visible:no-underline focus-visible:underline-offset-0"
-                    >
+                    <Link href={href} className="project-card__link">
                       <h2>{project.title}</h2>
                     </Link>
                   ) : (
-                    <h2 className="inline-block text-lg font-medium text-[var(--primary)]">
-                      {project.title}
-                    </h2>
+                    <h2 className="project-card__title">{project.title}</h2>
                   )}
 
-                  {project.description && <p>{project.description}</p>}
+                  {project.description && (
+                    <p className="project-card__summary">{project.description}</p>
+                  )}
                 </li>
               )
             })}
