@@ -3,6 +3,9 @@
 import type { CSSProperties, ReactNode } from 'react'
 import { useEffect, useState } from 'react'
 import Link from '@/components/Link'
+import DesktopIcon from '@/components/desktop/DesktopIcon'
+import PostTitleTransition from '@/components/PostTitleTransition'
+import { contentTitleTransitionKey } from '@/components/view-transitions'
 
 export type NotesTreeNode =
   | {
@@ -104,6 +107,8 @@ export default function NotesTree({
       {tree.map((node) => {
         if (node.type === 'folder') {
           const active = isActivePath(activePath, node.path)
+          const current = activePath === node.path
+          const href = node.path ? `/notes/${node.path}` : '/notes'
 
           return (
             <li key={`folder-${node.path}`} className="min-w-0">
@@ -123,20 +128,33 @@ export default function NotesTree({
                   style={{ paddingLeft: folderIndent(depth) }}
                 >
                   <span aria-hidden="true" className="notes-tree-folder-toggle">
-                    <svg viewBox="0 0 16 16" fill="none">
-                      <path d="M6 3.5 10.5 8 6 12.5" />
-                    </svg>
+                    &gt;
+                  </span>
+
+                  <span className="notes-tree-folder-icons" aria-hidden="true">
+                    <DesktopIcon
+                      className="notes-tree-folder-icon notes-tree-folder-icon--closed"
+                      variant="folder"
+                    />
+                    <DesktopIcon
+                      className="notes-tree-folder-icon notes-tree-folder-icon--open"
+                      variant="folder-open"
+                    />
                   </span>
 
                   <Link
-                    href={node.path ? `/notes/${node.path}` : '/notes'}
+                    href={href}
                     data-notes-nav-kind="folder"
                     data-notes-active={active ? 'true' : undefined}
                     className="notes-tree-folder-label min-w-0 truncate underline-offset-4 hover:text-[var(--primary-hover)] hover:underline hover:decoration-dashed"
                     onClick={(event) => event.stopPropagation()}
                     title={node.name}
                   >
-                    {node.name}
+                    <PostTitleTransition
+                      transitionKey={current ? undefined : contentTitleTransitionKey(href)}
+                    >
+                      {node.name}
+                    </PostTitleTransition>
                   </Link>
                 </summary>
 
@@ -164,7 +182,7 @@ export default function NotesTree({
               data-notes-active={active ? 'true' : undefined}
               aria-current={active ? 'page' : undefined}
               className={[
-                'block min-w-0 truncate border-l py-1 pr-2 text-sm underline-offset-4 transition',
+                'flex min-w-0 items-center gap-1.5 truncate border-l py-1 pr-2 text-sm underline-offset-4 transition',
                 active
                   ? 'border-[var(--primary)] text-[var(--primary)]'
                   : 'border-transparent text-[var(--text-muted)] hover:border-[var(--border)] hover:text-[var(--foreground)]',
@@ -172,7 +190,14 @@ export default function NotesTree({
               style={noteItemStyle(depth)}
               title={node.name}
             >
-              {node.name}
+              <DesktopIcon variant="document" />
+              <span className="min-w-0 truncate">
+                <PostTitleTransition
+                  transitionKey={active ? undefined : contentTitleTransitionKey(node.href)}
+                >
+                  {node.name}
+                </PostTitleTransition>
+              </span>
             </Link>
           </li>
         )

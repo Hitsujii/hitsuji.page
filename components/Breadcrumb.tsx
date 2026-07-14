@@ -2,6 +2,7 @@
 
 import { usePathname } from 'next/navigation'
 import Link from './Link'
+import DesktopIcon from './desktop/DesktopIcon'
 
 const labels: Record<string, string> = {
   blog: 'Posts',
@@ -12,8 +13,9 @@ const labels: Record<string, string> = {
   search: 'Search',
   archives: 'Archives',
   notes: 'Notes',
-  'learning-log': 'Learning Log',
 }
+const windowsRoot = 'C:\\HITSUJI.PAGE'
+const windowsSeparator = '\\'
 
 function safeDecode(value: string) {
   try {
@@ -60,55 +62,65 @@ export default function Breadcrumb({ labelsByHref = {} }: BreadcrumbProps) {
           : segments
 
   return (
-    <nav className="app-layout mt-8 mb-1" aria-label="breadcrumb">
-      <ul className="breadcrumb-list font-light [&>li]:inline">
-        <li>
-          <Link
-            href="/"
-            aria-label="Home"
-            className="text-[var(--text-muted)] hover:text-[var(--link-hover)]"
-          >
-            ~
-          </Link>{' '}
-          <span aria-hidden="true" className="breadcrumb-separator">
-            /
-          </span>{' '}
-        </li>
-
-        {visibleSegments.map((segment, index) => {
-          const isLast = index === visibleSegments.length - 1
-          const href =
-            segment === 'Posts' || String(segment).startsWith('Posts ')
-              ? '/blog'
-              : segment === 'Tags'
-                ? '/tags'
-                : `/${segments.slice(0, index + 1).join('/')}`
-
-          const label = labelsByHref[href]
-
-          return (
-            <li key={`${segment}-${index}`}>
-              {isLast ? (
-                <span className="text-[var(--text-muted)]" aria-current="page">
-                  {formatSegment(segment, index, label)}
-                </span>
-              ) : (
-                <>
-                  <Link
-                    href={href}
-                    className="text-[var(--text-muted)] hover:text-[var(--link-hover)]"
-                  >
-                    {formatSegment(segment, index, label)}
-                  </Link>{' '}
-                  <span aria-hidden="true" className="breadcrumb-separator">
-                    /
-                  </span>{' '}
-                </>
-              )}
+    <nav className="breadcrumb-bar app-layout mt-8 mb-1" aria-label="breadcrumb">
+      <div className="breadcrumb-bar__inner">
+        <span className="breadcrumb-bar__label" aria-hidden="true">
+          Address
+        </span>
+        <div className="breadcrumb-bar__field">
+          <span className="breadcrumb-bar__icon" aria-hidden="true">
+            <DesktopIcon variant="computer" />
+          </span>
+          <ul className="breadcrumb-list font-light">
+            <li>
+              <Link
+                href="/"
+                aria-label="Home"
+                className="text-[var(--text-muted)] hover:text-[var(--link-hover)]"
+              >
+                {windowsRoot}
+              </Link>{' '}
+              <span aria-hidden="true" className="breadcrumb-separator">
+                {windowsSeparator}
+              </span>{' '}
             </li>
-          )
-        })}
-      </ul>
+
+            {visibleSegments.map((segment, index) => {
+              const isLast = index === visibleSegments.length - 1
+              const href =
+                segment === 'Posts' || String(segment).startsWith('Posts ')
+                  ? '/blog'
+                  : segment === 'Tags'
+                    ? '/tags'
+                    : `/${segments.slice(0, index + 1).join('/')}`
+
+              const label = labelsByHref[href]
+
+              return (
+                <li key={`${segment}-${index}`}>
+                  {isLast ? (
+                    <span className="text-[var(--text-muted)]" aria-current="page">
+                      {formatSegment(segment, index, label)}
+                    </span>
+                  ) : (
+                    <>
+                      <Link
+                        href={href}
+                        className="text-[var(--text-muted)] hover:text-[var(--link-hover)]"
+                      >
+                        {formatSegment(segment, index, label)}
+                      </Link>{' '}
+                      <span aria-hidden="true" className="breadcrumb-separator">
+                        {windowsSeparator}
+                      </span>{' '}
+                    </>
+                  )}
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+      </div>
     </nav>
   )
 }

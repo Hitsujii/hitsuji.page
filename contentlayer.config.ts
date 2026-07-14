@@ -21,6 +21,7 @@ import rehypeCitation from 'rehype-citation'
 import rehypePrismPlus from 'rehype-prism-plus'
 import rehypePresetMinify from 'rehype-preset-minify'
 import siteMetadata from './data/siteMetadata'
+import { searchDocumentsPath } from './data/search'
 import { sortPosts } from 'pliny/utils/contentlayer.js'
 
 const root = process.cwd()
@@ -559,18 +560,12 @@ function toSearchDocument(document: SearchSourceDocument) {
 }
 
 function createSearchIndex(documents: SearchSourceDocument[]) {
-  if (
-    siteMetadata?.search?.provider === 'kbar' &&
-    siteMetadata.search.kbarConfig.searchDocumentsPath
-  ) {
+  if (searchDocumentsPath) {
     const publicDocuments = documents
       .filter((document) => document.draft !== true)
       .map(toSearchDocument)
 
-    writeFileSync(
-      `public/${path.basename(siteMetadata.search.kbarConfig.searchDocumentsPath)}`,
-      JSON.stringify(publicDocuments)
-    )
+    writeFileSync(`public/${path.basename(searchDocumentsPath)}`, JSON.stringify(publicDocuments))
     console.log('Local search index generated...')
   }
 }
@@ -724,7 +719,7 @@ export default makeSource({
       .filter((entry) => !entry.draft)
       .map((entry) => ({
         ...entry,
-        path: `learning-log#${entry.slug}`,
+        path: `#log-${entry.slug}`,
       }))
 
     const publicBlogs = sortPosts(allBlogs.filter((post) => !post.draft))

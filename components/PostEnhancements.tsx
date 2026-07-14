@@ -10,7 +10,6 @@ type TocItem = {
 
 type PostEnhancementsProps = {
   toc?: TocItem[]
-  hasToc?: boolean
 }
 
 function slugifyHeading(value: string) {
@@ -227,22 +226,13 @@ function enhanceCodeBlocks(article: HTMLElement) {
       codeBlock.dataset.language = language
     }
 
-    codeBlock.classList.add('astro-code', 'astro-code-themes', 'min-light', 'night-owl', 'mt-8')
-
-    codeBlock.style.setProperty('--shiki-light', 'var(--code-foreground)')
-    codeBlock.style.setProperty('--shiki-dark', 'var(--code-foreground)')
-    codeBlock.style.setProperty('--shiki-light-bg', 'var(--code-background)')
-    codeBlock.style.setProperty('--shiki-dark-bg', 'var(--code-background)')
-    codeBlock.style.setProperty('--file-name-offset', '-0.75rem')
-    codeBlock.style.overflowX = 'auto'
+    codeBlock.classList.add('astro-code')
 
     const wrapper = document.createElement('div')
-    wrapper.className = 'code-block-wrapper'
-    wrapper.style.position = 'relative'
+    wrapper.className = 'code-block-wrapper retro98'
 
     if (fileName) {
       wrapper.dataset.file = fileName
-      wrapper.style.setProperty('--file-name-offset', '-0.75rem')
       codeBlock.dataset.file = fileName
     }
 
@@ -253,37 +243,75 @@ function enhanceCodeBlocks(article: HTMLElement) {
       previousFileLabel.element.remove()
     }
 
+    const codeWindow = document.createElement('section')
+    codeWindow.className = 'code-window window'
+    codeWindow.setAttribute('aria-label', fileName ? `${fileName} source code` : 'Source code')
     parent.insertBefore(wrapper, codeBlock)
-    wrapper.appendChild(codeBlock)
+    wrapper.appendChild(codeWindow)
 
-    if (fileName) {
-      const fileLabel = document.createElement('span')
-      fileLabel.className = 'code-file-name'
-      fileLabel.textContent = fileName
-      wrapper.appendChild(fileLabel)
-    }
+    const caption = document.createElement('div')
+    caption.className = 'code-window__caption title-bar inactive'
+
+    const title = document.createElement('span')
+    title.className = 'code-window__title title-bar-text'
+    title.textContent = `${fileName ?? 'Untitled'} - Source Viewer`
+    caption.appendChild(title)
+    codeWindow.appendChild(caption)
+
+    const toolbar = document.createElement('div')
+    toolbar.className = 'code-window__toolbar'
+    toolbar.setAttribute('role', 'toolbar')
+    toolbar.setAttribute('aria-label', 'Source viewer commands')
 
     const copyButton = document.createElement('button')
     copyButton.type = 'button'
     copyButton.className = 'copy-code'
     copyButton.textContent = 'Copy'
 
+    toolbar.appendChild(copyButton)
+    codeWindow.appendChild(toolbar)
+
+    codeBlock.classList.add('code-window__viewport', 'sunken-panel')
+    codeWindow.appendChild(codeBlock)
+
+    const codeValue = codeText(codeBlock)
+    const lineCount = codeValue.length === 0 ? 0 : codeValue.split(/\r?\n/).length
+    const languageLabel =
+      language?.toLocaleLowerCase() === 'cpp' ? 'C++' : language?.toLocaleUpperCase() || 'Text'
+
+    const status = document.createElement('div')
+    status.className = 'code-window__status status-bar'
+
+    const languageStatus = document.createElement('span')
+    languageStatus.className = 'status-bar-field'
+    languageStatus.textContent = languageLabel
+
+    const lineStatus = document.createElement('span')
+    lineStatus.className = 'status-bar-field'
+    lineStatus.textContent = `${lineCount} ${lineCount === 1 ? 'line' : 'lines'}`
+
+    const copyStatus = document.createElement('span')
+    copyStatus.className = 'status-bar-field'
+    copyStatus.setAttribute('aria-live', 'polite')
+    copyStatus.textContent = 'Ready'
+
+    status.append(languageStatus, lineStatus, copyStatus)
+    codeWindow.appendChild(status)
+
     copyButton.addEventListener('click', async () => {
       try {
         await navigator.clipboard.writeText(codeText(codeBlock))
-        copyButton.textContent = 'Copied'
+        copyStatus.textContent = 'Copied.'
         window.setTimeout(() => {
-          copyButton.textContent = 'Copy'
-        }, 700)
+          copyStatus.textContent = 'Ready'
+        }, 1600)
       } catch {
-        copyButton.textContent = 'Error'
+        copyStatus.textContent = 'Copy failed.'
         window.setTimeout(() => {
-          copyButton.textContent = 'Copy'
-        }, 700)
+          copyStatus.textContent = 'Ready'
+        }, 1600)
       }
     })
-
-    wrapper.appendChild(copyButton)
   }
 }
 

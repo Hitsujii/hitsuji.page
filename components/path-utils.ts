@@ -8,7 +8,7 @@ function getOrigin() {
   return typeof window === 'undefined' ? 'https://nextpaper.local' : window.location.origin
 }
 
-export function getBasePath() {
+function getBasePath() {
   if (configuredBasePath) return configuredBasePath
 
   if (typeof window === 'undefined') return ''
@@ -32,7 +32,7 @@ export function withBasePath(path: string) {
   return `${basePath}${path}`
 }
 
-export function stripBasePath(path: string) {
+function stripBasePath(path: string) {
   const basePath = getBasePath()
   if (!basePath) return path || '/'
 

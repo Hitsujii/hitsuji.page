@@ -7,6 +7,7 @@ import { getTagCounts } from 'app/tag-data'
 import { genPageMetadata } from 'app/seo'
 import { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { tagViewTransitionName } from '@/components/view-transitions'
 
 const POSTS_PER_PAGE = 4
 
@@ -75,6 +76,7 @@ export default async function TagPage(props: { params: Promise<{ tag: string }> 
       pagination={pagination}
       title={['Tag:', tagName]}
       description={`All the articles with the tag "${tagName}".`}
+      accentViewTransitionName={tagViewTransitionName(tagName)}
     />
   )
 }

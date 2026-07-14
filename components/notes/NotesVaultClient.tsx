@@ -1,8 +1,16 @@
 'use client'
 
-import type { MouseEvent, ReactNode } from 'react'
+import type { CSSProperties, MouseEvent, ReactNode } from 'react'
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
+import DesktopIcon from '@/components/desktop/DesktopIcon'
 import NotesTree, { type NotesTreeCommand, type NotesTreeNode } from './NotesTree'
+import {
+  contentTitleTransitionKey,
+  contentTitleViewTransitionName,
+  pageTitleTransitionKey,
+  pageTitleViewTransitionName,
+} from '@/components/view-transitions'
 
 type NotesVaultClientProps = {
   tree: NotesTreeNode[]
@@ -27,33 +35,18 @@ function isMobileViewport() {
 }
 
 function ExplorerToolbarIcon({ command }: { command: NotesTreeCommand }) {
-  if (command === 'focus') {
-    return (
-      <svg aria-hidden="true" className="notes-vault-control-icon" viewBox="0 0 16 16" fill="none">
-        <path d="M8 2.25v2M8 11.75v2M2.25 8h2M11.75 8h2" />
-        <circle cx="8" cy="8" r="2.7" />
-      </svg>
-    )
-  }
-
-  if (command === 'expand') {
-    return (
-      <svg aria-hidden="true" className="notes-vault-control-icon" viewBox="0 0 16 16" fill="none">
-        <path d="M8 3.25v9.5M3.25 8h9.5" />
-      </svg>
-    )
-  }
-
   return (
-    <svg aria-hidden="true" className="notes-vault-control-icon" viewBox="0 0 16 16" fill="none">
-      <path d="M3.25 8h9.5" />
-    </svg>
+    <DesktopIcon
+      className="notes-vault-control-glyph"
+      variant={command === 'focus' ? 'computer' : command === 'expand' ? 'folder-open' : 'folder'}
+    />
   )
 }
 
 function revealActiveExplorerItem(shouldFocus = false) {
   window.requestAnimationFrame(() => {
     window.requestAnimationFrame(() => {
+      const explorer = document.querySelector<HTMLElement>('#notes-vault-explorer')
       const currentPage = document.querySelector<HTMLElement>(
         '#notes-vault-explorer [aria-current="page"]'
       )
@@ -62,9 +55,18 @@ function revealActiveExplorerItem(shouldFocus = false) {
       )
       const activeItem = currentPage || activeItems.at(-1)
 
-      if (!activeItem) return
+      if (!explorer || !activeItem) return
 
-      activeItem.scrollIntoView({ block: 'center', inline: 'nearest' })
+      const explorerRect = explorer.getBoundingClientRect()
+      const itemRect = activeItem.getBoundingClientRect()
+      const centeredTop =
+        explorer.scrollTop +
+        itemRect.top -
+        explorerRect.top -
+        (explorer.clientHeight - itemRect.height) / 2
+      const maximumScrollTop = Math.max(0, explorer.scrollHeight - explorer.clientHeight)
+
+      explorer.scrollTop = Math.min(Math.max(0, centeredTop), maximumScrollTop)
 
       if (shouldFocus) {
         activeItem.focus({ preventScroll: true })
@@ -82,6 +84,16 @@ export default function NotesVaultClient({ tree, activePath, children }: NotesVa
   const closeButtonRef = useRef<HTMLButtonElement>(null)
   const explorerRef = useRef<HTMLElement>(null)
   const toggleButtonRef = useRef<HTMLButtonElement>(null)
+  const noteTitleKey = contentTitleTransitionKey(activePath ? `/notes/${activePath}` : '/notes')
+  const noteTitleStyle = noteTitleKey
+    ? ({
+        '--note-title-view-transition': contentTitleViewTransitionName(noteTitleKey),
+      } as CSSProperties)
+    : undefined
+  const notesPageTitleKey = pageTitleTransitionKey('/notes')
+  const notesHeadingStyle = notesPageTitleKey
+    ? ({ viewTransitionName: pageTitleViewTransitionName(notesPageTitleKey) } as CSSProperties)
+    : undefined
 
   useEffect(() => {
     const mediaQuery = window.matchMedia('(max-width: 639px)')
@@ -229,20 +241,13 @@ export default function NotesVaultClient({ tree, activePath, children }: NotesVa
     setMobileOpen(true)
   }
 
-  return (
-    <div
-      className={[
-        'notes-vault-shell',
-        collapsed ? 'is-collapsed' : '',
-        mobileOpen ? 'is-mobile-open' : '',
-      ]
-        .filter(Boolean)
-        .join(' ')}
-    >
+  const explorerPanel = (
+    <>
       <aside
         ref={explorerRef}
         id="notes-vault-explorer"
         data-pagefind-ignore
+        data-mobile-open={mobileOpen ? 'true' : undefined}
         className="notes-vault-sidebar not-prose"
         aria-label="Notes explorer"
         aria-hidden={mobileViewport && !mobileOpen ? true : undefined}
@@ -252,8 +257,10 @@ export default function NotesVaultClient({ tree, activePath, children }: NotesVa
       >
         <div className="notes-vault-title">
           <div>
-            <div className="notes-vault-heading">Notes</div>
-            <p>C++ vault</p>
+            <div className="notes-vault-heading" style={notesHeadingStyle}>
+              Notes
+            </div>
+            <p>C:\HITSUJI.PAGE\NOTES</p>
           </div>
 
           <button
@@ -309,10 +316,30 @@ export default function NotesVaultClient({ tree, activePath, children }: NotesVa
       <button
         type="button"
         className="notes-vault-backdrop"
+        data-mobile-open={mobileOpen ? 'true' : undefined}
         aria-label="Close notes explorer"
         tabIndex={-1}
         onClick={closeMobileExplorer}
       />
+    </>
+  )
+
+  const mobileOverlayRoot =
+    mobileViewport && typeof document !== 'undefined'
+      ? document.getElementById('desktop-browser-overlay-root')
+      : null
+
+  return (
+    <div
+      className={[
+        'notes-vault-shell',
+        collapsed ? 'is-collapsed' : '',
+        mobileOpen ? 'is-mobile-open' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
+      {mobileOverlayRoot ? createPortal(explorerPanel, mobileOverlayRoot) : explorerPanel}
 
       <div className="notes-vault-main" inert={mobileViewport && mobileOpen ? true : undefined}>
         <button
@@ -323,13 +350,14 @@ export default function NotesVaultClient({ tree, activePath, children }: NotesVa
           aria-controls="notes-vault-explorer"
           onClick={openExplorer}
         >
-          <span aria-hidden="true">☰</span>
-          <span>Explorer</span>
+          <DesktopIcon variant="folder-open" />
+          <span>Folders</span>
         </button>
 
         <article
           id="article"
           className="notes-vault-content post-content app-prose prose dark:prose-invert"
+          style={noteTitleStyle}
         >
           {children}
         </article>

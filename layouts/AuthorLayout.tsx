@@ -1,8 +1,9 @@
 import { ReactNode } from 'react'
 import type { Authors } from 'contentlayer/generated'
 import SocialIcon from '@/components/social-icons'
-import AvatarWindow from '@/components/AvatarWindow'
+import FrierenLauncher from '@/components/desktop/FrierenLauncher'
 import PageHeader from '@/components/PageHeader'
+import { pageTitleTransitionKey } from '@/components/view-transitions'
 
 interface Props {
   children: ReactNode
@@ -14,22 +15,23 @@ export default function AuthorLayout({ children, content }: Props) {
 
   return (
     <main id="main-content" className="app-layout pb-4">
-      <PageHeader title="About" description="A bit about me and this blog." />
+      <PageHeader title="About" titleTransitionKey={pageTitleTransitionKey('/about')} />
 
       <section className="author-card">
         {avatar && (
-          <AvatarWindow
+          <FrierenLauncher
             src={avatar}
             alt={`${name}'s profile image: Frieren holding a C++ programming book`}
-            fileName="about_me.cpp"
-            size={176}
-            className="author-card__avatar"
           />
         )}
 
         <div className="author-card__body">
           <p className="author-card__type" aria-hidden="true">
-            struct Author {'{'}
+            <code>
+              <span className="token keyword">struct</span>{' '}
+              <span className="token class-name">Author</span>{' '}
+              <span className="token punctuation">{'{'}</span>
+            </code>
           </p>
           <h2>{name}</h2>
 
@@ -48,7 +50,10 @@ export default function AuthorLayout({ children, content }: Props) {
           </div>
 
           <p className="author-card__type" aria-hidden="true">
-            {'}'};
+            <code>
+              <span className="token punctuation">{'}'}</span>
+              <span className="token punctuation">;</span>
+            </code>
           </p>
         </div>
       </section>

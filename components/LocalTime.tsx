@@ -15,7 +15,7 @@ const LocalTime = ({
   className,
   ...props
 }: LocalTimeProps) => {
-  const [time, setTime] = React.useState(() => formatLocalTime(timeZone))
+  const [time, setTime] = React.useState<string | null>(null)
 
   React.useEffect(() => {
     const update = () => {
@@ -42,13 +42,17 @@ const LocalTime = ({
     <time
       {...props}
       className={rootClassName}
-      dateTime={time}
-      aria-label={`Current time in ${label}: ${time}`}
+      dateTime={time ?? undefined}
+      aria-label={time ? `Current time in ${label}: ${time}` : undefined}
+      hidden={!time}
       title={timeZone}
-      suppressHydrationWarning
     >
-      <span>{time}</span>
-      <span className="text-[var(--text-muted)]">{label}</span>
+      {time && (
+        <>
+          <span>{time}</span>
+          <span className="text-[var(--text-muted)]">{label}</span>
+        </>
+      )}
     </time>
   )
 }

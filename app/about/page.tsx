@@ -8,7 +8,7 @@ import { components } from '@/components/MDXComponents'
 
 export const metadata = genPageMetadata({
   title: 'About',
-  description: 'A little more about me.',
+  description: 'About Hitsuji and hitsuji.page.',
 })
 
 export default function Page() {

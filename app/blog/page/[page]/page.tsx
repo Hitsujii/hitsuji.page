@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { genPageMetadata } from 'app/seo'
 import { parsePageNumber } from 'app/pagination'
+import { pageTitleTransitionKey } from '@/components/view-transitions'
 
 const POSTS_PER_PAGE = 4
 
@@ -55,7 +56,8 @@ export default async function Page(props: { params: Promise<{ page: string }> })
       initialDisplayPosts={initialDisplayPosts}
       pagination={pagination}
       title="Posts"
-      description="All the articles I\'ve posted."
+      description="All the articles I've posted."
+      titleTransitionKey={pageTitleTransitionKey('/blog')}
     />
   )
 }

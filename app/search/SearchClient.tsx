@@ -1,9 +1,11 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
+import GithubSlugger from 'github-slugger'
 import Link from '@/components/Link'
 import { normalizeAppPath, withBasePath } from '@/components/path-utils'
-import { IconSearch } from '@/components/icons/AstroPaperIcons'
+import PostTitleTransition from '@/components/PostTitleTransition'
+import { contentTitleTransitionKey } from '@/components/view-transitions'
 
 const getSearchIndexPath = () => withBasePath('/search.json')
 
@@ -28,6 +30,7 @@ function isPublicSearchDocument(value: unknown): value is SearchDocument {
 }
 
 type SearchSection = {
+  id: string
   title: string
   text: string
 }
@@ -72,12 +75,7 @@ function formatDate(value?: string) {
     return ''
   }
 
-  return new Intl.DateTimeFormat('en', {
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-    timeZone: 'UTC',
-  }).format(parsedDate)
+  return parsedDate.toISOString().slice(0, 10)
 }
 
 function getHref(result: SearchDocument) {
@@ -88,18 +86,29 @@ function getHref(result: SearchDocument) {
 
 function getSections(raw = '') {
   const sections: SearchSection[] = []
-  let current: SearchSection = { title: '', text: '' }
+  const slugger = new GithubSlugger()
+  let current: SearchSection = { id: '', title: '', text: '' }
 
   for (const line of raw.split('\n')) {
-    const heading = line.match(/^#{2,3}\s+(.+)$/)
+    const heading = line.match(/^(#{1,6})\s+(.+)$/)
 
     if (heading) {
+      const title = stripMarkdown(heading[2])
+      const id = slugger.slug(title)
+      const depth = heading[1].length
+
+      if (depth !== 2 && depth !== 3) {
+        current.text += `${line}\n`
+        continue
+      }
+
       if (current.title || current.text.trim()) {
         sections.push(current)
       }
 
       current = {
-        title: stripMarkdown(heading[1]),
+        id,
+        title,
         text: '',
       }
       continue
@@ -230,18 +239,23 @@ export default function SearchClient() {
         onSubmit={(event) => event.preventDefault()}
       >
         <label className="sr-only" htmlFor="search-input">
-          Search posts...
+          Search the site
         </label>
 
-        <IconSearch className="pointer-events-none absolute top-1/2 left-4 size-5 -translate-y-1/2 text-[var(--text-muted)]" />
+        <span
+          className="search-prompt pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-sm text-[var(--primary)]"
+          aria-hidden="true"
+        >
+          grep&gt;
+        </span>
 
         <input
           id="search-input"
           ref={inputRef}
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Search posts..."
-          className="pagefind-ui__search-input w-full rounded-md border border-[var(--border-strong)] bg-[var(--surface-elevated)] py-3 pr-20 pl-12 text-[var(--foreground)] placeholder:text-[var(--text-muted)] focus:border-[var(--focus-ring)] focus:ring-0 focus:outline-none"
+          placeholder="type to search..."
+          className="pagefind-ui__search-input w-full rounded-[2px] border border-[var(--border-strong)] bg-[var(--surface-elevated)] py-2.5 pr-24 pl-17 text-[var(--foreground)] placeholder:text-[var(--text-muted)] focus:border-[var(--focus-ring)] focus:ring-0 focus:outline-none"
           type="search"
         />
 
@@ -252,9 +266,10 @@ export default function SearchClient() {
               setQuery('')
               inputRef.current?.focus()
             }}
-            className="absolute top-1/2 right-4 inline-flex min-h-6 min-w-6 -translate-y-1/2 items-center justify-center text-xs text-[var(--text-muted)] hover:text-[var(--primary-hover)]"
+            className="absolute top-1/2 right-1 inline-flex min-h-10 min-w-16 -translate-y-1/2 items-center justify-center text-xs text-[var(--text-muted)] hover:text-[var(--primary-hover)]"
+            aria-label="Clear search"
           >
-            Clear
+            [clear]
           </button>
         )}
       </form>
@@ -263,12 +278,6 @@ export default function SearchClient() {
         {!loaded && (
           <p className="pagefind-ui__message text-[var(--text-muted)]" role="status">
             Loading...
-          </p>
-        )}
-
-        {loaded && !hasQuery && (
-          <p className="pagefind-ui__message text-[var(--text-muted)]" role="status">
-            Search posts...
           </p>
         )}
 
@@ -297,9 +306,13 @@ export default function SearchClient() {
                 const title = result.title ?? href
                 const summary = result.summary ?? ''
                 const date = formatDate(result.lastmod ?? result.date)
+                const transitionKey = contentTitleTransitionKey(href)
                 const sections = getSections(result.body?.raw)
                   .filter((section) =>
-                    normalize(`${section.title} ${section.text}`).includes(normalize(query))
+                    Boolean(
+                      section.title &&
+                      normalize(`${section.title} ${section.text}`).includes(normalize(query))
+                    )
                   )
                   .slice(0, 3)
 
@@ -312,7 +325,11 @@ export default function SearchClient() {
                       href={href}
                       className="pagefind-ui__result-link inline-block text-base font-bold text-[var(--link)] underline-offset-4 visited:text-[var(--link-visited)] hover:text-[var(--link-hover)] hover:underline hover:decoration-dashed focus-visible:no-underline focus-visible:underline-offset-0"
                     >
-                      <h2>{highlightText(title, query)}</h2>
+                      <h2>
+                        <PostTitleTransition transitionKey={transitionKey}>
+                          {highlightText(title, query)}
+                        </PostTitleTransition>
+                      </h2>
                     </Link>
 
                     {(summary || date) && (
@@ -329,13 +346,16 @@ export default function SearchClient() {
 
                     {sections.length > 0 && (
                       <ul className="pagefind-ui__result-nested mt-3 space-y-2">
-                        {sections.map((section, sectionIndex) => {
+                        {sections.map((section) => {
                           const sectionSnippet = snippet(section.text, query)
+                          const sectionHref = result.path?.startsWith('#log-')
+                            ? href
+                            : `${href}#${section.id}`
 
                           return (
-                            <li key={`${section.title}-${sectionIndex}`}>
+                            <li key={section.id}>
                               <Link
-                                href={href}
+                                href={sectionHref}
                                 className="text-sm font-bold text-[var(--link)] visited:text-[var(--link-visited)] hover:text-[var(--link-hover)] hover:underline hover:decoration-dashed"
                               >
                                 ↳ {highlightText(section.title, query)}

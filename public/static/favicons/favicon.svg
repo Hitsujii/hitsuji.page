@@ -1,25 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Hitsuji plus plus">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">Hitsuji plus plus</title>
   <defs>
-    <linearGradient id="metal-blue" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="#f4f8ff" />
-      <stop offset="0.22" stop-color="#a9cbff" />
-      <stop offset="0.46" stop-color="#5778d0" />
-      <stop offset="0.51" stop-color="#27338a" />
-      <stop offset="0.72" stop-color="#667fd8" />
-      <stop offset="1" stop-color="#dbe9ff" />
+    <linearGradient id="case" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1c2942" />
+      <stop offset="0.52" stop-color="#111a2d" />
+      <stop offset="1" stop-color="#0b1120" />
     </linearGradient>
-    <filter id="edge" x="-20%" y="-20%" width="150%" height="150%">
-      <feDropShadow dx="1" dy="1" stdDeviation="0" flood-color="#11194f" />
-    </filter>
+    <linearGradient id="metal-blue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" />
+      <stop offset="0.2" stop-color="#dbe9ff" />
+      <stop offset="0.43" stop-color="#91b6ff" />
+      <stop offset="0.5" stop-color="#345bc2" />
+      <stop offset="0.72" stop-color="#a6c4ff" />
+      <stop offset="1" stop-color="#edf4ff" />
+    </linearGradient>
   </defs>
 
-  <g
-    fill="url(#metal-blue)"
-    filter="url(#edge)"
-    font-family="ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans CJK JP', 'Noto Sans JP', sans-serif"
-    font-weight="800"
-  >
-    <text x="4" y="45" font-size="43">羊</text>
-    <text x="40" y="43" font-size="18">++</text>
+  <rect x="1" y="1" width="62" height="62" rx="7" fill="url(#case)" stroke="#758eaf" stroke-width="2" />
+  <path d="M5 10.5h54" stroke="#345bc2" stroke-width="3" />
+  <g fill="#050914" transform="translate(1 1)">
+    <path d="M22.361 19.738v31.261h6.063V19.738ZM8.085 17.459v5.504H43.13v-5.504Zm1.978 9.417v5.461h30.702v-5.461ZM6.15 36.508v5.461h38.786v-5.461Zm6.622-24.381c1.29 1.978 2.752 4.644 3.225 6.364l5.59-2.064c-.688-1.72-2.193-4.257-3.569-6.149Zm20.081-1.978c-.688 1.978-2.064 4.687-3.139 6.536l5.031 1.462c1.247-1.591 2.924-3.999 4.472-6.493Z" />
+    <path d="M44.302 41.074h2.16v-3.798h3.618v-2.07h-3.618v-3.798h-2.16v3.798h-3.618v2.07h3.618Zm10.782 0h2.16v-3.798h3.618v-2.07h-3.618v-3.798h-2.16v3.798h-3.618v2.07h3.618Z" />
+  </g>
+  <g fill="url(#metal-blue)">
+    <path d="M22.361 19.738v31.261h6.063V19.738ZM8.085 17.459v5.504H43.13v-5.504Zm1.978 9.417v5.461h30.702v-5.461ZM6.15 36.508v5.461h38.786v-5.461Zm6.622-24.381c1.29 1.978 2.752 4.644 3.225 6.364l5.59-2.064c-.688-1.72-2.193-4.257-3.569-6.149Zm20.081-1.978c-.688 1.978-2.064 4.687-3.139 6.536l5.031 1.462c1.247-1.591 2.924-3.999 4.472-6.493Z" />
+    <path d="M44.302 41.074h2.16v-3.798h3.618v-2.07h-3.618v-3.798h-2.16v3.798h-3.618v2.07h3.618Zm10.782 0h2.16v-3.798h3.618v-2.07h-3.618v-3.798h-2.16v3.798h-3.618v2.07h3.618Z" />
   </g>
 </svg>

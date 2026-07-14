@@ -1,15 +1,11 @@
 @reference './tailwind.css';
 
-/*
- * Bluebell Field Notes syntax system.
- * The palette is defined once in css/tailwind.css; this file only maps
- * Prism/rehype-prism-plus categories and code-specific UI states to roles.
- */
+/* Prism token mapping. The palette lives in css/tailwind.css. */
 
 .remark-code-title {
   border: 1px solid var(--code-border);
   border-bottom: 0;
-  border-radius: 0.375rem 0.375rem 0 0;
+  border-radius: 2px 2px 0 0;
   background: var(--code-background);
   padding: 0.75rem 1.25rem;
   color: var(--code-file-name);
@@ -154,7 +150,7 @@
   color: var(--code-constant) !important;
 }
 
-.namespace {
+.token.namespace {
   color: var(--code-namespace) !important;
 }
 

@@ -17,6 +17,8 @@ const config = [
     ignores: [
       '.contentlayer/**',
       '.next/**',
+      '.next-dev/**',
+      '.local-audit/**',
       'node_modules/**',
       'out/**',
       'public/**',

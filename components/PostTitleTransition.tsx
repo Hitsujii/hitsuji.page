@@ -1,16 +1,23 @@
 import type { CSSProperties, ReactNode } from 'react'
-import { postTitleViewTransitionName } from './view-transitions'
+import { contentTitleViewTransitionName } from './view-transitions'
 
 type Props = {
-  title: string | undefined
+  title?: string
+  transitionKey?: string
   children: ReactNode
 }
 
-export default function PostTitleTransition({ title, children }: Props) {
+export default function PostTitleTransition({ title, transitionKey, children }: Props) {
+  const key = transitionKey ?? title
+
   return (
     <span
       className="inline-block"
-      style={{ viewTransitionName: postTitleViewTransitionName(title) } as CSSProperties}
+      style={
+        key
+          ? ({ viewTransitionName: contentTitleViewTransitionName(key) } as CSSProperties)
+          : undefined
+      }
     >
       {children}
     </span>

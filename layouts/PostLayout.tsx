@@ -4,15 +4,13 @@ import type { Authors, Blog } from 'contentlayer/generated'
 import Comments from '@/components/Comments'
 import BackButton from '@/components/BackButton'
 import BackToTopButton from '@/components/BackToTopButton'
-import Datetime from '@/components/Datetime'
-import EditPost from '@/components/EditPost'
 import Link from '@/components/Link'
 import ShareLinks from '@/components/ShareLinks'
 import Tag from '@/components/Tag'
 import siteMetadata from '@/data/siteMetadata'
 import PostTitleTransition from '@/components/PostTitleTransition'
 import PostEnhancements from '@/components/PostEnhancements'
-import { IconArrowLeft, IconArrowRight } from '@/components/icons/AstroPaperIcons'
+import { contentTitleTransitionKey } from '@/components/view-transitions'
 
 type TocItem = {
   value?: string
@@ -51,14 +49,16 @@ function AdjacentPostNav({
       {prev?.path ? (
         <Link
           href={`/${prev.path}`}
-          className="group flex w-full min-w-0 gap-1 hover:text-[var(--primary-hover)]"
+          className="group flex min-h-11 w-full min-w-0 items-center gap-2 hover:text-[var(--primary-hover)]"
         >
-          <IconArrowLeft className="inline-block flex-none rtl:rotate-180" />
+          <span className="flex-none text-[var(--text-muted)]" aria-hidden="true">
+            [prev]
+          </span>
           <div className="min-w-0">
-            <span className="block">Previous post</span>
-            <div className="text-sm text-[var(--link)] group-hover:text-[var(--link-hover)]">
-              <span className="break-words">{prev.title}</span>
-            </div>
+            <span className="sr-only">Previous post: </span>
+            <span className="text-sm break-words text-[var(--link)] group-hover:text-[var(--link-hover)]">
+              {prev.title}
+            </span>
           </div>
         </Link>
       ) : null}
@@ -66,23 +66,38 @@ function AdjacentPostNav({
       {next?.path && (
         <Link
           href={`/${next.path}`}
-          className="group flex w-full min-w-0 justify-end gap-1 text-end hover:text-[var(--primary-hover)] sm:col-start-2"
+          className="group flex min-h-11 w-full min-w-0 items-center justify-end gap-2 text-end hover:text-[var(--primary-hover)] sm:col-start-2"
         >
           <div className="min-w-0">
-            <span className="block">Next post</span>
-            <div className="text-sm text-[var(--link)] group-hover:text-[var(--link-hover)]">
-              <span className="break-words">{next.title}</span>
-            </div>
+            <span className="sr-only">Next post: </span>
+            <span className="text-sm break-words text-[var(--link)] group-hover:text-[var(--link-hover)]">
+              {next.title}
+            </span>
           </div>
-          <IconArrowRight className="inline-block flex-none rtl:rotate-180" />
+          <span className="flex-none text-[var(--text-muted)]" aria-hidden="true">
+            [next]
+          </span>
         </Link>
       )}
     </nav>
   )
 }
 
+function toIsoDate(value: string) {
+  const parsed = new Date(value)
+  return Number.isNaN(parsed.getTime()) ? value : parsed.toISOString().slice(0, 10)
+}
+
 export default function PostLayout({ content, next, prev, children }: LayoutProps) {
   const { path, slug, date, lastmod, title, tags } = content
+  const wasUpdated = Boolean(lastmod && lastmod > date)
+  const contentPath = path.endsWith('.md') || path.endsWith('.mdx') ? path : `data/${path}.mdx`
+  const repo = siteMetadata.siteRepo?.replace(/\/$/, '')
+  const sourceHref = repo ? `${repo}/blob/main/${contentPath}` : undefined
+  const permalink = `${siteMetadata.siteUrl.replace(/\/$/, '')}/${path.replace(/^\//, '')}`
+  const correctionsHref = siteMetadata.email
+    ? `mailto:${siteMetadata.email}?subject=${encodeURIComponent(`Correction: ${title}`)}`
+    : undefined
 
   return (
     <>
@@ -91,22 +106,33 @@ export default function PostLayout({ content, next, prev, children }: LayoutProp
       </div>
 
       <main id="main-content" className="app-layout pb-4" data-pagefind-body>
-        <PostEnhancements toc={content.toc} hasToc={Boolean(content.hasToc)} />
+        <PostEnhancements toc={content.toc} />
         <header className="article-header">
-          <span className="article-header__sigil" aria-hidden="true">
-            {'// article'}
+          <span className="article-header__path" aria-label="Source file">
+            ~/{contentPath}
           </span>
           <h1>
-            <PostTitleTransition title={title.replaceAll('.', '-')}>{title}</PostTitleTransition>
+            <PostTitleTransition transitionKey={contentTitleTransitionKey(path)}>
+              {title}
+            </PostTitleTransition>
           </h1>
 
           <div className="article-header__meta">
-            <Datetime date={date} lastmod={lastmod} size="lg" showIcon={false} />
-            <span aria-hidden="true" className="max-sm:hidden">
-              /
+            <span>
+              published: <time dateTime={date}>{toIsoDate(date)}</time>
             </span>
-            <EditPost path={path} className="max-sm:hidden" />
+            {wasUpdated && lastmod && (
+              <span>
+                updated: <time dateTime={lastmod}>{toIsoDate(lastmod)}</time>
+              </span>
+            )}
           </div>
+
+          <nav className="article-header__links" aria-label="Article utilities">
+            {sourceHref && <Link href={sourceHref}>[source]</Link>}
+            <Link href={permalink}>[permalink]</Link>
+            {correctionsHref && <Link href={correctionsHref}>[corrections]</Link>}
+          </nav>
         </header>
 
         <article
@@ -117,10 +143,6 @@ export default function PostLayout({ content, next, prev, children }: LayoutProp
         </article>
 
         <hr className="my-8 border-dashed" />
-
-        <div className="clear-both">
-          <EditPost path={path} className="sm:hidden" />
-        </div>
 
         <BackToTopButton />
 

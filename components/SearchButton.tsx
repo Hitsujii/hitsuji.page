@@ -1,5 +1,5 @@
 import Link from './Link'
-import { IconSearch, IconUnderline } from './icons/AstroPaperIcons'
+import DesktopIcon from './desktop/DesktopIcon'
 
 type SearchButtonProps = {
   active?: boolean
@@ -9,19 +9,16 @@ export default function SearchButton({ active = false }: SearchButtonProps) {
   return (
     <Link
       href="/search"
-      className="focus-outline relative size-8 hover:text-[var(--primary-hover)]"
-      aria-label="Search"
+      className={[
+        'header-tool focus-outline relative flex min-h-11 items-center justify-center px-2 lg:min-h-8',
+        active ? 'active-nav' : '',
+      ].join(' ')}
+      aria-label="Find posts and notes"
       aria-current={active ? 'page' : undefined}
-      title="Search"
+      title="Find posts and notes"
     >
-      <IconSearch className="absolute top-1/2 left-1/2 size-6 -translate-x-1/2 -translate-y-1/2" />
-      <span className="sr-only">Search</span>
-      {active && (
-        <IconUnderline
-          aria-hidden="true"
-          className="absolute bottom-0 w-6 scale-125 max-sm:inset-s-2"
-        />
-      )}
+      <DesktopIcon className="header-menu-icon" variant="search" />
+      <span>Find</span>
     </Link>
   )
 }

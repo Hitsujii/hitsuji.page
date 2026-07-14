@@ -7,14 +7,28 @@ type PageMainProps = {
   description?: string
   children: ReactNode
   className?: string
+  titleTransitionKey?: string
+  accentViewTransitionName?: string
 }
 
-export default function PageMain({ title, description, children, className = '' }: PageMainProps) {
+export default function PageMain({
+  title,
+  description,
+  children,
+  className = '',
+  titleTransitionKey,
+  accentViewTransitionName,
+}: PageMainProps) {
   return (
     <>
       <RememberBackUrl />
       <main id="main-content" className={['app-layout pb-4', className].filter(Boolean).join(' ')}>
-        <PageHeader title={title} description={description} />
+        <PageHeader
+          title={title}
+          description={description}
+          titleTransitionKey={titleTransitionKey}
+          accentViewTransitionName={accentViewTransitionName}
+        />
         {children}
       </main>
     </>

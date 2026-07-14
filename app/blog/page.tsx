@@ -2,6 +2,7 @@ import { allCoreContent, sortPosts } from 'pliny/utils/contentlayer'
 import { allBlogs } from 'contentlayer/generated'
 import { genPageMetadata } from 'app/seo'
 import ListLayout from '@/layouts/ListLayoutWithTags'
+import { pageTitleTransitionKey } from '@/components/view-transitions'
 
 const POSTS_PER_PAGE = 4
 
@@ -23,7 +24,8 @@ export default function BlogPage() {
       initialDisplayPosts={initialDisplayPosts}
       pagination={pagination}
       title="Posts"
-      description="All the articles I\'ve posted."
+      description="Mistakes that grew too large for a log entry."
+      titleTransitionKey={pageTitleTransitionKey('/blog')}
     />
   )
 }

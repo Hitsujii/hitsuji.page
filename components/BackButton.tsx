@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import Link from './Link'
-import { IconChevronLeft } from './icons/AstroPaperIcons'
 import { normalizeAppPath } from './path-utils'
 
 type BackButtonProps = {
@@ -37,11 +36,10 @@ export default function BackButton({ fallbackHref }: BackButtonProps) {
     <Link
       id="back-button"
       href={href}
-      className="focus-outline -ms-2 mt-8 mb-2 inline-flex items-center gap-1 hover:text-[color-mix(in_srgb,var(--foreground)_75%,transparent)]"
+      className="focus-outline -ms-2 mt-6 mb-2 inline-flex min-h-11 items-center px-2 text-sm text-[var(--text-muted)] hover:text-[var(--link-hover)]"
       aria-label="Go back"
     >
-      <IconChevronLeft className="inline-block size-6 rtl:rotate-180" />
-      <span>Go back</span>
+      <span aria-hidden="true">[← back]</span>
     </Link>
   )
 }

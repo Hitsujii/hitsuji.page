@@ -3,5 +3,6 @@ learning-log-design-debug.md
 
 .contentlayer/
 .next/
+.next-dev/
 out/
 public/search.json

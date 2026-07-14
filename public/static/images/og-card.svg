@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">羊++ — Hitsuji personal devlog</title>
+  <desc id="desc">A blue retro application window introducing hitsuji.page, a personal devlog about C++, the web, and notes.</desc>
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1120" />
+      <stop offset="0.55" stop-color="#111a2d" />
+      <stop offset="1" stop-color="#18243a" />
+    </linearGradient>
+    <linearGradient id="titlebar" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#0a246a" />
+      <stop offset="0.5" stop-color="#345bc2" />
+      <stop offset="1" stop-color="#91b6ff" />
+    </linearGradient>
+    <linearGradient id="metal-blue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" />
+      <stop offset="0.18" stop-color="#dbe9ff" />
+      <stop offset="0.4" stop-color="#91b6ff" />
+      <stop offset="0.48" stop-color="#345bc2" />
+      <stop offset="0.68" stop-color="#a6c4ff" />
+      <stop offset="1" stop-color="#edf4ff" />
+    </linearGradient>
+    <pattern id="grid" width="32" height="32" patternUnits="userSpaceOnUse">
+      <path d="M32 0H0V32" fill="none" stroke="#2a3b59" stroke-width="1" opacity="0.45" />
+    </pattern>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#background)" />
+  <rect width="1200" height="630" fill="url(#grid)" />
+
+  <rect x="48" y="38" width="1104" height="554" fill="#050914" stroke="#050914" stroke-width="8" />
+  <rect x="52" y="42" width="1096" height="546" fill="#111a2d" stroke="#bfd0e8" stroke-width="2" />
+  <rect x="54" y="44" width="1092" height="62" fill="url(#titlebar)" />
+  <path d="M54 106h1092" stroke="#050914" stroke-width="3" />
+
+  <text x="78" y="84" fill="#ffffff" font-family="'Noto Sans Mono', 'DejaVu Sans Mono', monospace" font-size="22" font-weight="700">hitsuji.page :: social_card.cpp</text>
+
+  <g font-family="'Noto Sans Mono', 'DejaVu Sans Mono', monospace" font-size="20" font-weight="700" text-anchor="middle">
+    <rect x="1019" y="60" width="31" height="29" fill="#edf4ff" stroke="#0b1120" stroke-width="2" />
+    <text x="1034.5" y="79" fill="#17243a">_</text>
+    <rect x="1056" y="60" width="31" height="29" fill="#edf4ff" stroke="#0b1120" stroke-width="2" />
+    <text x="1071.5" y="80" fill="#17243a">□</text>
+    <rect x="1093" y="60" width="31" height="29" fill="#edf4ff" stroke="#0b1120" stroke-width="2" />
+    <text x="1108.5" y="80" fill="#17243a">×</text>
+  </g>
+
+  <rect x="90" y="146" width="340" height="332" fill="#0b1120" stroke="#758eaf" stroke-width="2" />
+  <rect x="104" y="160" width="312" height="248" fill="#111a2d" stroke="#2a3b59" stroke-width="2" />
+  <g font-family="'Noto Sans CJK JP', 'Noto Sans JP', ui-sans-serif, system-ui, sans-serif" font-weight="800">
+    <text x="127" y="350" font-size="206" fill="#050914">羊</text>
+    <text x="318" y="318" font-size="75" fill="#050914">++</text>
+    <text x="121" y="344" font-size="206" fill="url(#metal-blue)">羊</text>
+    <text x="312" y="312" font-size="75" fill="url(#metal-blue)">++</text>
+  </g>
+  <text x="260" y="447" text-anchor="middle" fill="#91b6ff" font-family="'Noto Sans Mono', 'DejaVu Sans Mono', monospace" font-size="18" font-weight="700" letter-spacing="2">// PERSONAL DEVLOG</text>
+
+  <g font-family="'Noto Sans Mono', 'DejaVu Sans Mono', monospace">
+    <text x="486" y="207" fill="#edf4ff" font-size="57" font-weight="800">hitsuji.page</text>
+    <text x="490" y="247" fill="#91b6ff" font-size="20" font-weight="700" letter-spacing="5">C++ / WEB / NOTES</text>
+    <path d="M488 274h585" stroke="#2a3b59" stroke-width="2" stroke-dasharray="10 8" />
+
+    <text x="488" y="326" fill="#c5b5ee" font-size="26">namespace</text>
+    <text x="646" y="326" fill="#edf4ff" font-size="26">hitsuji {</text>
+    <text x="526" y="370" font-size="26"><tspan fill="#91b6ff">constexpr auto</tspan><tspan dx="16" fill="#edf4ff">topics =</tspan></text>
+    <text x="566" y="414" font-size="26"><tspan fill="#a6c4ff">"C++ / web / notes"</tspan><tspan fill="#edf4ff">;</tspan></text>
+    <text x="488" y="458" fill="#edf4ff" font-size="26">}</text>
+  </g>
+
+  <rect x="54" y="518" width="1092" height="68" fill="#e3edfb" />
+  <path d="M54 518h1092" stroke="#050914" stroke-width="3" />
+  <g fill="#17243a" font-family="'Noto Sans Mono', 'DejaVu Sans Mono', monospace" font-size="18" font-weight="700">
+    <text x="78" y="560">build: 0 errors, 47 warnings</text>
+    <text x="1120" y="560" text-anchor="end">status: works on my machine</text>
+  </g>
+</svg>

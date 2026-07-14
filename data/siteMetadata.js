@@ -13,8 +13,7 @@ const siteMetadata = {
   title: 'Hitsuji',
   author: 'Hitsuji',
   headerTitle: '羊++',
-  description:
-    'Learning C++, building for the web, and slowly turning high-cortisol decisions into projects.',
+  description: 'Notes and posts from learning C++ and building things for the web.',
   language: 'en-us',
   theme: 'system', // system, dark or light
   siteUrl,
@@ -95,20 +94,6 @@ const siteMetadata = {
       lang: 'en',
     },
   },
-  search: {
-    provider: 'kbar', // kbar or algolia
-    kbarConfig: {
-      searchDocumentsPath: `${process.env.BASE_PATH || ''}/search.json`, // path to load documents to search
-    },
-    // provider: 'algolia',
-    // algoliaConfig: {
-    //   // The application ID provided by Algolia
-    //   appId: 'R2IYF7ETH7',
-    //   // Public API key: it is safe to commit it
-    //   apiKey: '599cec31baffa4868cae4e79f180729b',
-    //   indexName: 'docsearch',
-    // },
-  },
   presence: {
     discordUserId: '225253076628406274',
   },
@@ -116,8 +101,6 @@ const siteMetadata = {
   availability: {
     timeZone: 'Europe/Warsaw',
     locationLabel: 'Warsaw',
-    sleepStart: '01:00',
-    sleepEnd: '09:30',
   },
 }
 

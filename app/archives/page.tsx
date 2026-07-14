@@ -37,23 +37,27 @@ export default async function ArchivesPage() {
   return (
     <>
       <Breadcrumb />
-      <PageMain title="Archives" description="All the articles I've archived.">
+      <PageMain
+        title="Archives"
+        description="All the articles I've archived."
+        className="archive-page"
+      >
         {Object.entries(groupBy(posts, (post) => new Date(post.date).getUTCFullYear()))
           .sort(([yearA], [yearB]) => Number(yearB) - Number(yearA))
           .map(([year, yearGroup]) => (
-            <div key={year}>
-              <span className="text-2xl font-bold">{year}</span>
-              <sup className="text-sm text-[var(--text-muted)]">{yearGroup.length}</sup>
+            <section key={year} className="archive-year" aria-labelledby={`archive-year-${year}`}>
+              <h2 id={`archive-year-${year}`} className="archive-year__heading">
+                {year}
+              </h2>
 
               {Object.entries(groupBy(yearGroup, (post) => new Date(post.date).getUTCMonth() + 1))
                 .sort(([monthA], [monthB]) => Number(monthB) - Number(monthA))
                 .map(([month, monthGroup]) => (
-                  <div key={`${year}-${month}`} className="flex flex-col sm:flex-row">
-                    <div className="mt-6 min-w-36 text-lg sm:my-6">
-                      <span className="font-bold">
+                  <section key={`${year}-${month}`} className="archive-month">
+                    <div className="archive-month__label">
+                      <h3 className="archive-month__heading">
                         {monthFormatter.format(new Date(Date.UTC(2000, Number(month) - 1, 1)))}
-                      </span>
-                      <sup className="text-xs text-[var(--text-muted)]">{monthGroup.length}</sup>
+                      </h3>
                     </div>
 
                     <ul className="post-list archive-post-list">
@@ -64,12 +68,16 @@ export default async function ArchivesPage() {
                             Math.floor(new Date(a.date).getTime() / 1000)
                         )
                         .map((post) => (
-                          <PostCard key={post.path ?? post.slug ?? post.title} post={post} />
+                          <PostCard
+                            key={post.path ?? post.slug ?? post.title}
+                            post={post}
+                            heading="h4"
+                          />
                         ))}
                     </ul>
-                  </div>
+                  </section>
                 ))}
-            </div>
+            </section>
           ))}
       </PageMain>
     </>

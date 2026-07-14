@@ -1,22 +1,36 @@
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
+import { pageTitleViewTransitionName } from './view-transitions'
 
 type PageHeaderProps = {
   title: string | [string, string]
   description?: string
   aside?: ReactNode
+  titleTransitionKey?: string
+  accentViewTransitionName?: string
 }
 
-export default function PageHeader({ title, description, aside }: PageHeaderProps) {
+export default function PageHeader({
+  title,
+  description,
+  aside,
+  titleTransitionKey,
+  accentViewTransitionName,
+}: PageHeaderProps) {
+  const titleStyle =
+    titleTransitionKey && !accentViewTransitionName
+      ? ({ viewTransitionName: pageTitleViewTransitionName(titleTransitionKey) } as CSSProperties)
+      : undefined
+  const accentStyle = accentViewTransitionName
+    ? ({ viewTransitionName: accentViewTransitionName } as CSSProperties)
+    : undefined
+
   return (
     <header className="page-header">
       <div className="page-header__title-row">
-        <span className="page-header__sigil" aria-hidden="true">
-          {'//'}
-        </span>
-        <h1>
+        <h1 style={titleStyle}>
           {Array.isArray(title) ? (
             <>
-              {title[0]} <span>{title[1]}</span>
+              {title[0]} <span style={accentStyle}>{title[1]}</span>
             </>
           ) : (
             title

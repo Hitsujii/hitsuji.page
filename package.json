@@ -1,35 +1,30 @@
 {
-  "name": "next-paper",
+  "name": "hitsuji-page",
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "next dev",
     "dev": "cross-env INIT_CWD=$PWD next dev",
     "build": "cross-env INIT_CWD=$PWD next build && cross-env NODE_OPTIONS='--experimental-json-modules' node ./scripts/postbuild.mjs",
-    "serve": "next start",
+    "start": "next start",
     "analyze": "cross-env ANALYZE=true next build",
     "lint": "eslint . --no-fix",
     "lint:fix": "eslint . --fix",
     "typecheck": "tsc --noEmit --pretty false",
-    "test:colors": "node scripts/check-color-contrast.mjs",
-    "preview:colors": "node scripts/capture-color-previews.mjs",
     "format:check": "prettier --check . --ignore-unknown",
     "prepare": "husky",
     "lh:desktop": "npm run build && node scripts/lighthouse.mjs desktop",
-    "lh:report": "(npm run start > /tmp/hitsuji-next.log 2>&1 & echo $! > /tmp/hitsuji-next.pid) && sleep 5 && npx lighthouse http://localhost:3000 --only-categories=performance --preset=desktop --chrome-flags=\"--headless\" --output=html --output-path=./lighthouse-report.html && kill \"$(cat /tmp/hitsuji-next.pid)\"",
     "lh:mobile": "npm run build && node scripts/lighthouse.mjs mobile",
     "notes:sync": "bash -lc 'set -euo pipefail; NOTES=\"${CPP_NOTES:-/home/hitsuji/Learning/programming/cpp/notes}\"; test -d \"$NOTES\"; SRC=\"$NOTES\"; if [ -d \"$NOTES/notes\" ] && [ -z \"$(find \"$NOTES\" -maxdepth 1 -type f -name \"*.md\" -print -quit)\" ]; then SRC=\"$NOTES/notes\"; fi; rm -rf data/notes; mkdir -p data/notes; rsync -a --delete --delete-excluded --exclude=\".*/\" --exclude=\".*\" --exclude=\".obsidian/\" --exclude=\".trash/\" --include=\"*/\" --include=\"*.md\" --exclude=\"*\" \"$SRC/\" data/notes/; echo \"Synced markdown notes from $SRC\"'",
     "notes:resync": "bash -lc 'set -euo pipefail; rm -rf data/notes .contentlayer .next public/search.json; npm run notes:sync'"
   },
   "dependencies": {
-    "@headlessui/react": "2.2.9",
     "@next/bundle-analyzer": "15.5.20",
+    "@react95/icons": "2.5.3",
     "@tailwindcss/forms": "^0.5.11",
     "@tailwindcss/postcss": "^4.1.18",
     "@tailwindcss/typography": "^0.5.19",
-    "body-scroll-lock": "^3.1.5",
+    "98.css": "0.1.21",
     "contentlayer2": "0.5.8",
-    "flubber": "^0.4.2",
     "github-slugger": "^2.0.0",
     "next": "15.5.20",
     "next-contentlayer2": "0.5.8",
@@ -50,16 +45,15 @@
     "remark-gfm": "^4.0.1",
     "remark-github-blockquote-alert": "^2.0.1",
     "remark-math": "^6.0.0",
-    "svgpath": "^2.6.0",
     "tailwindcss": "^4.1.18"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.3",
     "@eslint/js": "^9.18.0",
     "@svgr/webpack": "^8.1.0",
-    "@types/body-scroll-lock": "3.1.2",
     "@types/mdx": "^2.0.13",
     "@types/react": "^19.2.13",
+    "@types/react-dom": "^19.2.3",
     "@typescript-eslint/eslint-plugin": "^8.54.0",
     "@typescript-eslint/parser": "^8.54.0",
     "cross-env": "^10.1.0",
@@ -70,6 +64,7 @@
     "globals": "^17.3.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
+    "postcss-prefix-selector": "2.1.1",
     "prettier": "^3.8.1",
     "prettier-plugin-tailwindcss": "^0.7.2",
     "typescript": "^5.9.3"
@@ -87,11 +82,11 @@
   "author": "Hitsuji <dev.hitsuji@gmail.com>",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Hitsujii/next-paper.git"
+    "url": "https://github.com/Hitsujii/hitsuji.page.git"
   },
   "bugs": {
-    "url": "https://github.com/Hitsujii/next-paper/issues"
+    "url": "https://github.com/Hitsujii/hitsuji.page/issues"
   },
-  "homepage": "https://github.com/Hitsujii/next-paper#readme",
+  "homepage": "https://hitsuji.page",
   "license": "MIT"
 }

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { useTheme } from 'next-themes'
-import { IconMoon, IconSunHigh } from './icons/AstroPaperIcons'
+import DesktopIcon from './desktop/DesktopIcon'
 
 export default function ThemeSwitch() {
   const [mounted, setMounted] = useState(false)
@@ -30,17 +30,26 @@ export default function ThemeSwitch() {
     setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')
   }
 
+  const nextTheme = resolvedTheme === 'dark' ? 'Light' : 'Dark'
+  const actionLabel = mounted ? `Use ${nextTheme} Colors` : 'Change Colors'
+
   return (
     <button
       id="theme-btn"
       type="button"
-      className="focus-outline relative size-12 p-4 sm:size-8 hover:[&>svg]:stroke-[var(--primary-hover)]"
-      aria-label={mounted ? resolvedTheme || 'system' : 'theme'}
+      className="header-tool header-tool--theme focus-outline relative flex min-h-11 items-center justify-center px-2 lg:min-h-8"
+      aria-label={actionLabel}
+      title={actionLabel}
       aria-live="polite"
       onClick={toggleTheme}
     >
-      <IconMoon className="absolute top-[50%] left-[50%] translate-[-50%] scale-100 rotate-0 transition-all dark:scale-0 dark:-rotate-90" />
-      <IconSunHigh className="absolute top-[50%] left-[50%] translate-[-50%] scale-0 rotate-90 transition-all dark:scale-100 dark:rotate-0" />
+      <DesktopIcon className="header-menu-icon" variant="appearance" />
+      <span aria-hidden="true" className="dark:hidden">
+        Use Dark Colors
+      </span>
+      <span aria-hidden="true" className="hidden dark:inline">
+        Use Light Colors
+      </span>
     </button>
   )
 }

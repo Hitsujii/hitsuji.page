@@ -13,7 +13,7 @@ type LanyardResponse = {
   }
 }
 
-export type LanyardPresence = {
+type LanyardPresence = {
   status: DiscordPresenceStatus | null
   isLoading: boolean
   hasError: boolean
@@ -22,7 +22,6 @@ export type LanyardPresence = {
 export const DEFAULT_DISCORD_USER_ID: string = statusConfig.discordUserId
 
 const DEFAULT_REFRESH_INTERVAL_MS = 30_000
-const DEFAULT_START_DELAY_MS = 4_000
 const LANYARD_ENDPOINT = 'https://api.lanyard.rest/v1/users'
 
 const isDiscordPresenceStatus = (value: unknown): value is DiscordPresenceStatus => {
@@ -114,8 +113,7 @@ const shouldStartPolling = (discordUserId: string) => {
 export const useLanyardPresence = (
   discordUserId: string = DEFAULT_DISCORD_USER_ID,
   refreshIntervalMs: number = DEFAULT_REFRESH_INTERVAL_MS,
-  enabled: boolean = true,
-  startDelayMs: number = DEFAULT_START_DELAY_MS
+  enabled: boolean = true
 ) => {
   const [presence, setPresence] = React.useState<LanyardPresence>(() =>
     enabled
@@ -159,21 +157,6 @@ export const useLanyardPresence = (
       }
     }
 
-    const delay = Math.max(0, startDelayMs)
-
-    if (delay > 0) {
-      const timeoutId = window.setTimeout(start, delay)
-
-      return () => {
-        window.clearTimeout(timeoutId)
-        listeners.delete(setPresence)
-
-        if (listeners.size === 0) {
-          stopPolling()
-        }
-      }
-    }
-
     start()
 
     return () => {
@@ -183,7 +166,7 @@ export const useLanyardPresence = (
         stopPolling()
       }
     }
-  }, [discordUserId, refreshIntervalMs, enabled, startDelayMs])
+  }, [discordUserId, refreshIntervalMs, enabled])
 
   return presence
 }

@@ -142,7 +142,7 @@ export default async function NotePage(props: { params: Promise<{ slug: string[]
 
         <MDXLayoutRenderer code={note.body.code} components={components} toc={note.toc} />
 
-        <PostEnhancements toc={note.toc} hasToc={note.hasToc} />
+        <PostEnhancements toc={note.toc} />
       </NotesShell>
     )
   }

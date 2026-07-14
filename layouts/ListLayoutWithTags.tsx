@@ -8,7 +8,6 @@ import Link from '@/components/Link'
 import PostCard from '@/components/PostCard'
 import RememberBackUrl from '@/components/RememberBackUrl'
 import PageHeader from '@/components/PageHeader'
-import { IconArrowLeft, IconArrowRight } from '@/components/icons/AstroPaperIcons'
 
 interface PaginationProps {
   totalPages: number
@@ -21,6 +20,8 @@ interface ListLayoutProps {
   description?: string
   initialDisplayPosts?: CoreContent<Blog>[]
   pagination?: PaginationProps
+  titleTransitionKey?: string
+  accentViewTransitionName?: string
 }
 
 function Pagination({ totalPages, currentPage }: PaginationProps) {
@@ -35,7 +36,7 @@ function Pagination({ totalPages, currentPage }: PaginationProps) {
 
   return (
     <nav
-      className="mt-auto mb-8 flex justify-center gap-4"
+      className="mt-auto mb-8 flex items-center justify-center gap-3 text-sm"
       role="navigation"
       aria-label="Pagination Navigation"
     >
@@ -43,35 +44,31 @@ function Pagination({ totalPages, currentPage }: PaginationProps) {
         <Link
           href={currentPage - 1 === 1 ? `/${basePath}/` : `/${basePath}/page/${currentPage - 1}`}
           rel="prev"
-          className="inline-flex items-center gap-1 text-[var(--link)] select-none hover:text-[var(--link-hover)]"
+          className="inline-flex min-h-11 items-center px-2 text-[var(--link)] select-none hover:text-[var(--link-hover)]"
         >
-          <IconArrowLeft className="inline-block rtl:rotate-180" />
-          Previous
+          [prev]
         </Link>
       ) : (
-        <span className="inline-flex items-center gap-1 text-[var(--text-muted)] select-none">
-          <IconArrowLeft className="inline-block rtl:rotate-180" />
-          Previous
+        <span className="inline-flex min-h-11 items-center px-2 text-[var(--text-muted)] select-none">
+          [prev]
         </span>
       )}
 
-      <span>
-        {currentPage} / {totalPages}
+      <span className="text-[var(--text-muted)]">
+        page {String(currentPage).padStart(2, '0')}/{String(totalPages).padStart(2, '0')}
       </span>
 
       {nextPage ? (
         <Link
           href={`/${basePath}/page/${currentPage + 1}`}
           rel="next"
-          className="inline-flex items-center gap-1 text-[var(--link)] select-none hover:text-[var(--link-hover)]"
+          className="inline-flex min-h-11 items-center px-2 text-[var(--link)] select-none hover:text-[var(--link-hover)]"
         >
-          Next
-          <IconArrowRight className="inline-block rtl:rotate-180" />
+          [next]
         </Link>
       ) : (
-        <span className="inline-flex items-center gap-1 text-[var(--text-muted)] select-none">
-          Next
-          <IconArrowRight className="inline-block rtl:rotate-180" />
+        <span className="inline-flex min-h-11 items-center px-2 text-[var(--text-muted)] select-none">
+          [next]
         </span>
       )}
     </nav>
@@ -84,6 +81,8 @@ export default function ListLayoutWithTags({
   description,
   initialDisplayPosts = [],
   pagination,
+  titleTransitionKey,
+  accentViewTransitionName,
 }: ListLayoutProps) {
   const displayPosts = initialDisplayPosts.length > 0 ? initialDisplayPosts : posts
 
@@ -93,7 +92,12 @@ export default function ListLayoutWithTags({
       <Breadcrumb />
 
       <main id="main-content" className="app-layout pb-4">
-        <PageHeader title={title} description={description} />
+        <PageHeader
+          title={title}
+          description={description}
+          titleTransitionKey={titleTransitionKey}
+          accentViewTransitionName={accentViewTransitionName}
+        />
 
         <ul className="post-list">
           {!displayPosts.length && 'No posts found.'}

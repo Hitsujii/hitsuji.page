@@ -14,9 +14,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: post.lastmod || post.date,
     }))
 
-  const routes = ['', 'blog', 'learning-log', 'projects', 'archives', 'tags', 'about'].map(
-    (route) => ({ url: route ? `${siteUrl}/${route}/` : `${siteUrl}/` })
-  )
+  const routes = ['', 'blog', 'projects', 'archives', 'tags', 'about'].map((route) => ({
+    url: route ? `${siteUrl}/${route}/` : `${siteUrl}/`,
+  }))
 
   return [...routes, ...blogRoutes]
 }

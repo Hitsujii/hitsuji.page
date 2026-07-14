@@ -48,10 +48,7 @@ function NotesFallbackList({ tree }: { tree: NotesTreeNode[] }) {
     return (
       <div className="rounded-md border border-[var(--border)] bg-[var(--surface-muted)] p-4">
         <h1 className="text-2xl font-semibold sm:text-3xl">Notes</h1>
-        <p className="mt-4 text-sm text-[var(--text-muted)]">
-          No notes were found. Add markdown files to the vault, then run npm run notes:sync to
-          populate this page.
-        </p>
+        <p className="mt-4 text-sm text-[var(--text-muted)]">No notes yet.</p>
       </div>
     )
   }
@@ -59,10 +56,7 @@ function NotesFallbackList({ tree }: { tree: NotesTreeNode[] }) {
   return (
     <>
       <h1 className="text-2xl font-semibold sm:text-3xl">Notes</h1>
-      <p className="mt-4 text-sm text-[var(--text-muted)]">
-        Root <code>index.md</code> was not found, so this page is showing the top-level notes and
-        folders instead.
-      </p>
+      <p className="mt-4 text-sm text-[var(--text-muted)]">Top-level notes and folders.</p>
 
       <ul className="mt-6 space-y-2">
         {tree.map((child) => (
@@ -102,7 +96,7 @@ export default function NotesIndexPage() {
 
       <MDXLayoutRenderer code={note.body.code} components={components} toc={note.toc} />
 
-      <PostEnhancements toc={note.toc} hasToc={note.hasToc} />
+      <PostEnhancements toc={note.toc} />
     </NotesShell>
   )
 }

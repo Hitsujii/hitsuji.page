@@ -1,4 +1,4 @@
-export const NOTES_BASE_PATH = '/notes'
+const NOTES_BASE_PATH = '/notes'
 
 function toPosixPath(value: string) {
   return String(value).replace(/\\/g, '/').trim()
@@ -17,10 +17,6 @@ function decodePath(value: string) {
     .split('/')
     .map((part) => safeDecodeURIComponent(part))
     .join('/')
-}
-
-export function trimSlashes(value: string) {
-  return value.replace(/^\/+|\/+$/g, '')
 }
 
 export function normalizeNotePath(value: string) {
@@ -47,7 +43,7 @@ export function splitNotePath(value: string) {
   return normalized ? normalized.split('/') : []
 }
 
-export function encodeNotePath(value: string) {
+function encodeNotePath(value: string) {
   return splitNotePath(value).map(encodeURIComponent).join('/')
 }
 

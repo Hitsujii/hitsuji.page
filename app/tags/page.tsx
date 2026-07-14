@@ -3,6 +3,7 @@ import PageMain from '@/components/PageMain'
 import Tag from '@/components/Tag'
 import { getTagCounts } from 'app/tag-data'
 import { genPageMetadata } from 'app/seo'
+import { pageTitleTransitionKey } from '@/components/view-transitions'
 
 export const metadata = genPageMetadata({
   title: 'Tags',
@@ -16,7 +17,11 @@ export default async function Page() {
   return (
     <>
       <Breadcrumb />
-      <PageMain title="Tags" description="All the tags used in posts.">
+      <PageMain
+        title="Tags"
+        description="All the tags used in posts."
+        titleTransitionKey={pageTitleTransitionKey('/tags')}
+      >
         {sortedTags.length === 0 ? (
           <p>No tags found.</p>
         ) : (

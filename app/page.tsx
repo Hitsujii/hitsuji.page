@@ -1,9 +1,14 @@
-import { sortPosts, allCoreContent } from 'pliny/utils/contentlayer'
-import { allBlogs } from 'contentlayer/generated'
+import 'katex/dist/katex.css'
+
+import { allBlogs, allLearningLogs } from 'contentlayer/generated'
 import Main from './Main'
+import { getHistoryStream } from './_lib/history-stream'
 
 export default async function Page() {
-  const sortedPosts = sortPosts(allBlogs.filter((post) => !post.draft))
-  const posts = allCoreContent(sortedPosts)
-  return <Main posts={posts} />
+  const history = getHistoryStream({
+    blogs: allBlogs,
+    learningLogs: allLearningLogs,
+  })
+
+  return <Main history={history} />
 }

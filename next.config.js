@@ -1,4 +1,5 @@
 const { withContentlayer } = require('next-contentlayer2')
+const { PHASE_DEVELOPMENT_SERVER } = require('next/constants')
 
 const withBundleAnalyzer = require('@next/bundle-analyzer')({
   enabled: process.env.ANALYZE === 'true',
@@ -61,9 +62,14 @@ const unoptimized = process.env.UNOPTIMIZED ? true : undefined
 /**
  * @type {import('next/dist/next-server/server/config').NextConfig}
  **/
-module.exports = () => {
+module.exports = (phase) => {
   const plugins = [withContentlayer, withBundleAnalyzer]
   return plugins.reduce((acc, next) => next(acc), {
+    // `next dev` must not share its compiler state with `next build`.
+    // A production build can otherwise replace chunks and manifests while the
+    // development server is still reading them. Production keeps Next's
+    // default directory so `next start` and static export continue to work.
+    distDir: phase === PHASE_DEVELOPMENT_SERVER ? '.next-dev' : '.next',
     output,
     basePath,
     reactStrictMode: true,

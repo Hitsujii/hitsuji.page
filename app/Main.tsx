@@ -1,37 +1,38 @@
 import Link from '@/components/Link'
-import PostCard from '@/components/PostCard'
-import SocialIcon from '@/components/social-icons'
 import siteMetadata from '@/data/siteMetadata'
 import NewsletterForm from 'pliny/ui/NewsletterForm'
 import RememberBackUrl from '@/components/RememberBackUrl'
 import DiscordStatus from '@/components/DiscordStatus'
 import LocalTime from '@/components/LocalTime'
-import AvatarWindow from '@/components/AvatarWindow'
-import { IconArrowRight, IconRss } from '@/components/icons/AstroPaperIcons'
-import type { CoreContent } from 'pliny/utils/contentlayer'
-import type { Blog } from 'contentlayer/generated'
-
-const POSTS_PER_INDEX = 4
-const FEATURED_FALLBACK_COUNT = 3
+import DesktopIcon from '@/components/desktop/DesktopIcon'
+import HistoryLogDisclosure from '@/components/HistoryLogDisclosure'
+import { components } from '@/components/MDXComponents'
+import { withBasePath } from '@/components/path-utils'
+import PostTitleTransition from '@/components/PostTitleTransition'
+import { contentTitleTransitionKey } from '@/components/view-transitions'
+import { MDXLayoutRenderer } from 'pliny/mdx-components'
+import type { HistoryItem } from './_lib/history-stream'
 
 const socialLinks = [
-  { kind: 'github', href: siteMetadata.github },
-  { kind: 'x', href: siteMetadata.twitter || siteMetadata.x },
-  { kind: 'linkedin', href: siteMetadata.linkedin },
-  { kind: 'mail', href: siteMetadata.email ? `mailto:${siteMetadata.email}` : undefined },
+  { label: 'github', href: siteMetadata.github },
+  { label: 'x', href: siteMetadata.twitter || siteMetadata.x },
+  { label: 'linkedin', href: siteMetadata.linkedin },
+  { label: 'mail', href: siteMetadata.email ? `mailto:${siteMetadata.email}` : undefined },
 ] as const
 
-export default function Home({ posts }: { posts: CoreContent<Blog>[] }) {
-  const explicitFeaturedPosts = posts.filter((post) => Boolean(post.featured))
-  const featuredPosts =
-    explicitFeaturedPosts.length > 0
-      ? explicitFeaturedPosts.slice(0, FEATURED_FALLBACK_COUNT)
-      : posts.slice(0, FEATURED_FALLBACK_COUNT)
+function formatIsoDate(date: string) {
+  const parsedDate = new Date(date)
+  return Number.isNaN(parsedDate.getTime())
+    ? date.slice(0, 10)
+    : parsedDate.toISOString().slice(0, 10)
+}
 
-  const featuredKeys = new Set(featuredPosts.map((post) => post.path ?? post.slug))
-  const recentPosts = posts
-    .filter((post) => !featuredKeys.has(post.path ?? post.slug))
-    .slice(0, POSTS_PER_INDEX)
+const streamLinkClassName =
+  'text-[var(--link)] underline-offset-4 visited:text-[var(--link-visited)] hover:text-[var(--link-hover)] hover:underline hover:decoration-dashed'
+
+export default function Home({ history }: { history: HistoryItem[] }) {
+  const newestLogSlug = history.find((item) => item.type === 'LOG')?.slug
+  const lastUpdated = history[0]?.date
 
   return (
     <>
@@ -47,95 +48,116 @@ export default function Home({ posts }: { posts: CoreContent<Blog>[] }) {
 
           <div className="home-hero__grid">
             <div className="home-hero__copy">
-              <p className="home-hero__kicker">{'// C++, web & avoidable complexity'}</p>
+              <p className="home-hero__kicker">{'// learning C++ from scratch'}</p>
 
               <div className="home-hero__title-row">
                 <h1 className="title-mark">
                   <span className="title-mark__glyph">Hi World!!</span>
                 </h1>
 
-                <Link
-                  href="/feed.xml"
-                  target="_blank"
-                  prefetch={false}
+                <a
+                  href={withBasePath('/feed.xml')}
                   className="home-hero__rss"
                   aria-label="RSS Feed"
                   title="RSS Feed"
                 >
-                  <IconRss width={20} height={20} className="stroke-current stroke-3" />
+                  <DesktopIcon variant="rss" size={18} />
                   <span className="sr-only">RSS Feed</span>
-                </Link>
+                </a>
               </div>
 
               <div className="home-hero__intro">
                 <p>
-                  I’m Hitsuji. I’m learning C++ from scratch, building this site myself, and
-                  accidentally picking up frontend along the way.
-                </p>
-
-                <p>
-                  Feel free to read the <Link href="/blog">high-cortisol posts</Link> or check out
-                  the <Link href="/projects">projects</Link> to see how the overengineering is
-                  going.
+                  I’m Hitsuji. I’m learning C++ from scratch and building this site along the way.
                 </p>
               </div>
 
+              {lastUpdated && (
+                <p className="home-hero__updated">
+                  Last updated: <time dateTime={lastUpdated}>{formatIsoDate(lastUpdated)}</time>
+                </p>
+              )}
+
               {socialLinks.some(({ href }) => Boolean(href)) && (
                 <div className="home-hero__socials">
-                  <span>links[]:</span>
+                  <span>Links:</span>
                   <div>
-                    {socialLinks.map(({ kind, href }) => (
-                      <SocialIcon key={kind} kind={kind} href={href} size={24} />
-                    ))}
+                    {socialLinks.map(
+                      ({ label, href }) =>
+                        href && (
+                          <a key={label} href={href}>
+                            [{label}]
+                          </a>
+                        )
+                    )}
                   </div>
                 </div>
               )}
             </div>
-
-            <AvatarWindow className="home-hero__avatar" priority />
           </div>
         </section>
 
-        {featuredPosts.length > 0 && (
-          <section
-            id="featured"
-            className={[
-              'pt-12 pb-6',
-              recentPosts.length > 0 ? 'border-b border-[var(--border)]' : '',
-            ].join(' ')}
-          >
+        {history.length > 0 && (
+          <section id="history" className="home-history" aria-labelledby="history-heading">
             <div className="section-heading">
-              <h2>Featured</h2>
-              <span>{String(featuredPosts.length).padStart(2, '0')}</span>
+              <h2 id="history-heading">Latest</h2>
             </div>
-            <ul className="post-list">
-              {featuredPosts.map((post) => (
-                <PostCard key={post.path ?? post.slug} post={post} heading="h3" />
-              ))}
-            </ul>
+            <ol className="history-stream">
+              {history.map((item) =>
+                item.type === 'LOG' ? (
+                  <li
+                    key={`${item.type}:${item.slug}`}
+                    className="history-entry history-entry--log"
+                  >
+                    <HistoryLogDisclosure
+                      badges={item.badges}
+                      date={item.date}
+                      defaultOpen={item.slug === newestLogSlug}
+                      duration={item.duration}
+                      notes={item.notes}
+                      slug={item.slug}
+                      title={item.title}
+                    >
+                      {item.body.raw.trim().length > 0 && (
+                        <MDXLayoutRenderer
+                          code={item.body.code}
+                          components={components}
+                          toc={item.toc}
+                        />
+                      )}
+                    </HistoryLogDisclosure>
+                  </li>
+                ) : (
+                  <li
+                    key={`${item.type}:${item.href}`}
+                    className="history-entry history-entry--post"
+                  >
+                    <time dateTime={item.date} className="history-entry__date">
+                      {formatIsoDate(item.date)}
+                    </time>
+                    <span className="history-entry__kind">POST</span>
+                    <Link href={item.href} className="history-entry__post-title">
+                      <h3>
+                        <PostTitleTransition transitionKey={contentTitleTransitionKey(item.href)}>
+                          {item.title}
+                        </PostTitleTransition>
+                      </h3>
+                    </Link>
+                  </li>
+                )
+              )}
+            </ol>
           </section>
         )}
 
-        {recentPosts.length > 0 && (
-          <section id="recent-posts" className="pt-12 pb-6">
-            <div className="section-heading">
-              <h2>Recent posts</h2>
-              <span>{String(recentPosts.length).padStart(2, '0')}</span>
-            </div>
-            <ul className="post-list">
-              {recentPosts.map((post) => (
-                <PostCard key={post.path ?? post.slug} post={post} heading="h3" />
-              ))}
-            </ul>
-          </section>
-        )}
-
-        <div className="my-8 text-center">
-          <Link href="/blog" className="command-link">
-            All Posts
-            <IconArrowRight className="inline-block size-5 rtl:-rotate-180" />
+        <nav aria-label="Browse all content" className="home-directory-links">
+          <Link href="/blog" className={streamLinkClassName}>
+            posts/
           </Link>
-        </div>
+          <Link href="/notes" className={streamLinkClassName}>
+            notes/
+          </Link>
+        </nav>
         {siteMetadata.newsletter?.provider && (
           <section
             className="newsletter-section my-8 flex items-center justify-center"

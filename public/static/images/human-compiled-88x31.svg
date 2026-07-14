@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="88" height="31" viewBox="0 0 88 31" role="img" aria-labelledby="title">
+  <title id="title">羊++ — compiled by a human</title>
+  <defs>
+    <linearGradient id="blue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#91b6ff" />
+      <stop offset="0.48" stop-color="#345bc2" />
+      <stop offset="1" stop-color="#0a246a" />
+    </linearGradient>
+  </defs>
+  <rect width="88" height="31" fill="#0b1120" />
+  <rect x="1" y="1" width="86" height="29" fill="#edf4ff" stroke="#bfd0e8" />
+  <rect x="2" y="2" width="29" height="27" fill="url(#blue)" />
+  <rect x="32" y="2" width="54" height="13" fill="#edf4ff" />
+  <rect x="32" y="16" width="54" height="13" fill="#345bc2" />
+  <g font-family="'Noto Sans CJK JP', 'Noto Sans JP', ui-sans-serif, system-ui, sans-serif" font-weight="800">
+    <text x="3.5" y="23" fill="#050914" font-size="20">羊</text>
+    <text x="20" y="21" fill="#050914" font-size="8">++</text>
+    <text x="3" y="22.5" fill="#ffffff" font-size="20">羊</text>
+    <text x="19.5" y="20.5" fill="#edf4ff" font-size="8">++</text>
+  </g>
+  <g font-family="'Noto Sans Mono', 'DejaVu Sans Mono', monospace" font-size="6.6" font-weight="800" text-anchor="middle">
+    <text x="59" y="11" fill="#17243a">COMPILED</text>
+    <text x="59" y="25" fill="#ffffff">BY A HUMAN</text>
+  </g>
+</svg>
