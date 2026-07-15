@@ -714,6 +714,7 @@ footer svg {
   height: 2.75rem;
   min-height: 2.75rem;
   padding-block: 0;
+  padding-inline: 4.25rem 6rem;
   border: 1px solid var(--control-border);
   background: var(--surface-elevated);
   color: var(--foreground);
